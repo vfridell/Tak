@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TakLib
 {
@@ -7,6 +8,13 @@ namespace TakLib
         public readonly char Row;
         public readonly char Column;
         public readonly Coordinate Location;
+
+        protected Move(Coordinate location)
+        {
+            Location = location;
+            Row = location.RowChar;
+            Column = location.ColumnChar;
+        }
 
         public Move(char r, char c)
         {
@@ -51,33 +59,28 @@ namespace TakLib
             Drops = new List<char>();
             Drops =  drops;
             Direction = direction;
+            CarryInt = int.Parse(Carry.ToString());
+            DirectionEnum = (Direction) Direction;
+            DropInts = drops.Select(d => int.Parse(d.ToString())).ToList();
 
-            char currentRow = r;
-            char currentCol = c;
-            char currentDrop;
-            char currentCarry = carry;
-            foreach (char drop in Drops)
+            int currentCarry = CarryInt;
+            Coordinate nextCoordinate = Location;
+            foreach (int currentDrop in DropInts)
             {
-                int carryInt = int.Parse(Carry.ToString());
-                carryInt
-                SubMoves.Add(new MoveOneSquare(carry, currentRow, currentCol, drop, direction));
-                Coordinate nextCoordinate = Location.GetNeighbor((Direction)direction);
-                currentRow = nextCoordinate.RowChar;
-                currentCol = nextCoordinate.ColumnChar;
-                currentCarry = int.Parse(carry);
+                SubMoves.Add(new MoveOneSquare(currentCarry, nextCoordinate, currentDrop, DirectionEnum));
+                nextCoordinate = nextCoordinate.GetNeighbor((Direction)direction);
+                currentCarry = currentCarry - currentDrop;
             }
-            SubMoves
         }
-        
     }
 
     public class MoveOneSquare : Move
     {
-        public readonly char Carry;
-        public readonly char Drop;
-        public readonly char Direction;
-        public MoveOneSquare(char carry, char r, char c, char drop, char direction) 
-            : base(r,c)
+        public readonly int Carry;
+        public readonly int Drop;
+        public readonly Direction Direction;
+        public MoveOneSquare(int carry, Coordinate start, int drop, Direction direction)
+            : base(start)
         {
             Carry = carry;
             Drop = drop;
