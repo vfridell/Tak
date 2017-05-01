@@ -15,18 +15,46 @@ namespace TakLib
         public Player WhitePlayer => _whitePlayer;
         public Player BlackPlayer => _blackPlayer;
         public Board CurrentBoard => _boards.Last();
-        public bool WhiteToPlay = true;
+        public bool WhiteToPlay => CurrentBoard.WhiteToPlay;
         public Player CurrentPlayer => WhiteToPlay ? _whitePlayer : _blackPlayer;
 
-        public Game(GameSetup gameSetup)
+        public static readonly Dictionary<int, Tuple<int, int>> InitialPieceSetup = new Dictionary<int, Tuple<int, int>>
         {
-            _boards = new List<Board>();
-            _boards.Add(Board.GetInitialBoard(gameSetup.BoardSize));
+            [3] = new Tuple<int, int>(10, 0),
+            [4] = new Tuple<int, int>(15, 0),
+            [5] = new Tuple<int, int>(21, 1),
+            [6] = new Tuple<int, int>(30, 1),
+            [7] = new Tuple<int, int>(40, 2),
+            [8] = new Tuple<int, int>(50, 2),
+        };
+
+        protected Game() { }
+
+        public static Game GetNewGame(GameSetup gameSetup)
+        {
+            if (gameSetup.BoardSize < 3 || gameSetup.BoardSize > 8) throw new Exception("Board size must be between 3 and 8");
+            Game newGame = new Game();
+            gameSetup.NumStonesPerSide = InitialPieceSetup[gameSetup.BoardSize].Item1;
+            if(gameSetup.BoardSize != 7) gameSetup.NumCapstones = InitialPieceSetup[gameSetup.BoardSize].Item2;
+            newGame._boards = new List<Board> {Board.GetInitialBoard(gameSetup)};
+            return newGame;
+        }
+
+        public static Game GetNewGame(int boardSize, int capStones=0)
+        {
+            if (boardSize == 7 && capStones != 2 && capStones != 1) throw new Exception("For size 7 board, capstones must be 1 or 2");
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = boardSize
+            };
+            return GetNewGame(gameSetup);
         }
 
         public IEnumerable<Move> GetAllMoves()
         {
-            throw new NotImplementedException();
+            return CurrentBoard.GetAllMoves();
         }
 
         public void ApplyMove(Move move)
@@ -36,6 +64,8 @@ namespace TakLib
 
         public void EndTurn()
         {
+            CurrentBoard.EndTurn();
+            _boards.Add(CurrentBoard.CloneBoard());
             throw new NotImplementedException();
         }
     }

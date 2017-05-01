@@ -41,9 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
+    <Compile Include="Coordinate.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSetup.cs" />
     <Compile Include="Move.cs" />
+    <Compile Include="NotationParser.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

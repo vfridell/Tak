@@ -12,5 +12,7 @@ namespace TakLib
         public int BoardSize { get; set; }
         public Player WhitePlayer { get; set; }
         public Player BlackPlayer { get; set; }
+        public int NumCapstones { get; set; }
+        public int NumStonesPerSide { get; set; }
     }
 }

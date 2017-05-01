@@ -19,7 +19,7 @@ namespace TakLibTests
                 BoardSize = 5
             };
 
-            Game game = new Game(gameSetup);
+            Game game = Game.GetNewGame(gameSetup);
 
             Assert.AreEqual(5, game.CurrentBoard.Size);
         }
@@ -34,10 +34,17 @@ namespace TakLibTests
                 BoardSize = 5
             };
 
-            Game game = new Game(gameSetup);
+            Game game = Game.GetNewGame(gameSetup);
             IEnumerable<Move> moves = game.GetAllMoves();
             // TODO how many initial moves are there in a size 5 Tak?
             Assert.AreEqual(15, moves.Count());
         }
+
+        [TestMethod]
+        public void EndTurnStateCheck()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
