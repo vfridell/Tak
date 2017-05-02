@@ -11,12 +11,13 @@ namespace TakLib
         private IList<Board> _boards;
         private Player _whitePlayer;
         private Player _blackPlayer;
-
         public Player WhitePlayer => _whitePlayer;
         public Player BlackPlayer => _blackPlayer;
         public Board CurrentBoard => _boards.Last();
         public bool WhiteToPlay => CurrentBoard.WhiteToPlay;
+        public PieceColor ColorToPlay => CurrentBoard.ColorToPlay;
         public Player CurrentPlayer => WhiteToPlay ? _whitePlayer : _blackPlayer;
+        public int Turn => CurrentBoard.Turn;
 
         public static readonly Dictionary<int, Tuple<int, int>> InitialPieceSetup = new Dictionary<int, Tuple<int, int>>
         {
@@ -34,6 +35,8 @@ namespace TakLib
         {
             if (gameSetup.BoardSize < 3 || gameSetup.BoardSize > 8) throw new Exception("Board size must be between 3 and 8");
             Game newGame = new Game();
+            newGame._whitePlayer = gameSetup.WhitePlayer;
+            newGame._blackPlayer = gameSetup.BlackPlayer;
             gameSetup.NumStonesPerSide = InitialPieceSetup[gameSetup.BoardSize].Item1;
             if(gameSetup.BoardSize != 7) gameSetup.NumCapstones = InitialPieceSetup[gameSetup.BoardSize].Item2;
             newGame._boards = new List<Board> {Board.GetInitialBoard(gameSetup)};
@@ -59,13 +62,20 @@ namespace TakLib
 
         public void ApplyMove(Move move)
         {
+            move.Apply(CurrentBoard);
+            throw new NotImplementedException();
+        }
+
+        public void EndPlayerMove()
+        {
+            if(!WhiteToPlay) EndTurn();
+            _boards.Add(CurrentBoard.Clone());
             throw new NotImplementedException();
         }
 
         public void EndTurn()
         {
             CurrentBoard.EndTurn();
-            _boards.Add(CurrentBoard.CloneBoard());
             throw new NotImplementedException();
         }
     }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TakLib
 {
-    public class Move
+    public abstract class Move
     {
         public readonly char Row;
         public readonly char Column;
@@ -16,29 +16,41 @@ namespace TakLib
             Column = location.ColumnChar;
         }
 
-        public Move(char r, char c)
+        protected Move(char r, char c)
         {
             Row = r;
             Column = c;
             Location = new Coordinate(r,c);
         }
 
+        public abstract void Apply(Board board);
     }
 
     public class PlaceCapstone : Move
     {
         public PlaceCapstone(char r, char c) : base(r, c) { }
+        public override void Apply(Board board)
+        {
+            board.PlacePiece(Location.Row, Location.Column, new CapStone(board.ColorToPlay));
+        }
     }
 
     public class PlaceWall : Move
     {
         public PlaceWall(char r, char c) : base(r, c) { }
-        
+        public override void Apply(Board board)
+        {
+            board.PlacePiece(Location.Row, Location.Column, new Wall(board.ColorToPlay));
+        }
     }
 
     public class PlaceStone : Move
     {
         public PlaceStone(char r, char c) : base(r, c) { }
+        public override void Apply(Board board)
+        {
+            board.PlacePiece(Location.Row, Location.Column, new Wall(board.ColorToPlay));
+        }
     }
 
     public class MoveStack : Move
@@ -72,6 +84,14 @@ namespace TakLib
                 currentCarry = currentCarry - currentDrop;
             }
         }
+
+        public override void Apply(Board board)
+        {
+            foreach (Move move in SubMoves)
+            {
+                move.Apply(board);
+            }
+        }
     }
 
     public class MoveOneSquare : Move
@@ -85,6 +105,13 @@ namespace TakLib
             Carry = carry;
             Drop = drop;
             Direction = direction;
+        }
+
+        public override void Apply(Board board)
+        {
+            PieceStack stack = board.PickStack(Location.Row, Location.Column, Carry);
+            Coordinate nextCoordinate = Location.GetNeighbor(Direction);
+            board.PlaceStack(nextCoordinate.Row, nextCoordinate.Column, stack);
         }
     }
 }

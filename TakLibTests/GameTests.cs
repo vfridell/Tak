@@ -41,6 +41,22 @@ namespace TakLibTests
         }
 
         [TestMethod]
+        public void CheckPlayerFirstTurn()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            Assert.AreEqual(true, game.WhiteToPlay);
+            Assert.AreEqual(gameSetup.WhitePlayer, game.CurrentPlayer);
+            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
+        }
+
+        [TestMethod]
         public void EndTurnStateCheck()
         {
             throw new NotImplementedException();

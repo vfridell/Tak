@@ -10,7 +10,14 @@ namespace TakLibTests
         [TestMethod]
         public void ParsePlacement()
         {
-            throw new NotImplementedException();
+            Move move = NotationParser.Parse("a5");
+            Assert.IsInstanceOfType(move, typeof(PlaceStone));
+
+            Move move2 = NotationParser.Parse("Cd3");
+            Assert.IsInstanceOfType(move2, typeof(PlaceCapstone));
+
+            Move move3 = NotationParser.Parse("Sb2");
+            Assert.IsInstanceOfType(move3, typeof(PlaceWall));
         }
 
         [TestMethod]
@@ -22,7 +29,11 @@ namespace TakLibTests
         [TestMethod]
         public void ParseBasicMovement()
         {
-            throw new NotImplementedException();
+            Move move = NotationParser.Parse("a5-");
+            Assert.IsInstanceOfType(move, typeof(MoveStack));
+            Assert.AreEqual(Direction.Down, (move as MoveStack).DirectionEnum);
+            Assert.AreEqual(0, (move as MoveStack).Location.Column);
+            Assert.AreEqual(4, (move as MoveStack).Location.Row);
         }
 
         [TestMethod]
@@ -34,7 +45,15 @@ namespace TakLibTests
         [TestMethod]
         public void ParseStackMovement()
         {
-            throw new NotImplementedException();
+            Move move = NotationParser.Parse("5e1+41");
+            Assert.IsInstanceOfType(move, typeof(MoveStack));
+            Assert.AreEqual(Direction.Up, (move as MoveStack).DirectionEnum);
+            Assert.AreEqual(4, (move as MoveStack).Location.Column);
+            Assert.AreEqual(0, (move as MoveStack).Location.Row);
+            Assert.AreEqual(5, (move as MoveStack).CarryInt);
+            Assert.AreEqual(2, (move as MoveStack).DropInts.Count);
+            Assert.AreEqual(4, (move as MoveStack).DropInts[0]);
+            Assert.AreEqual(1, (move as MoveStack).DropInts[1]);
         }
 
         [TestMethod]

@@ -9,27 +9,40 @@ namespace TakLib
 {
     public class Board
     {
-        private readonly int _size;
         public int Size => _size;
         public bool WhiteToPlay => _whiteToPlay;
-        public PieceColor ColorToPlay => (PieceColor) PlayerIndex;
+        public PieceColor ColorToPlay => (PieceColor) StonePileIndex;
 
-        protected int PlayerIndex => _whiteToPlay ? _w : _b;
+        public int Turn => _turn;
+        public int Round => _round;
 
-        private Stack<Piece>[,] _grid;
-        private int _w = 0;
-        private int _b = 1;
+        protected int StonePileIndex
+        {
+            get
+            {
+                if (_turn > 1) return _whiteToPlay ? 0 : 1;
+                return _whiteToPlay ? 1 : 0;
+            }
+        }
+
+
+        private PieceStack[,] _grid;
         private int[] _capStonesInHand;
         private int[] _stonesInHand;
         private bool _whiteToPlay = true;
+        private int _turn = 1;
+        private int _size;
+        private int _round = 1;
+
+        protected Board() { }
 
         protected Board(GameSetup gameSetup)
         {
             _size = gameSetup.BoardSize;
-            _grid = new Stack<Piece>[_size,_size];
+            _grid = new PieceStack[_size,_size];
             for(int r=0; r<_size;r++)
                 for(int c=0; c<_size;c++)
-                    _grid[r,c] = new Stack<Piece>();
+                    _grid[r,c] = new PieceStack();
             _capStonesInHand = new []{gameSetup.NumCapstones, gameSetup.NumCapstones};
             _stonesInHand = new []{gameSetup.NumStonesPerSide, gameSetup.NumStonesPerSide};
         }
@@ -46,17 +59,17 @@ namespace TakLib
             if(piece.Color != ColorToPlay) throw new Exception($"Piece {piece.Color} does not match color to play in game {ColorToPlay}");
             if(_grid[r,c].Count != 0) throw new Exception("Cannot place on non-empty space");
             _grid[r, c].Push(piece);
-            if (piece is CapStone) _capStonesInHand[PlayerIndex]--;
-            else _stonesInHand[PlayerIndex]--;
-            if(_capStonesInHand[PlayerIndex] < 0 || _stonesInHand[PlayerIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
+            if (piece is CapStone) _capStonesInHand[StonePileIndex]--;
+            else _stonesInHand[StonePileIndex]--;
+            if(_capStonesInHand[StonePileIndex] < 0 || _stonesInHand[StonePileIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
         }
 
-        public Stack<Piece> PickStack(int r, int c, int count)
+        public PieceStack PickStack(int r, int c, int count)
         {
             CheckGridRange(r,c);
             if(count > Size) throw new Exception($"{count} is greater than the carry limit of {Size}");
             if(_grid[r,c].Count < count) throw new Exception($"There are fewer than {count} stones at {r},{c}");
-            Stack<Piece> tempStack = new Stack<Piece>();
+            PieceStack tempStack = new PieceStack();
             int leftToPick = count;
             while (leftToPick > 0)
             {
@@ -66,16 +79,12 @@ namespace TakLib
             return tempStack;
         }
 
-        public void PlaceStack(int r, int c, Stack<Piece> heldStack, int count)
+        public void PlaceStack(int r, int c, Stack<Piece> heldStack)
         {
             CheckGridRange(r,c);
-            if(count > heldStack.Count) throw new Exception($"There are fewer than {count} stones in the held stack ({heldStack.Count})");
-            int leftToPush = count;
-            while (leftToPush > 0)
-            {
+            if(heldStack.Count == 0) throw new Exception($"There are no stones in the held stack");
+            while (heldStack.Count > 0)
                 _grid[r,c].Push(heldStack.Pop());
-                leftToPush--;
-            }
         }
 
         private void CheckGridRange(int r, int c)
@@ -88,15 +97,30 @@ namespace TakLib
             throw new NotImplementedException();
         }
 
-        public Board CloneBoard()
+        public Board Clone()
         {
-            throw new NotImplementedException();
+            Board clone = new Board();
+            clone._round = _round;
+            clone._turn = _turn;
+            clone._size = _size;
+            clone._whiteToPlay = _whiteToPlay;
+            _capStonesInHand.CopyTo(clone._capStonesInHand,0);
+            _stonesInHand.CopyTo(clone._stonesInHand, 0);
+            for (int r = 0; r < _size; r++)
+                for (int c = 0; c < _size; c++)
+                    clone._grid[r,c] = _grid[r,c].Clone();
+            return clone;
+        }
+
+        public void EndPlayerMove()
+        {
+            _round++;
+            _whiteToPlay = !_whiteToPlay;
         }
 
         public void EndTurn()
         {
-            _whiteToPlay = !_whiteToPlay;
-            throw new NotImplementedException();
+            _turn++;
         }
     }
 }

@@ -9,12 +9,29 @@ namespace TakLib
     public enum PieceColor { White = 0, Black = 1 };
     public class Piece
     {
-        public PieceColor Color { get; set; }
+        public Piece(PieceColor color)
+        {
+            Color = color;
+        }
+
+        public readonly PieceColor Color;
     }
 
-    public class Stone : Piece { }
+    public class Stone : Piece {
+        public Stone(PieceColor color) : base(color)
+        {
+        }
+    }
 
-    public class Wall : Piece { }
+    public class Wall : Piece {
+        public Wall(PieceColor color) : base(color)
+        {
+        }
+    }
 
-    public class CapStone : Piece { }
+    public class CapStone : Piece {
+        public CapStone(PieceColor color) : base(color)
+        {
+        }
+    }
 }
