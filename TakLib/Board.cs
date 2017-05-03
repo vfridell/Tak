@@ -25,7 +25,6 @@ namespace TakLib
             }
         }
 
-
         private PieceStack[,] _grid;
         private int[] _capStonesInHand;
         private int[] _stonesInHand;
@@ -87,10 +86,29 @@ namespace TakLib
                 _grid[r,c].Push(heldStack.Pop());
         }
 
+        public bool OnTheBoard(int r, int c) => Math.Max(r, c) < Size && r >= 0 && c >= 0;
+
         private void CheckGridRange(int r, int c)
         {
-            if (Math.Max(r, c) > Size) throw new Exception($"{r},{c} out of range for grid size {Size}");
+            if (!OnTheBoard(r,c)) throw new Exception($"{r},{c} out of range for grid size {Size}");
         }
+
+        public int DistanceAvailable(int r, int c, Direction direction)
+        {
+            CheckGridRange(r,c);
+            Coordinate next = new Coordinate(r, c).GetNeighbor(direction);
+            int dist = 0;
+            while (OnTheBoard(next.Row, next.Column) && !WallOrCap(next.Row, next.Column))
+            {
+                dist++;
+                next = new Coordinate(r, c).GetNeighbor(direction);
+            }
+            return dist;
+        }
+
+        public bool WallOrCap(int r, int c)
+            => _grid[r, c].Count > 0 && 
+               (_grid[r, c].Peek() is Wall || _grid[r, c].Peek() is CapStone);
 
         public IEnumerable<Move> GetAllMoves()
         {

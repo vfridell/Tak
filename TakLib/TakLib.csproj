@@ -45,6 +45,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameSetup.cs" />
     <Compile Include="Move.cs" />
+    <Compile Include="MoveGenerator.cs" />
     <Compile Include="NotationParser.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="PieceStack.cs" />
