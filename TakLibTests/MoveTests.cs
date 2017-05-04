@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TakLib;
 
@@ -19,6 +20,11 @@ namespace TakLibTests
 
             Game game = Game.GetNewGame(gameSetup);
 
+
+            //List<string> strings = CarryStackArrayMaker.Split('5');
+            List<string> strings = CarryStackArrayMaker.SplitRecursive(5, "");
+
+            throw new NotImplementedException();
         }
     }
 }

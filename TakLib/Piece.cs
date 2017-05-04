@@ -7,31 +7,18 @@ using System.Threading.Tasks;
 namespace TakLib
 {
     public enum PieceColor { White = 0, Black = 1 };
-    public class Piece
+    public enum PieceType { Stone = 0, Wall = 1, CapStone = 2 };
+    public struct Piece
     {
-        public Piece(PieceColor color)
+        public Piece(PieceColor color, PieceType type)
         {
             Color = color;
+            Type = type;
         }
+
+        public readonly PieceType Type;
 
         public readonly PieceColor Color;
     }
 
-    public class Stone : Piece {
-        public Stone(PieceColor color) : base(color)
-        {
-        }
-    }
-
-    public class Wall : Piece {
-        public Wall(PieceColor color) : base(color)
-        {
-        }
-    }
-
-    public class CapStone : Piece {
-        public CapStone(PieceColor color) : base(color)
-        {
-        }
-    }
 }

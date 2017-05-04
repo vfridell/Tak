@@ -33,6 +33,9 @@ namespace TakLib
         private int _size;
         private int _round = 1;
 
+        public int StonesInHand(PieceColor color) => _stonesInHand[(int)color];
+        public int CapStonesInHand(PieceColor color) => _capStonesInHand[(int)color];
+
         protected Board() { }
 
         protected Board(GameSetup gameSetup)
@@ -56,18 +59,27 @@ namespace TakLib
         {
             CheckGridRange(r,c);
             if(piece.Color != ColorToPlay) throw new Exception($"Piece {piece.Color} does not match color to play in game {ColorToPlay}");
-            if(_grid[r,c].Count != 0) throw new Exception("Cannot place on non-empty space");
+            if(StackSize(r,c) != 0) throw new Exception("Cannot place on non-empty space");
             _grid[r, c].Push(piece);
-            if (piece is CapStone) _capStonesInHand[StonePileIndex]--;
+            if (piece.Type == PieceType.CapStone) _capStonesInHand[StonePileIndex]--;
             else _stonesInHand[StonePileIndex]--;
             if(_capStonesInHand[StonePileIndex] < 0 || _stonesInHand[StonePileIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
+        }
+
+        public int StackSize(int r, int c) => _grid[r, c].Count;
+
+        public bool StackOwned(int r, int c, PieceColor color)
+        {
+            CheckGridRange(r, c);
+            if (StackSize(r, c) == 0) return false;
+            return color == _grid[r,c].Peek().Color;
         }
 
         public PieceStack PickStack(int r, int c, int count)
         {
             CheckGridRange(r,c);
             if(count > Size) throw new Exception($"{count} is greater than the carry limit of {Size}");
-            if(_grid[r,c].Count < count) throw new Exception($"There are fewer than {count} stones at {r},{c}");
+            if(StackSize(r, c) < count) throw new Exception($"There are fewer than {count} stones at {r},{c}");
             PieceStack tempStack = new PieceStack();
             int leftToPick = count;
             while (leftToPick > 0)
@@ -108,7 +120,7 @@ namespace TakLib
 
         public bool WallOrCap(int r, int c)
             => _grid[r, c].Count > 0 && 
-               (_grid[r, c].Peek() is Wall || _grid[r, c].Peek() is CapStone);
+               (_grid[r, c].Peek().Type == PieceType.Wall || _grid[r, c].Peek().Type == PieceType.CapStone);
 
         public IEnumerable<Move> GetAllMoves()
         {
