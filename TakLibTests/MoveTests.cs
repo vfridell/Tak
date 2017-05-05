@@ -21,8 +21,8 @@ namespace TakLibTests
             Game game = Game.GetNewGame(gameSetup);
 
 
-            //List<string> strings = CarryStackArrayMaker.Split('5');
-            List<string> strings = CarryStackArrayMaker.SplitRecursive(5, "");
+            //List<string> strings = CarryStackArrayMaker.GetAllDropLists('5');
+            List<List<int>> strings = CarryStackArrayMaker.GetAllDropLists(5, 4);
 
             throw new NotImplementedException();
         }

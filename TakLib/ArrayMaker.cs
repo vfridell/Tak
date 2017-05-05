@@ -40,36 +40,73 @@ namespace TakLib
 
         //}
 
-        public static List<string> Split(char numberChar)
+        public static List<List<int>> GetAllDropLists(int maxPicked, int maxDistance)
         {
-            List<string> returnList = new List<string>();
-            int num = int.Parse(numberChar.ToString());
-            int currentNum = num;
-            returnList.Add($"{currentNum}");
-            while(currentNum > 1)
-            {
-                currentNum--;
-                returnList.Add($"{currentNum}{num - currentNum}");
-            }
+            List<List<int>> returnList = new List<List<int>>();
+            for(int i = 1; i <= maxPicked; i++)
+                returnList.AddRange(GetAllDropListsRecursive(i, maxDistance, new List<int>() ));
             return returnList;
         }
 
 
-        public static List<string> SplitRecursive(int num, string baseString)
+        public static List<List<int>> GetAllDropListsRecursive(int maxPicked, int maxDistance, List<int> baseList)
         {
-            List<string> returnList = new List<string>();
 
-            int currentNum = num;
-            returnList.Add($"{currentNum}");
-            while (currentNum > 1)
+            List<List<int>> returnList = new List<List<int>>();
+            if (baseList.Count > maxDistance) return returnList;
+
+            int sum = baseList.Sum();
+            if (sum == maxPicked)
             {
-                currentNum--;
-                string newBase = $"{baseString}{currentNum}{num - currentNum}";
-                returnList.Add(newBase);
-                for(int i = currentNum-1; i > 1; i--)
-                    if(currentNum-2 > 0) returnList.AddRange(SplitRecursive(currentNum, newBase));
+                returnList.Add(baseList);
+                return returnList;
             }
+
+            int picked = 1;
+            while (picked + sum <= maxPicked)
+            {
+                List<int> newBase = new List<int>(baseList) {picked};
+
+                returnList.AddRange(GetAllDropListsRecursive(maxPicked, maxDistance, newBase));
+                picked++;
+            }
+
             return returnList;
         }
+
+        /*
+        public static List<string> GetAllDropLists(int maxPicked, int maxDistance)
+        {
+            List<string> returnList = new List<string>();
+            for (int i = 1; i <= maxPicked; i++)
+                returnList.AddRange(GetAllDropListsRecursive(i, maxDistance, ""));
+            return returnList;
+        }
+
+        public static List<string> GetAllDropListsRecursive(int maxPicked, int maxDistance, string baseList)
+        {
+
+            List<string> returnList = new List<string>();
+            if (baseList.Length > maxDistance) return returnList;
+
+            int sum = baseList.ToCharArray().Aggregate<char, int, int>(0, (i, c) => i + int.Parse(c.ToString()), i => i);
+            if (sum == maxPicked)
+            {
+                returnList.Add(baseList);
+                return returnList;
+            }
+
+            int picked = 1;
+            while (picked + sum <= maxPicked)
+            {
+                string newBase = $"{baseList}{picked}";
+
+                returnList.AddRange(GetAllDropListsRecursive(maxPicked, maxDistance, newBase));
+                picked++;
+            }
+
+            return returnList;
+        }
+        */
     }
 }
