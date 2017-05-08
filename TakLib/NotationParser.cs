@@ -46,11 +46,11 @@ namespace TakLib
             if (MoveRegex.IsMatch(notation))
             {
                 Match match = MoveRegex.Matches(notation)[0];
-                char carry = match.Groups[1].Length > 0 ? match.Groups[1].Value[0] : '0';
+                char carry = match.Groups[1].Length > 0 ? match.Groups[1].Value[0] : '1';
                 char column = match.Groups[2].Value[0];
                 char row = match.Groups[3].Value[0];
                 char direction = match.Groups[4].Value[0];
-                string drops = match.Groups[5].Length > 0 ? match.Groups[5].Value : "0";
+                string drops = match.Groups[5].Length > 0 ? match.Groups[5].Value : "1";
                 return new MoveStack(carry, row, column, drops.ToCharArray(), direction);
             }
             else if (PlaceStoneRegex.IsMatch(notation))

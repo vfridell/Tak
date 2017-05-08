@@ -63,20 +63,19 @@ namespace TakLib
         public void ApplyMove(Move move)
         {
             move.Apply(CurrentBoard);
-            throw new NotImplementedException();
+            EndPlayerMove();
         }
 
         public void EndPlayerMove()
         {
-            if(!WhiteToPlay) EndTurn();
+            CurrentBoard.EndPlayerMove();
+            if(CurrentBoard.Round % 2 != 0) EndTurn();
             _boards.Add(CurrentBoard.Clone());
-            throw new NotImplementedException();
         }
 
         public void EndTurn()
         {
             CurrentBoard.EndTurn();
-            throw new NotImplementedException();
         }
     }
 }

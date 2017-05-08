@@ -46,10 +46,9 @@ namespace TakLib
         private static void AddMovementMoves(Board board, IList<Move> moves, Coordinate location, Direction dir)
         {
             // movement moves
-            // TODO fix DistanceAvailable to allow Capstones to flatten walls on the final placement
-            int maxDist = board.DistanceAvailable(location.Row, location.Column, dir);
+            DistanceAvailable maxDist = board.GetDistanceAvailable(location.Row, location.Column, dir);
             int possibleCarry = Math.Min(board.StackSize(location.Row, location.Column), board.Size);
-            if (maxDist == 0 || possibleCarry == 0) return;
+            if (maxDist.Distance == 0 || possibleCarry == 0) return;
 
             List<List<int>> dropLists = GetAllDropLists(possibleCarry, maxDist);
             foreach (List<int> dropList in dropLists)
@@ -59,7 +58,7 @@ namespace TakLib
         }
 
 
-        public static List<List<int>> GetAllDropLists(int maxPicked, int maxDistance)
+        public static List<List<int>> GetAllDropLists(int maxPicked, DistanceAvailable maxDistance)
         {
             List<List<int>> returnList = new List<List<int>>();
             for (int i = 1; i <= maxPicked; i++)
@@ -68,11 +67,15 @@ namespace TakLib
         }
 
 
-        public static List<List<int>> GetAllDropListsRecursive(int maxPicked, int maxDistance, List<int> baseList)
+        public static List<List<int>> GetAllDropListsRecursive(int maxPicked, DistanceAvailable maxDistance, List<int> baseList)
         {
 
             List<List<int>> returnList = new List<List<int>>();
-            if (baseList.Count > maxDistance) return returnList;
+            if (baseList.Count > maxDistance.Distance)
+            {
+                if(maxDistance.EndsWithWall && maxDistance.CapStoneTop && baseList.Last() == 1) returnList.Add(baseList);
+                return returnList;
+            }
 
             int sum = baseList.Sum();
             if (sum == maxPicked)
@@ -85,7 +88,6 @@ namespace TakLib
             while (picked + sum <= maxPicked)
             {
                 List<int> newBase = new List<int>(baseList) { picked };
-
                 returnList.AddRange(GetAllDropListsRecursive(maxPicked, maxDistance, newBase));
                 picked++;
             }

@@ -27,6 +27,7 @@ namespace TakLib
         }
 
         public abstract void Apply(Board board);
+
     }
 
     public class PlaceCapstone : Move
@@ -36,6 +37,11 @@ namespace TakLib
         public override void Apply(Board board)
         {
             board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.CapStone));
+        }
+
+        public override string ToString()
+        {
+            return $"C{Column}{Row}";
         }
     }
 
@@ -47,6 +53,11 @@ namespace TakLib
         {
             board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.Wall));
         }
+
+        public override string ToString()
+        {
+            return $"S{Column}{Row}";
+        }
     }
 
     public class PlaceStone : Move
@@ -56,6 +67,10 @@ namespace TakLib
         public override void Apply(Board board)
         {
             board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.Stone));
+        }
+        public override string ToString()
+        {
+            return $"{Column}{Row}";
         }
     }
 
@@ -116,6 +131,10 @@ namespace TakLib
             {
                 move.Apply(board);
             }
+        }
+        public override string ToString()
+        {
+            return $"{Carry}{Column}{Row}{Direction}{new string(_drops.ToArray())}";
         }
     }
 

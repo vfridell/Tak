@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,37 +106,58 @@ namespace TakLib
             if (!OnTheBoard(r,c)) throw new Exception($"{r},{c} out of range for grid size {Size}");
         }
 
-        public int DistanceAvailable(int r, int c, Direction direction)
+        private void CheckNonEmpty(int r, int c)
+        {
+            if(_grid[r,c].Count == 0) throw new Exception($"Operation not valid on empty space at {r}, {c}");
+        }
+
+        public DistanceAvailable GetDistanceAvailable(int r, int c, Direction direction)
         {
             CheckGridRange(r,c);
             Coordinate next = new Coordinate(r, c).GetNeighbor(direction);
             int dist = 0;
-            while (OnTheBoard(next.Row, next.Column) && !WallOrCap(next.Row, next.Column))
+            while (OnTheBoard(next.Row, next.Column) && !IsWallOrCap(next.Row, next.Column))
             {
                 dist++;
-                next = new Coordinate(r, c).GetNeighbor(direction);
+                next = (new Coordinate(next.Row, next.Column)).GetNeighbor(direction);
             }
-            return dist;
+            return new DistanceAvailable()
+            {
+                Distance = dist,
+                EndsWithWall = OnTheBoard(next.Row, next.Column) && IsWall(next.Row, next.Column),
+                CapStoneTop = IsCapStone(r, c),
+            };
         }
 
-        public bool WallOrCap(int r, int c)
+        public bool IsWallOrCap(int r, int c)
             => _grid[r, c].Count > 0 && 
                (_grid[r, c].Peek().Type == PieceType.Wall || _grid[r, c].Peek().Type == PieceType.CapStone);
 
+        public bool IsWall(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.Wall);
+        public bool IsCapStone(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.CapStone);
+
+        public Piece GetPiece(int r, int c)
+        {
+            CheckGridRange(r, c);
+            CheckNonEmpty(r, c);
+            return _grid[r, c].Peek();
+        }
+
         public IEnumerable<Move> GetAllMoves()
         {
-            throw new NotImplementedException();
+            return MoveGenerator.GetAllMoves(this);
         }
 
         public Board Clone()
         {
             Board clone = new Board();
+            clone._capStonesInHand = new[] {_capStonesInHand[0], _capStonesInHand[1]};
+            clone._stonesInHand = new[] {_stonesInHand[0], _stonesInHand[1]};
             clone._round = _round;
             clone._turn = _turn;
             clone._size = _size;
             clone._whiteToPlay = _whiteToPlay;
-            _capStonesInHand.CopyTo(clone._capStonesInHand,0);
-            _stonesInHand.CopyTo(clone._stonesInHand, 0);
+            clone._grid = new PieceStack[_size,_size];
             for (int r = 0; r < _size; r++)
                 for (int c = 0; c < _size; c++)
                     clone._grid[r,c] = _grid[r,c].Clone();
@@ -152,5 +174,13 @@ namespace TakLib
         {
             _turn++;
         }
+
+    }
+
+    public struct DistanceAvailable
+    {
+        public int Distance;
+        public bool EndsWithWall;
+        public bool CapStoneTop;
     }
 }
