@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ArrayMaker.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="BoardStats.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSetup.cs" />
