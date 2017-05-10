@@ -175,6 +175,10 @@ namespace TakLib
             _turn++;
         }
 
+        public void FindRoads()
+        {
+            
+        }
     }
 
     public struct DistanceAvailable
