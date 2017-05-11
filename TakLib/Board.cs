@@ -143,6 +143,11 @@ namespace TakLib
             return _grid[r, c].Peek();
         }
 
+        public Piece GetPiece(Coordinate c)
+        {
+            return GetPiece(c.Row, c.Column);
+        }
+
         public IEnumerable<Move> GetAllMoves()
         {
             return MoveGenerator.GetAllMoves(this);
