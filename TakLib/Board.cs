@@ -100,6 +100,7 @@ namespace TakLib
         }
 
         public bool OnTheBoard(int r, int c) => Math.Max(r, c) < Size && r >= 0 && c >= 0;
+        public bool OnTheBoard(Coordinate c) => OnTheBoard(c.Row, c.Column);
 
         private void CheckGridRange(int r, int c)
         {
@@ -146,6 +147,11 @@ namespace TakLib
         public Piece GetPiece(Coordinate c)
         {
             return GetPiece(c.Row, c.Column);
+        }
+
+        public Space GetSpace(Coordinate c)
+        {
+            return new Space(_grid[c.Row, c.Column] ?? new PieceStack(), c, OnTheBoard(c));
         }
 
         public IEnumerable<Move> GetAllMoves()

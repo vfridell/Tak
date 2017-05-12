@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Cryptography;
 using QuickGraph;
+using QuickGraph.Algorithms.Search;
 
 namespace TakLib
 {
@@ -10,8 +11,6 @@ namespace TakLib
         public int MaxCoord => BoardSize - 1;
 
         public Dictionary<Coordinate, HashSet<Coordinate>> DestinationsDictionary = new Dictionary<Coordinate, HashSet<Coordinate>>();
-        private UndirectedGraph<Piece, UndirectedEdge<Piece>> _whiteAdjacencyGraph = new UndirectedGraph<Piece, UndirectedEdge<Piece>>();
-        private UndirectedGraph<Piece, UndirectedEdge<Piece>> _blackAdjacencyGraph = new UndirectedGraph<Piece, UndirectedEdge<Piece>>();
 
         public RoadFinder(int boardSize)
         {
@@ -59,44 +58,38 @@ namespace TakLib
                    coordinate.Column == MaxCoord;
         }
 
-        public void Analyze(Board board)
+        public void Analyze(Board board, PieceColor color)
         {
+            var spaceAdjacencyGraph = CreateAdjacencyList(board);
+            spaceAdjacencyGraph.RemoveVertexIf(v => !v.ColorEquals(color));
+            var dfs = new UndirectedDepthFirstSearchAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
+            var foo = new QuickGraph.Algorithms.ConnectedComponents.ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
+            foo.Compute();
             
         }
 
-        private void CreateAdjacencyList(Board board)
+        private UndirectedGraph<Space, UndirectedEdge<Space>> CreateAdjacencyList(Board board)
         {
-            _whiteAdjacencyGraph.Clear();
-            var finishedVertices = new HashSet<Piece>();
+            var spaceAdjacencyGraph = new UndirectedGraph<Space, UndirectedEdge<Space>>();
+            var finishedVertices = new HashSet<Space>();
             foreach (Coordinate c in new CoordinateEnumerable(BoardSize))
             {
-                var cUp = c.Add(c.GetNeighbor(Direction.Up));
-                var cDown = c.Add(c.GetNeighbor(Direction.Down));
-                var cLeft = c.Add(c.GetNeighbor(Direction.Left));
-                var cRight = c.Add(c.GetNeighbor(Direction.Right));
+                var currentSpace = board.GetSpace(c);
+                
+                var uSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Up)));
+                var dSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Down)));
+                var lSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Left)));
+                var rSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Right)));
 
-                if (board.GetPiece(cUp).Color == PieceColor.White)
-                {
-                    
-                }
+                if(uSpace.OnTheBoard && !finishedVertices.Contains(uSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, uSpace));
+                if(dSpace.OnTheBoard && !finishedVertices.Contains(dSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, dSpace));
+                if(lSpace.OnTheBoard && !finishedVertices.Contains(lSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, lSpace));
+                if(rSpace.OnTheBoard && !finishedVertices.Contains(rSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, rSpace));
 
-                foreach (Hex directionHex in Neighborhood.neighborDirections)
-                {
-                    // don't do the center
-                    if (directionHex.Equals(new Hex(0, 0))) continue;
-
-                    Hex adjacentHex = kvp.Value + directionHex;
-                    Piece adjacentPiece;
-                    if (TryGetPieceAtHex(adjacentHex, out adjacentPiece))
-                    {
-                        if (!finishedVertices.Contains(adjacentPiece))
-                        {
-                            _adjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Piece>(kvp.Key, adjacentPiece));
-                        }
-                    }
-                }
-                finishedVertices.Add(kvp.Key);
+                finishedVertices.Add(currentSpace);
             }
+
+            return spaceAdjacencyGraph;
         }
     }
 }
