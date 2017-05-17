@@ -23,7 +23,7 @@ namespace TakLibTests
 
             Assert.AreEqual(5, game.CurrentBoard.Size);
             Assert.AreEqual(1, game.CurrentBoard.CapStonesInHand(PieceColor.White));
-            Assert.AreEqual(0, game.CurrentBoard.CapStonesInHand(PieceColor.Black));
+            Assert.AreEqual(1, game.CurrentBoard.CapStonesInHand(PieceColor.Black));
         }
 
         [TestMethod]

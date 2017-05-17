@@ -7,11 +7,6 @@ namespace TakLibTests
     [TestClass]
     public class BoardTests
     {
-        [TestMethod]
-        public void CloneBoard()
-        {
-            throw new NotImplementedException();
-        }
 
         [TestMethod]
         public void CornerCheck()

@@ -6,11 +6,24 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
+    public enum GameResult
+    {
+        Incomplete,
+        WhiteFlat,
+        BlackFlat,
+        WhiteRoad,
+        BlackRoad,
+        Draw
+    };
+
     public class Game
     {
         private IList<Board> _boards;
         private Player _whitePlayer;
         private Player _blackPlayer;
+        private RoadFinder _roadFinder;
+
+        public RoadFinder RoadFinder => _roadFinder;
         public Player WhitePlayer => _whitePlayer;
         public Player BlackPlayer => _blackPlayer;
         public Board CurrentBoard => _boards.Last();
@@ -18,6 +31,7 @@ namespace TakLib
         public PieceColor ColorToPlay => CurrentBoard.ColorToPlay;
         public Player CurrentPlayer => WhiteToPlay ? _whitePlayer : _blackPlayer;
         public int Turn => CurrentBoard.Turn;
+        public GameResult GameResult { get; private set; }
 
         public static readonly Dictionary<int, Tuple<int, int>> InitialPieceSetup = new Dictionary<int, Tuple<int, int>>
         {
@@ -40,6 +54,7 @@ namespace TakLib
             gameSetup.NumStonesPerSide = InitialPieceSetup[gameSetup.BoardSize].Item1;
             if(gameSetup.BoardSize != 7) gameSetup.NumCapstones = InitialPieceSetup[gameSetup.BoardSize].Item2;
             newGame._boards = new List<Board> {Board.GetInitialBoard(gameSetup)};
+            newGame._roadFinder = new RoadFinder(gameSetup.BoardSize);
             return newGame;
         }
 
@@ -57,25 +72,60 @@ namespace TakLib
 
         public IEnumerable<Move> GetAllMoves()
         {
-            return CurrentBoard.GetAllMoves();
+            if(GameResult == GameResult.Incomplete)
+                return CurrentBoard.GetAllMoves();
+            else
+                return new List<Move>();
         }
 
         public void ApplyMove(Move move)
         {
+            if (GameResult != GameResult.Incomplete) throw new Exception("Game is already finished");
             move.Apply(CurrentBoard);
             EndPlayerMove();
         }
 
         public void EndPlayerMove()
         {
-            CurrentBoard.EndPlayerMove();
-            if(CurrentBoard.Round % 2 != 0) EndTurn();
-            _boards.Add(CurrentBoard.Clone());
+            SetGameResult();
+            if (GameResult == GameResult.Incomplete)
+            {
+                CurrentBoard.EndPlayerMove();
+                if (CurrentBoard.Round % 2 != 0) EndTurn();
+                _boards.Add(CurrentBoard.Clone());
+            }
         }
 
         public void EndTurn()
         {
             CurrentBoard.EndTurn();
+        }
+
+        private void SetGameResult()
+        {
+            var currentColor = CurrentBoard.WhiteToPlay ? PieceColor.White : PieceColor.Black;
+            var otherColor = CurrentBoard.WhiteToPlay ? PieceColor.Black : PieceColor.White;
+            _roadFinder.Analyze(CurrentBoard, currentColor);
+            if (_roadFinder.Roads.Count > 0)
+            {
+                GameResult = currentColor == PieceColor.White ? GameResult.WhiteRoad : GameResult.BlackRoad;
+                return;
+            }
+            _roadFinder.Analyze(CurrentBoard, otherColor);
+            if (_roadFinder.Roads.Count > 0)
+            {
+                GameResult = otherColor == PieceColor.White ? GameResult.WhiteRoad : GameResult.BlackRoad;
+                return;
+            }
+
+            if (CurrentBoard.EmptySpaces == 0 || CurrentBoard.EitherPlayerOutOfPieces)
+            {
+                if (CurrentBoard.FlatScore == 0) GameResult = GameResult.Draw;
+                else GameResult = CurrentBoard.FlatScore > 0 ? GameResult.WhiteFlat : GameResult.BlackFlat;
+                return;
+            }
+
+            GameResult = GameResult.Incomplete;
         }
     }
 }

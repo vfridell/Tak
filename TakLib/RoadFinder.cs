@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using QuickGraph;
 using QuickGraph.Algorithms.Search;
@@ -11,6 +12,7 @@ namespace TakLib
         public int MaxCoord => BoardSize - 1;
 
         public Dictionary<Coordinate, HashSet<Coordinate>> DestinationsDictionary = new Dictionary<Coordinate, HashSet<Coordinate>>();
+        public IDictionary<int, IEnumerable<Space>> Roads = new Dictionary<int, IEnumerable<Space>>();
 
         public RoadFinder(int boardSize)
         {
@@ -60,11 +62,24 @@ namespace TakLib
 
         public void Analyze(Board board, PieceColor color)
         {
+            Roads.Clear();
             var spaceAdjacencyGraph = CreateAdjacencyList(board);
-            spaceAdjacencyGraph.RemoveVertexIf(v => !v.ColorEquals(color));
-            var dfs = new UndirectedDepthFirstSearchAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
-            var foo = new QuickGraph.Algorithms.ConnectedComponents.ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
-            foo.Compute();
+            spaceAdjacencyGraph.RemoveVertexIf(v => !v.ColorEquals(color) || v.Piece?.Type == PieceType.Wall);
+            if (spaceAdjacencyGraph.VertexCount == 0) return;
+
+            var connectedComponentsAlg = new QuickGraph.Algorithms.ConnectedComponents.ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
+            connectedComponentsAlg.Compute();
+            foreach (Space space in connectedComponentsAlg.Components.Keys.Where(s => DestinationsDictionary.ContainsKey(s.Coordinate)))
+            {
+                int componentNo = connectedComponentsAlg.Components[space];
+                if(Roads.ContainsKey(componentNo)) continue;
+                IEnumerable<Space> connectedNodes = connectedComponentsAlg.Components
+                    .GroupBy(kvp => kvp.Value)
+                    .Where(g => g.Key == componentNo)
+                    .SelectMany(g => g).Select(kvp => kvp.Key);
+                bool road = connectedNodes.Any(s => DestinationsDictionary[space.Coordinate].Contains(s.Coordinate));
+                if(road) Roads.Add(componentNo, connectedNodes);
+            }
             
         }
 
@@ -76,10 +91,10 @@ namespace TakLib
             {
                 var currentSpace = board.GetSpace(c);
                 
-                var uSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Up)));
-                var dSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Down)));
-                var lSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Left)));
-                var rSpace = board.GetSpace(c.Add(c.GetNeighbor(Direction.Right)));
+                var uSpace = board.GetSpace(c.GetNeighbor(Direction.Up));
+                var dSpace = board.GetSpace(c.GetNeighbor(Direction.Down));
+                var lSpace = board.GetSpace(c.GetNeighbor(Direction.Left));
+                var rSpace = board.GetSpace(c.GetNeighbor(Direction.Right));
 
                 if(uSpace.OnTheBoard && !finishedVertices.Contains(uSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, uSpace));
                 if(dSpace.OnTheBoard && !finishedVertices.Contains(dSpace)) spaceAdjacencyGraph.AddVerticesAndEdge(new UndirectedEdge<Space>(currentSpace, dSpace));

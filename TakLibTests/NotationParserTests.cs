@@ -21,12 +21,6 @@ namespace TakLibTests
         }
 
         [TestMethod]
-        public void CannotPlaceOnStack()
-        {
-            throw new NotImplementedException();
-        }
-
-        [TestMethod]
         public void ParseBasicMovement()
         {
             Move move = NotationParser.Parse("a5-");
@@ -34,12 +28,6 @@ namespace TakLibTests
             Assert.AreEqual(Direction.Down, (move as MoveStack).DirectionEnum);
             Assert.AreEqual(0, (move as MoveStack).Location.Column);
             Assert.AreEqual(4, (move as MoveStack).Location.Row);
-        }
-
-        [TestMethod]
-        public void CannotMoveFullStackTwice()
-        {
-            throw new NotImplementedException();
         }
 
         [TestMethod]

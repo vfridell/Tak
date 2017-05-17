@@ -33,9 +33,39 @@ namespace TakLib
         private int _turn = 1;
         private int _size;
         private int _round = 1;
+        private int _flatScore;
+        private int _emptySpaces;
+        private bool _flatScoreDirty = true;
 
         public int StonesInHand(PieceColor color) => _stonesInHand[(int)color];
         public int CapStonesInHand(PieceColor color) => _capStonesInHand[(int)color];
+
+        public bool EitherPlayerOutOfPieces => CapStonesInHand(PieceColor.White) + StonesInHand(PieceColor.White) == 0 ||
+                                               CapStonesInHand(PieceColor.Black) + StonesInHand(PieceColor.Black) == 0;
+
+        public int FlatScore
+        {
+            get
+            {
+                if (_flatScoreDirty)
+                {
+                    ComputeFlatScoreAndEmptySpaces();
+                }
+                return _flatScore;
+            }
+        }
+
+        public int EmptySpaces
+        {
+            get
+            {
+                if (_flatScoreDirty)
+                {
+                    ComputeFlatScoreAndEmptySpaces();
+                }
+                return _emptySpaces;
+            }
+        }
 
         protected Board() { }
 
@@ -62,6 +92,7 @@ namespace TakLib
             if(piece.Color != ColorToPlay) throw new Exception($"Piece {piece.Color} does not match color to play in game {ColorToPlay}");
             if(StackSize(r,c) != 0) throw new Exception("Cannot place on non-empty space");
             _grid[r, c].Push(piece);
+            _flatScoreDirty = true;
             if (piece.Type == PieceType.CapStone) _capStonesInHand[StonePileIndex]--;
             else _stonesInHand[StonePileIndex]--;
             if(_capStonesInHand[StonePileIndex] < 0 || _stonesInHand[StonePileIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
@@ -88,6 +119,7 @@ namespace TakLib
                 tempStack.Push(_grid[r, c].Pop());
                 leftToPick--;
             }
+            _flatScoreDirty = true;
             return tempStack;
         }
 
@@ -97,6 +129,7 @@ namespace TakLib
             if(heldStack.Count == 0) throw new Exception($"There are no stones in the held stack");
             while (heldStack.Count > 0)
                 _grid[r,c].Push(heldStack.Pop());
+            _flatScoreDirty = true;
         }
 
         public bool OnTheBoard(int r, int c) => Math.Max(r, c) < Size && r >= 0 && c >= 0;
@@ -151,12 +184,27 @@ namespace TakLib
 
         public Space GetSpace(Coordinate c)
         {
-            return new Space(_grid[c.Row, c.Column] ?? new PieceStack(), c, OnTheBoard(c));
+            return new Space(OnTheBoard(c) ? _grid[c.Row, c.Column] : new PieceStack(), c, OnTheBoard(c));
         }
 
         public IEnumerable<Move> GetAllMoves()
         {
             return MoveGenerator.GetAllMoves(this);
+        }
+
+        private void ComputeFlatScoreAndEmptySpaces()
+        {
+            _emptySpaces = 0;
+            _flatScore = 0;
+            foreach (Coordinate c in new CoordinateEnumerable(Size))
+            {
+                Space space = GetSpace(c);
+                if (space.IsEmpty)
+                    _emptySpaces++;
+                else if (space.Piece?.Type == PieceType.Stone)
+                    _flatScore += space.ColorEquals(PieceColor.White) ? 1 : -1;
+            }
+            _flatScoreDirty = false;
         }
 
         public Board Clone()
@@ -184,11 +232,6 @@ namespace TakLib
         public void EndTurn()
         {
             _turn++;
-        }
-
-        public void FindRoads()
-        {
-            
         }
     }
 

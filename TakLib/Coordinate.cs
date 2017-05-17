@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +23,12 @@ namespace TakLib
         public int Row;
         public int Column;
 
-        public Coordinate Add(Coordinate other) => new Coordinate(other.Row + Row, other.Column + Column);
-        public Coordinate GetNeighbor(Direction direction) => Add(NotationParser.ToCoordinateDirection(direction));
+        public Coordinate GetNeighbor(Direction direction) => this + NotationParser.ToCoordinateDirection(direction);
         public char RowChar => NotationParser.ToCharRow(this);
         public char ColumnChar => NotationParser.ToCharColumn(this);
+
+        public static Coordinate operator +(Coordinate c1, Coordinate c2) => new Coordinate(c1.Row + c2.Row, c1.Column + c2.Column);
+        public static bool operator ==(Coordinate c1, Coordinate c2) => c1.Row == c2.Row && c1.Column == c2.Column;
+        public static bool operator !=(Coordinate c1, Coordinate c2) => c1.Row != c2.Row || c1.Column != c2.Column;
     }
 }
