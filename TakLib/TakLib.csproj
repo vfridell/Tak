@@ -58,11 +58,14 @@
   <ItemGroup>
     <Compile Include="ArrayMaker.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="BoardAnalysisData.cs" />
+    <Compile Include="BoardAnalysisWeights.cs" />
     <Compile Include="BoardStats.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="CoordinateEnumerable.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSetup.cs" />
+    <Compile Include="JohnnyDeep.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="MoveGenerator.cs" />
     <Compile Include="NotationParser.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="PieceStack.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomAI.cs" />
     <Compile Include="RoadFinder.cs" />
     <Compile Include="Space.cs" />
   </ItemGroup>

@@ -88,6 +88,7 @@ namespace TakLib
         public void EndPlayerMove()
         {
             SetGameResult();
+            CurrentBoard.GameResult = GameResult;
             if (GameResult == GameResult.Incomplete)
             {
                 CurrentBoard.EndPlayerMove();

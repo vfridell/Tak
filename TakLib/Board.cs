@@ -1,10 +1,5 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TakLib
 {
@@ -36,6 +31,8 @@ namespace TakLib
         private int _flatScore;
         private int _emptySpaces;
         private bool _flatScoreDirty = true;
+
+        internal GameResult GameResult;
 
         public int StonesInHand(PieceColor color) => _stonesInHand[(int)color];
         public int CapStonesInHand(PieceColor color) => _capStonesInHand[(int)color];
