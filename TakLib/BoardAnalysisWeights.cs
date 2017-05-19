@@ -12,21 +12,20 @@ namespace TakLib
         public double flatScoreWeight;
         public double possibleMovesDiffWeight;
         public double wallCountDiffWeight;
-        public double unplayedPiecesDiffWeight;
-        public double queenPlacementDiffWeight;
+        public double averageSubGraphDiffWeight;
         public double movementPlacementDiffWeight;
-        public double ownedBeetleStacksWeight;
+        public double longestSubGraphDiffWeight;
+        public double numberOfSubGraphsDiffWeight;
 
         public static BoardAnalysisWeights startingWeights = new BoardAnalysisWeights()
         {
-            capStoneDiffWeight = 1.5,
-            flatScoreWeight = 0.5,
+            capStoneDiffWeight = 1.0,
+            flatScoreWeight = 5.0,
             possibleMovesDiffWeight = 1.0,
-            wallCountDiffWeight = 2.0,
-            unplayedPiecesDiffWeight = 1.0,
-            queenPlacementDiffWeight = 100.0,
-            movementPlacementDiffWeight = 0,
-            ownedBeetleStacksWeight = 0,
+            wallCountDiffWeight = 1.0,
+            averageSubGraphDiffWeight = 5.0,
+            longestSubGraphDiffWeight = 30.0,
+            numberOfSubGraphsDiffWeight = 1.0,
         };
 
         public override string ToString()
@@ -35,10 +34,9 @@ namespace TakLib
                     string.Format("flatScoreWeight: {0} \n", flatScoreWeight) +
                     string.Format("possibleMovesDiffWeight: {0} \n", possibleMovesDiffWeight) +
                     string.Format("wallCountDiffWeight: {0} \n", wallCountDiffWeight) +
-                    string.Format("unplayedPiecesDiffWeight: {0} \n", unplayedPiecesDiffWeight) +
-                    string.Format("queenPlacementDiffWeight: {0} \n", queenPlacementDiffWeight) +
-                    string.Format("ownedBeetleStacksDiffWeight: {0} \n", ownedBeetleStacksWeight) +
-                    string.Format("movementPlacementAdvantageDiffWeight: {0} \n", movementPlacementDiffWeight);
+                    string.Format("averageSubGraphDiffWeight: {0} \n", averageSubGraphDiffWeight) +
+                    string.Format("numberOfSubGraphsDiffWeight: {0} \n", numberOfSubGraphsDiffWeight) +
+                    string.Format("longestSubGraphDiffWeight: {0} \n", longestSubGraphDiffWeight);
         }
     }
 }

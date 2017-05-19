@@ -95,14 +95,22 @@ namespace TakLibTests
             };
 
             Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("a4"));
-            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(3, 0));
+            game.ApplyMove(NotationParser.Parse("c2"));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(1, 2));
             Assert.AreEqual(1, game.Turn);
             Assert.AreEqual(2, game.CurrentBoard.Round);
-            game.ApplyMove(NotationParser.Parse("e2"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(1, 4));
+            game.ApplyMove(NotationParser.Parse("a1"));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(0, 0));
             Assert.AreEqual(2, game.Turn);
             Assert.AreEqual(3, game.CurrentBoard.Round);
+            game.ApplyMove(NotationParser.Parse("e5"));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(4, 4));
+            Assert.AreEqual(2, game.Turn);
+            Assert.AreEqual(4, game.CurrentBoard.Round);
+            game.ApplyMove(NotationParser.Parse("d5"));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(4, 3));
+            Assert.AreEqual(3, game.Turn);
+            Assert.AreEqual(5, game.CurrentBoard.Round);
         }
 
     }

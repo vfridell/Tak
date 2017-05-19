@@ -12,6 +12,7 @@ namespace TakLib
     {
         private bool _playingWhite;
         private int _depth;
+        private BoardAnalyzer _analyzer;
 
         public JohnnyDeep(BoardAnalysisWeights weights, int depth)
         {
@@ -62,9 +63,10 @@ namespace TakLib
             });
         }
 
-        public void BeginNewGame(bool playingWhite)
+        public void BeginNewGame(bool playingWhite, int boardSize)
         {
             _playingWhite = playingWhite;
+            _analyzer = new BoardAnalyzer(boardSize);
         }
 
         private double AnalyzeNextMoves(Board board, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
@@ -73,7 +75,7 @@ namespace TakLib
             if (depth == 0 || !board.GetAllMoves().Any())
             {
                 bestMove = null;
-                return BoardAnalysisData.GetBoardAnalysisData(board, _weights).whiteAdvantage * color;
+                return _analyzer.Analyze(board, _weights).whiteAdvantage * color;
             }
 
             var localMovesData = new ConcurrentDictionary<Move, Tuple<BoardAnalysisData, Board>>();
@@ -111,7 +113,7 @@ namespace TakLib
                 if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
                 Board futureBoard = board.Clone();
                 nextMove.Apply(futureBoard);
-                localMovesData[nextMove] = new Tuple<BoardAnalysisData, Board>(BoardAnalysisData.GetBoardAnalysisData(futureBoard, _weights), futureBoard);
+                localMovesData[nextMove] = new Tuple<BoardAnalysisData, Board>(_analyzer.Analyze(futureBoard, _weights), futureBoard);
             });
 
             aiCancelToken.ThrowIfCancellationRequested();

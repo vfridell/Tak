@@ -13,6 +13,10 @@ namespace TakLib
 
         public Dictionary<Coordinate, HashSet<Coordinate>> DestinationsDictionary = new Dictionary<Coordinate, HashSet<Coordinate>>();
         public IDictionary<int, IEnumerable<Space>> Roads = new Dictionary<int, IEnumerable<Space>>();
+        public PieceColor ColorAnalyzed { get; protected set; }
+        public int SubGraphCount { get; protected set; }
+        public double AverageSubGraphLength { get; protected set; }
+        public int LongestSubGraphLength { get; protected set; }
 
         public RoadFinder(int boardSize)
         {
@@ -63,12 +67,26 @@ namespace TakLib
         public void Analyze(Board board, PieceColor color)
         {
             Roads.Clear();
+            ColorAnalyzed = color;
             var spaceAdjacencyGraph = CreateAdjacencyList(board);
             spaceAdjacencyGraph.RemoveVertexIf(v => !v.ColorEquals(color) || v.Piece?.Type == PieceType.Wall);
             if (spaceAdjacencyGraph.VertexCount == 0) return;
 
             var connectedComponentsAlg = new QuickGraph.Algorithms.ConnectedComponents.ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
             connectedComponentsAlg.Compute();
+
+            // get stats on all subgraphs
+            SubGraphCount = connectedComponentsAlg.ComponentCount;
+            AverageSubGraphLength = connectedComponentsAlg.Components
+                .GroupBy(kvp => kvp.Value)
+                .Select(g => g.Count())
+                .Average();
+            LongestSubGraphLength = connectedComponentsAlg.Components
+                .GroupBy(kvp => kvp.Value)
+                .Select(g => g.Count())
+                .Max();
+
+            // find roads
             foreach (Space space in connectedComponentsAlg.Components.Keys.Where(s => DestinationsDictionary.ContainsKey(s.Coordinate)))
             {
                 int componentNo = connectedComponentsAlg.Components[space];

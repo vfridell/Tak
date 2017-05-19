@@ -23,6 +23,9 @@ namespace TakLib
         private Player _blackPlayer;
         private RoadFinder _roadFinder;
 
+        private List<Move> _movesMade = new List<Move>();
+        public IReadOnlyList<Move> movesMade { get { return _movesMade.AsReadOnly(); } }
+
         public RoadFinder RoadFinder => _roadFinder;
         public Player WhitePlayer => _whitePlayer;
         public Player BlackPlayer => _blackPlayer;
@@ -82,6 +85,7 @@ namespace TakLib
         {
             if (GameResult != GameResult.Incomplete) throw new Exception("Game is already finished");
             move.Apply(CurrentBoard);
+            _movesMade.Add(move);
             EndPlayerMove();
         }
 
@@ -127,6 +131,42 @@ namespace TakLib
             }
 
             GameResult = GameResult.Incomplete;
+        }
+
+        public string GetMoveTranscript()
+        {
+            StringBuilder sb = new StringBuilder();
+            int i = 1;
+            while(i <= _movesMade.Count)
+            {
+                string turnNumber = $"{Math.Max((int)(Math.Floor(i / 2m)), 1).ToString()}. ";
+                sb.Append(turnNumber).Append(_movesMade[i-1]).Append(" ");
+                i++;
+                if (i > _movesMade.Count)
+                {
+                    sb.Append("\n");
+                    break;
+                }
+                sb.Append(_movesMade[i-1]).Append("\n");
+                i++;
+            }
+            return sb.ToString();
+        }
+
+        public static string WriteGameTranscript(Game game)
+        {
+            string filename = string.Format("transcript_{0}", DateTime.Now.ToString("yyyy.MM.dd.HHmmss"));
+            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(filename + ".txt"))
+            {
+                writer.Write(game.GetMoveTranscript());
+            }
+
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //using (Stream stream = new FileStream(filename + ".bin", FileMode.Create, FileAccess.Write, FileShare.None))
+            //{
+            //    formatter.Serialize(stream, game);
+            //}
+            return filename;
         }
     }
 }

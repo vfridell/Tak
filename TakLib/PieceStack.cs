@@ -10,7 +10,12 @@ namespace TakLib
     {
         public PieceStack Clone()
         {
-            return (PieceStack) MemberwiseClone();
+            PieceStack clone = new PieceStack();
+            foreach(Piece p in this.Reverse())
+            {
+                clone.Push(new Piece(p.Color, p.Type));
+            }
+            return clone;
         }
     }
 }

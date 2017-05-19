@@ -29,7 +29,7 @@ namespace TakLib
             return move;
         }
 
-        public void BeginNewGame(bool playingWhite)
+        public void BeginNewGame(bool playingWhite, int boardSize)
         {
             _playingWhite = playingWhite;
         }
@@ -39,7 +39,7 @@ namespace TakLib
             return moves[_rand.Next(0, moves.Count - 1)];
         }
 
-        public string Name
+        public override string Name
         {
             get { return "RandomAI"; }
         }

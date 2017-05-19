@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakLib", "TakLib\TakLib.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakLibTests", "TakLibTests\TakLibTests.csproj", "{8967D0AD-DADD-4487-9FFC-3BE0E74CD4F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayTakConsole", "PlayTakConsole\PlayTakConsole.csproj", "{1B92F172-2EF8-4895-A856-ADDA39A27EB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8967D0AD-DADD-4487-9FFC-3BE0E74CD4F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8967D0AD-DADD-4487-9FFC-3BE0E74CD4F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8967D0AD-DADD-4487-9FFC-3BE0E74CD4F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B92F172-2EF8-4895-A856-ADDA39A27EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B92F172-2EF8-4895-A856-ADDA39A27EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B92F172-2EF8-4895-A856-ADDA39A27EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B92F172-2EF8-4895-A856-ADDA39A27EB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
