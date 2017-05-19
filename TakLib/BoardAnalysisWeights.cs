@@ -17,15 +17,26 @@ namespace TakLib
         public double longestSubGraphDiffWeight;
         public double numberOfSubGraphsDiffWeight;
 
-        public static BoardAnalysisWeights startingWeights = new BoardAnalysisWeights()
+        public static BoardAnalysisWeights bestWeights = new BoardAnalysisWeights()
         {
-            capStoneDiffWeight = 1.0,
-            flatScoreWeight = 5.0,
-            possibleMovesDiffWeight = 1.0,
-            wallCountDiffWeight = 1.0,
-            averageSubGraphDiffWeight = 5.0,
-            longestSubGraphDiffWeight = 30.0,
-            numberOfSubGraphsDiffWeight = 1.0,
+            capStoneDiffWeight = .1,
+            flatScoreWeight = 100.0,
+            possibleMovesDiffWeight = .1,
+            wallCountDiffWeight = 2.0,
+            averageSubGraphDiffWeight = 10.0,
+            longestSubGraphDiffWeight = 10.0,
+            numberOfSubGraphsDiffWeight = .1,
+        };
+
+        public static BoardAnalysisWeights testingWeights = new BoardAnalysisWeights()
+        {
+            capStoneDiffWeight = .1,
+            flatScoreWeight = 50.0,
+            possibleMovesDiffWeight = .1,
+            wallCountDiffWeight = 2.0,
+            averageSubGraphDiffWeight = 10.0,
+            longestSubGraphDiffWeight = 50.0,
+            numberOfSubGraphsDiffWeight = .1,
         };
 
         public override string ToString()

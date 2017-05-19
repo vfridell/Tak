@@ -31,6 +31,7 @@ namespace TakLib
         private int _flatScore;
         private int _emptySpaces;
         private bool _flatScoreDirty = true;
+        private IEnumerable<Move> _moves;
 
         internal GameResult GameResult;
 
@@ -186,7 +187,11 @@ namespace TakLib
 
         public IEnumerable<Move> GetAllMoves()
         {
-            return MoveGenerator.GetAllMoves(this);
+            if (_moves == null || _flatScoreDirty)
+            {
+                _moves = MoveGenerator.GetAllMoves(this);
+            }
+            return _moves;
         }
 
         private void ComputeFlatScoreAndEmptySpaces()

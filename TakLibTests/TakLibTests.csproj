@@ -57,6 +57,7 @@
     <Compile Include="NotationParserTests.cs" />
     <Compile Include="BoardTests.cs" />
     <Compile Include="MoveTests.cs" />
+    <Compile Include="AITests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TakLib\TakLib.csproj">

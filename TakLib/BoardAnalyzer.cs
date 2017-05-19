@@ -32,7 +32,7 @@ namespace TakLib
             d.whiteUnplayedPieces = board.StonesInHand(PieceColor.White);
             d.flatScore = board.FlatScore;
             d.emptySpaces = board.EmptySpaces;
-            d.gameResult = board.GameResult;
+            d.gameResult = GameResultService.GetGameResult(board);
             d.whiteToPlay = board.WhiteToPlay;
             d.turnNumber = board.Turn;
             CountWalls(board, d);

@@ -17,8 +17,9 @@ namespace PlayTakConsole
                     BoardSize = 5
                 };
 
-                ITakAI AI = new JohnnyDeep(BoardAnalysisWeights.startingWeights, 2);
-                ITakAI AI2 = new RandomAI();
+                ITakAI AI = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 2);
+                ITakAI AI2 = new JohnnyDeep(BoardAnalysisWeights.testingWeights, 2, "TestWeights");
+                //ITakAI AI2 = new RandomAI();
 
                 YesNo yn = PromptYesOrNo(string.Format("Is {0} playing white? ", AI.Name));
 
@@ -26,12 +27,12 @@ namespace PlayTakConsole
                 if (yn == YesNo.Yes)
                 {
                     gameSetup.WhitePlayer = (Player)AI;
-                    gameSetup.WhitePlayer = (Player)AI2;
+                    gameSetup.BlackPlayer = (Player)AI2;
                 }
                 else
                 {
                     gameSetup.WhitePlayer = (Player)AI2;
-                    gameSetup.WhitePlayer = (Player)AI;
+                    gameSetup.BlackPlayer = (Player)AI;
                 }
                 game = Game.GetNewGame(gameSetup);
 
