@@ -3,15 +3,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using QuickGraph;
 using QuickGraph.Algorithms.Search;
+using System.Collections.Concurrent;
 
 namespace TakLib
 {
     public class RoadFinder
     {
-        public readonly int BoardSize;
-        public int MaxCoord => BoardSize - 1;
-
-        public Dictionary<Coordinate, HashSet<Coordinate>> DestinationsDictionary = new Dictionary<Coordinate, HashSet<Coordinate>>();
+        public readonly RoadEndPoints DestinationsDictionary;
         public IDictionary<int, IEnumerable<Space>> Roads = new Dictionary<int, IEnumerable<Space>>();
         public PieceColor ColorAnalyzed { get; protected set; }
         public int SubGraphCount { get; protected set; }
@@ -20,48 +18,7 @@ namespace TakLib
 
         public RoadFinder(int boardSize)
         {
-            BoardSize = boardSize;
-            for (int i = 0; i < MaxCoord; i++)
-            {
-                Coordinate leftSide = new Coordinate(i, 0);
-                Coordinate rightSide = new Coordinate(MaxCoord-i, MaxCoord);
-                Coordinate topSide = new Coordinate(MaxCoord, i);
-                Coordinate bottomSide = new Coordinate(0, MaxCoord-i);
-
-                DestinationsDictionary.Add(leftSide, new HashSet<Coordinate>());
-                DestinationsDictionary.Add(rightSide, new HashSet<Coordinate>());
-                DestinationsDictionary.Add(topSide, new HashSet<Coordinate>());
-                DestinationsDictionary.Add(bottomSide, new HashSet<Coordinate>());
-
-                for (int j = 0; j < BoardSize; j++)
-                {
-                    DestinationsDictionary[leftSide].Add(new Coordinate(MaxCoord - j, MaxCoord));
-                    if(IsCorner(leftSide)) DestinationsDictionary[leftSide].Add(new Coordinate(MaxCoord, j));
-
-                    DestinationsDictionary[rightSide].Add(new Coordinate(j, 0));
-                    if(IsCorner(rightSide)) DestinationsDictionary[rightSide].Add(new Coordinate(0, MaxCoord - j));
-
-                    DestinationsDictionary[topSide].Add(new Coordinate(0, MaxCoord - j));
-                    if(IsCorner(topSide)) DestinationsDictionary[topSide].Add(new Coordinate(MaxCoord - j, MaxCoord));
-
-                    DestinationsDictionary[bottomSide].Add(new Coordinate(MaxCoord, j));
-                    if(IsCorner(bottomSide)) DestinationsDictionary[bottomSide].Add(new Coordinate(j, 0));
-                }
-            }
-        }
-
-        public bool IsCorner(Coordinate coordinate)
-        {
-            return (coordinate.Row == 0 || coordinate.Row == MaxCoord) &&
-                    (coordinate.Column == 0 || coordinate.Column == MaxCoord);
-        }
-
-        public bool IsSide(Coordinate coordinate)
-        {
-            return coordinate.Row == 0 || 
-                   coordinate.Column == 0 ||
-                   coordinate.Row == MaxCoord || 
-                   coordinate.Column == MaxCoord;
+            DestinationsDictionary = RoadEndPoints.GetRoadEndPoints(boardSize);
         }
 
         public void Analyze(Board board, PieceColor color)
@@ -105,7 +62,7 @@ namespace TakLib
         {
             var spaceAdjacencyGraph = new UndirectedGraph<Space, UndirectedEdge<Space>>();
             var finishedVertices = new HashSet<Space>();
-            foreach (Coordinate c in new CoordinateEnumerable(BoardSize))
+            foreach (Coordinate c in new CoordinateEnumerable(DestinationsDictionary.BoardSize))
             {
                 var currentSpace = board.GetSpace(c);
                 
@@ -124,5 +81,8 @@ namespace TakLib
 
             return spaceAdjacencyGraph;
         }
+
+        public bool IsCorner(Coordinate c) => DestinationsDictionary.IsCorner(c);
+        public bool IsSide(Coordinate c) => DestinationsDictionary.IsSide(c);
     }
 }

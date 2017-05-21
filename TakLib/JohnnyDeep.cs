@@ -84,7 +84,6 @@ namespace TakLib
             GetSortedMoves(board, aiCancelToken, out orderedAnalysis);
             double bestScore = double.MinValue;
             Move localBestMove = orderedAnalysis.First().Key;
-            object _lock = new object();
 
             foreach (var kvp in orderedAnalysis)
             {

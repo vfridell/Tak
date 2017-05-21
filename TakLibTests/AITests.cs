@@ -71,21 +71,28 @@ namespace TakLibTests
             game.ApplyMove(NotationParser.Parse("4c2>22"));
             game.ApplyMove(NotationParser.Parse("3a2+12"));
             var moves = game.GetAllMoves();
+            
+            //there are two winning moves
             Assert.IsTrue(moves.Any(m => m.ToString() == "1b4>1"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "1d4<1"));
             Move winningMove = moves.First(m => m.ToString() == "1b4>1");
 
+            BoardAnalyzer analyzer = new BoardAnalyzer(5);
+            BoardAnalysisData data = analyzer.Analyze(game.CurrentBoard, BoardAnalysisWeights.bestWeights);
+            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board winningBoard = game.CurrentBoard.Clone();
             winningMove.Apply(winningBoard);
             
-            BoardAnalyzer analyzer = new BoardAnalyzer(5);
-            var data = analyzer.Analyze(winningBoard, BoardAnalysisWeights.bestWeights);
+            data = analyzer.Analyze(winningBoard, BoardAnalysisWeights.bestWeights);
+            Assert.IsTrue(int.MinValue + 1000.0 > data.whiteAdvantage);
+            Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
 
             JohnnyDeep jd = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 1);
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
-            Assert.AreEqual("1b4>1", move.ToString());
-            //game.ApplyMove(NotationParser.Parse("1b4-1"));
-
+            game.ApplyMove(move);
+            data = analyzer.Analyze(game.CurrentBoard, BoardAnalysisWeights.bestWeights);
+            Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
         }
     }
 }

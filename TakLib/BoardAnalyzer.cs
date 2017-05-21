@@ -25,8 +25,8 @@ namespace TakLib
 
             IEnumerable<Move> whiteMoves = MoveGenerator.GetAllMoves(board, PieceColor.White);
             IEnumerable<Move> blackMoves = MoveGenerator.GetAllMoves(board, PieceColor.Black);
-            d.blackPossibleMovementMoves = whiteMoves.Count(m => m is MoveStack);
-            d.whitePossibleMovementMoves = blackMoves.Count(m => m is MoveStack);
+            d.whitePossibleMovementMoves = whiteMoves.Count(m => m is MoveStack);
+            d.blackPossibleMovementMoves = blackMoves.Count(m => m is MoveStack);
 
             d.blackUnplayedPieces = board.StonesInHand(PieceColor.Black);
             d.whiteUnplayedPieces = board.StonesInHand(PieceColor.White);
@@ -45,6 +45,8 @@ namespace TakLib
 
             roadFinder.Analyze(board, PieceColor.Black);
             d.blackLongestSubgraph = roadFinder.LongestSubGraphLength;
+            d.blackAverageSubgraph = roadFinder.AverageSubGraphLength;
+            d.blackNumberOfSubgraphs = roadFinder.SubGraphCount;
 
             return d;
         }
