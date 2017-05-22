@@ -47,7 +47,7 @@ namespace TakLib
 
             if(ContainsVertex(oldSpace)) RemoveVertex(oldSpace);
 
-            if (newSpace.ColorEquals(_color))
+            if (newSpace.ColorEquals(_color) && newSpace.Piece?.Type != PieceType.Wall)
             {
                 AddVertex(newSpace);
                 AddVertexAndEdge(newSpace, uSpace);
