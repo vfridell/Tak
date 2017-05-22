@@ -26,6 +26,7 @@ namespace TakLib
         public Coordinate GetNeighbor(Direction direction) => this + NotationParser.ToCoordinateDirection(direction);
         public char RowChar => NotationParser.ToCharRow(this);
         public char ColumnChar => NotationParser.ToCharColumn(this);
+        public override string ToString() => $"{ColumnChar}{RowChar} ({Row},{Column})";
 
         public static Coordinate operator +(Coordinate c1, Coordinate c2) => new Coordinate(c1.Row + c2.Row, c1.Column + c2.Column);
         public static bool operator ==(Coordinate c1, Coordinate c2) => c1.Row == c2.Row && c1.Column == c2.Column;

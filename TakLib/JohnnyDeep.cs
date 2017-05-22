@@ -12,7 +12,7 @@ namespace TakLib
     {
         private bool _playingWhite;
         private int _depth;
-        private BoardAnalyzer _analyzer;
+        private IBoardAnalyzer _analyzer;
 
         public JohnnyDeep(BoardAnalysisWeights weights, int depth)
         {
@@ -78,8 +78,8 @@ namespace TakLib
                 return _analyzer.Analyze(board, _weights).whiteAdvantage * color;
             }
 
-            var localMovesData = new ConcurrentDictionary<Move, Tuple<BoardAnalysisData, Board>>();
-            IOrderedEnumerable<KeyValuePair<Move, Tuple<BoardAnalysisData, Board>>> orderedAnalysis;
+            var localMovesData = new ConcurrentDictionary<Move, Tuple<IAnalysisResult, Board>>();
+            IOrderedEnumerable<KeyValuePair<Move, Tuple<IAnalysisResult, Board>>> orderedAnalysis;
 
             GetSortedMoves(board, aiCancelToken, out orderedAnalysis);
             double bestScore = double.MinValue;
@@ -101,18 +101,25 @@ namespace TakLib
             return bestScore;
         }
 
-        private void GetSortedMoves(Board board, CancellationToken aiCancelToken, out IOrderedEnumerable<KeyValuePair<Move, Tuple<BoardAnalysisData, Board>>> orderedAnalysis)
+        private void GetSortedMoves(Board board, CancellationToken aiCancelToken, out IOrderedEnumerable<KeyValuePair<Move, Tuple<IAnalysisResult, Board>>> orderedAnalysis)
         {
-            var localMovesData = new ConcurrentDictionary<Move, Tuple<BoardAnalysisData, Board>>();
+            var localMovesData = new ConcurrentDictionary<Move, Tuple<IAnalysisResult, Board>>();
 
             // I think this parallelism allows for randomness when picking multiple moves that all analyze to the same advantage number
             Parallel.ForEach(board.GetAllMoves(), (nextMove, parallelLoopState) =>
             {
                 if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
                 if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
+            //    foreach (Move nextMove in board.GetAllMoves())
+            //{
                 Board futureBoard = board.Clone();
+
                 nextMove.Apply(futureBoard);
-                localMovesData[nextMove] = new Tuple<BoardAnalysisData, Board>(_analyzer.Analyze(futureBoard, _weights), futureBoard);
+                futureBoard.EndPlayerMove();
+                if (futureBoard.Round % 2 != 0) futureBoard.EndTurn();
+
+                localMovesData[nextMove] = new Tuple<IAnalysisResult, Board>(_analyzer.Analyze(futureBoard, _weights), futureBoard);
+            //}
             });
 
             aiCancelToken.ThrowIfCancellationRequested();

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using QuickGraph;
+using QuickGraph.Algorithms.ConnectedComponents;
+using System;
 using System.Collections.Generic;
 
 namespace TakLib
@@ -32,6 +34,8 @@ namespace TakLib
         private int _emptySpaces;
         private bool _flatScoreDirty = true;
         private IEnumerable<Move> _moves;
+        private SpaceGraph _whiteSpaceGraph;
+        private SpaceGraph _blackSpaceGraph;
 
         internal GameResult GameResult;
 
@@ -76,6 +80,8 @@ namespace TakLib
                     _grid[r,c] = new PieceStack();
             _capStonesInHand = new []{gameSetup.NumCapstones, gameSetup.NumCapstones};
             _stonesInHand = new []{gameSetup.NumStonesPerSide, gameSetup.NumStonesPerSide};
+            _whiteSpaceGraph = new SpaceGraph(this, PieceColor.White);
+            _blackSpaceGraph = new SpaceGraph(this, PieceColor.Black);
         }
 
         public static Board GetInitialBoard(GameSetup gameSetup)
@@ -84,69 +90,89 @@ namespace TakLib
             return newBoard;
         }
 
-        public void PlacePiece(int r, int c, Piece piece)
+        public void PlacePiece(Coordinate c, Piece piece)
         {
-            CheckGridRange(r,c);
+            CheckGridRange(c);
             if(piece.Color != ColorToPlay) throw new Exception($"Piece {piece.Color} does not match color to play in game {ColorToPlay}");
-            if(StackSize(r,c) != 0) throw new Exception("Cannot place on non-empty space");
-            _grid[r, c].Push(piece);
+            if(StackSize(c) != 0) throw new Exception("Cannot place on non-empty space");
+            Space oldSpace = GetSpace(c);
+            _grid[c.Row, c.Column].Push(piece);
+            Space newSpace = GetSpace(c);
+            _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
+            _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
             if (piece.Type == PieceType.CapStone) _capStonesInHand[StonePileIndex]--;
             else _stonesInHand[StonePileIndex]--;
             if(_capStonesInHand[StonePileIndex] < 0 || _stonesInHand[StonePileIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
         }
 
-        public int StackSize(int r, int c) => _grid[r, c].Count;
+        public int StackSize(Coordinate c) => _grid[c.Row, c.Column].Count;
 
-        public bool StackOwned(int r, int c, PieceColor color)
+        public bool StackOwned(Coordinate c, PieceColor color)
         {
-            CheckGridRange(r, c);
-            if (StackSize(r, c) == 0) return false;
-            return color == _grid[r,c].Peek().Color;
+            CheckGridRange(c);
+            if (StackSize(c) == 0) return false;
+            return color == _grid[c.Row, c.Column].Peek().Color;
         }
 
-        public PieceStack PickStack(int r, int c, int count)
+        public PieceStack PickStack(Coordinate c, int count)
         {
-            CheckGridRange(r,c);
+            CheckGridRange(c);
             if(count > Size) throw new Exception($"{count} is greater than the carry limit of {Size}");
-            if(StackSize(r, c) < count) throw new Exception($"There are fewer than {count} stones at {r},{c}");
+            if(StackSize(c) < count) throw new Exception($"There are fewer than {count} stones at {c.Row},{c.Column}");
+            Space oldSpace = GetSpace(c);
             PieceStack tempStack = new PieceStack();
             int leftToPick = count;
             while (leftToPick > 0)
             {
-                tempStack.Push(_grid[r, c].Pop());
+                tempStack.Push(_grid[c.Row, c.Column].Pop());
                 leftToPick--;
             }
+            Space newSpace = GetSpace(c);
+            _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
+            _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
             return tempStack;
         }
 
-        public void PlaceStack(int r, int c, Stack<Piece> heldStack)
+        public void PlaceStack(Coordinate c, Stack<Piece> heldStack)
         {
-            CheckGridRange(r,c);
+            CheckGridRange(c);
             if(heldStack.Count == 0) throw new Exception($"There are no stones in the held stack");
+            Space oldSpace = GetSpace(c);
             while (heldStack.Count > 0)
-                _grid[r,c].Push(heldStack.Pop());
+                _grid[c.Row,c.Column].Push(heldStack.Pop());
+            Space newSpace = GetSpace(c);
+            _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
+            _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
+        }
+
+        public ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>> ComputeConnectedComponents(PieceColor color)
+        {
+            SpaceGraph spaceAdjacencyGraph = color == PieceColor.White ? _whiteSpaceGraph : _blackSpaceGraph;
+            var connectedComponentsAlg = new ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>>(spaceAdjacencyGraph);
+            connectedComponentsAlg.Compute();
+            return connectedComponentsAlg;
         }
 
         public bool OnTheBoard(int r, int c) => Math.Max(r, c) < Size && r >= 0 && c >= 0;
         public bool OnTheBoard(Coordinate c) => OnTheBoard(c.Row, c.Column);
 
-        private void CheckGridRange(int r, int c)
+        private void CheckGridRange(Coordinate c)
         {
-            if (!OnTheBoard(r,c)) throw new Exception($"{r},{c} out of range for grid size {Size}");
+            if (!OnTheBoard(c)) throw new Exception($"{c.Row},{c.Column} out of range for grid size {Size}");
         }
 
-        private void CheckNonEmpty(int r, int c)
+        private void CheckNonEmpty(Coordinate c)
         {
-            if(_grid[r,c].Count == 0) throw new Exception($"Operation not valid on empty space at {r}, {c}");
+            if(_grid[c.Row,c.Column].Count == 0) throw new Exception($"Operation not valid on empty space at {c.Row}, {c.Column}");
         }
 
-        public DistanceAvailable GetDistanceAvailable(int r, int c, Direction direction)
+        public DistanceAvailable GetDistanceAvailable(Coordinate c, Direction direction)
         {
-            CheckGridRange(r,c);
-            Coordinate next = new Coordinate(r, c).GetNeighbor(direction);
+            CheckGridRange(c);
+            Coordinate next = c.GetNeighbor(direction);
             int dist = 0;
             while (OnTheBoard(next.Row, next.Column) && !IsWallOrCap(next.Row, next.Column))
             {
@@ -157,7 +183,7 @@ namespace TakLib
             {
                 Distance = dist,
                 EndsWithWall = OnTheBoard(next.Row, next.Column) && IsWall(next.Row, next.Column),
-                CapStoneTop = IsCapStone(r, c),
+                CapStoneTop = IsCapStone(c.Row, c.Column),
             };
         }
 
@@ -168,16 +194,11 @@ namespace TakLib
         public bool IsWall(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.Wall);
         public bool IsCapStone(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.CapStone);
 
-        public Piece GetPiece(int r, int c)
-        {
-            CheckGridRange(r, c);
-            CheckNonEmpty(r, c);
-            return _grid[r, c].Peek();
-        }
-
         public Piece GetPiece(Coordinate c)
         {
-            return GetPiece(c.Row, c.Column);
+            CheckGridRange(c);
+            CheckNonEmpty(c);
+            return _grid[c.Row, c.Column].Peek();
         }
 
         public Space GetSpace(Coordinate c)
@@ -222,6 +243,8 @@ namespace TakLib
             for (int r = 0; r < _size; r++)
                 for (int c = 0; c < _size; c++)
                     clone._grid[r,c] = _grid[r,c].Clone();
+            clone._whiteSpaceGraph = _whiteSpaceGraph.Clone();
+            clone._blackSpaceGraph = _blackSpaceGraph.Clone();
             return clone;
         }
 

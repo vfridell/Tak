@@ -22,25 +22,25 @@ namespace TakLibTests
 
             Game game = Game.GetNewGame(gameSetup);
             game.ApplyMove(NotationParser.Parse("a4"));
-            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(3,0));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(3,0)));
             Assert.AreEqual(1, game.Turn);
             Assert.AreEqual(2, game.CurrentBoard.Round);
             game.ApplyMove(NotationParser.Parse("e2"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(1,4));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(1,4)));
             game.ApplyMove(NotationParser.Parse("Se3"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Wall), game.CurrentBoard.GetPiece(2,4));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Wall), game.CurrentBoard.GetPiece(new Coordinate(2,4)));
             game.ApplyMove(NotationParser.Parse("e1"));
-            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(0,4));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(0,4)));
             game.ApplyMove(NotationParser.Parse("b3"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(2,1));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(2,1)));
             game.ApplyMove(NotationParser.Parse("Cd1"));
-            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.CapStone), game.CurrentBoard.GetPiece(0,3));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.CapStone), game.CurrentBoard.GetPiece(new Coordinate(0,3)));
             game.ApplyMove(NotationParser.Parse("e4"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(3,4));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(3,4)));
             game.ApplyMove(NotationParser.Parse("d1>"));
-            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.CapStone), game.CurrentBoard.GetPiece(0,4));
+            Assert.AreEqual(new Piece(PieceColor.Black, PieceType.CapStone), game.CurrentBoard.GetPiece(new Coordinate(0,4)));
             game.ApplyMove(NotationParser.Parse("d2"));
-            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(1,3));
+            Assert.AreEqual(new Piece(PieceColor.White, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(1,3)));
 
             IEnumerable<Move> moves = game.GetAllMoves();
             MoveStack ems = new MoveStack('2', '1', 'e', new [] {'1','1'}, '+');

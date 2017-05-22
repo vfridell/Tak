@@ -66,6 +66,8 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameResultService.cs" />
     <Compile Include="GameSetup.cs" />
+    <Compile Include="IAnalysisResult.cs" />
+    <Compile Include="IBoardAnalyzer.cs" />
     <Compile Include="JohnnyDeep.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="MoveGenerator.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="RoadEndPoints.cs" />
     <Compile Include="RoadFinder.cs" />
     <Compile Include="Space.cs" />
+    <Compile Include="SpaceGraph.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

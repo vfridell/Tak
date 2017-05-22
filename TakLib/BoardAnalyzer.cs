@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TakLib
 {
     // this class must be thread safe
-    public class BoardAnalyzer
+    public class BoardAnalyzer : IBoardAnalyzer
     {
         private readonly int _boardSize;
         public BoardAnalyzer(int boardSize)
@@ -15,7 +15,7 @@ namespace TakLib
             _boardSize = boardSize;
         }
 
-        public BoardAnalysisData Analyze (Board board, BoardAnalysisWeights weights)
+        public IAnalysisResult Analyze (Board board, BoardAnalysisWeights weights)
         {
             BoardAnalysisData d = new BoardAnalysisData();
             d.weights = weights;

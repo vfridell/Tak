@@ -21,32 +21,28 @@ namespace TakLib
         public static IEnumerable<Move> GetAllMoves(Board board, PieceColor colorToCheck)
         {
             IList<Move> moves = new List<Move>();
-            for (int r = 0; r < board.Size; r++)
+            foreach(Coordinate location in new CoordinateEnumerable(board.Size))
             {
-                for (int c = 0; c < board.Size; c++)
+                // placement moves
+                if (board.StackSize(location) == 0)
                 {
-                    Coordinate location = new Coordinate(r, c);
-                    // placement moves
-                    if (board.StackSize(r, c) == 0)
+                    if (board.StonesInHand(colorToCheck) > 0)
                     {
-                        if (board.StonesInHand(colorToCheck) > 0)
-                        {
-                            moves.Add(new PlaceStone(location));
-                            if (board.Turn > 1) moves.Add(new PlaceWall(location));
-                        }
+                        moves.Add(new PlaceStone(location));
+                        if (board.Turn > 1) moves.Add(new PlaceWall(location));
+                    }
 
-                        if (board.Turn > 1 && board.CapStonesInHand(colorToCheck) > 0)
-                        {
-                            moves.Add(new PlaceCapstone(location));
-                        }
-                    }
-                    else if (board.StackOwned(r, c, colorToCheck))
+                    if (board.Turn > 1 && board.CapStonesInHand(colorToCheck) > 0)
                     {
-                        AddMovementMoves(board, moves, location, Direction.Up);
-                        AddMovementMoves(board, moves, location, Direction.Down);
-                        AddMovementMoves(board, moves, location, Direction.Left);
-                        AddMovementMoves(board, moves, location, Direction.Right);
+                        moves.Add(new PlaceCapstone(location));
                     }
+                }
+                else if (board.StackOwned(location, colorToCheck))
+                {
+                    AddMovementMoves(board, moves, location, Direction.Up);
+                    AddMovementMoves(board, moves, location, Direction.Down);
+                    AddMovementMoves(board, moves, location, Direction.Left);
+                    AddMovementMoves(board, moves, location, Direction.Right);
                 }
             }
             return moves;
@@ -56,8 +52,8 @@ namespace TakLib
         private static void AddMovementMoves(Board board, IList<Move> moves, Coordinate location, Direction dir)
         {
             // movement moves
-            DistanceAvailable maxDist = board.GetDistanceAvailable(location.Row, location.Column, dir);
-            int possibleCarry = Math.Min(board.StackSize(location.Row, location.Column), board.Size);
+            DistanceAvailable maxDist = board.GetDistanceAvailable(location, dir);
+            int possibleCarry = Math.Min(board.StackSize(location), board.Size);
             if (maxDist.Distance == 0 || possibleCarry == 0) return;
 
             List<List<int>> dropLists = GetAllDropLists(possibleCarry, maxDist);

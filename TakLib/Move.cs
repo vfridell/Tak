@@ -36,7 +36,7 @@ namespace TakLib
         public PlaceCapstone(Coordinate location) : base(location) { }
         public override void Apply(Board board)
         {
-            board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.CapStone));
+            board.PlacePiece(Location, new Piece(board.ColorToPlay, PieceType.CapStone));
         }
 
         public override string ToString()
@@ -51,7 +51,7 @@ namespace TakLib
         public PlaceWall(Coordinate location) : base(location) { }
         public override void Apply(Board board)
         {
-            board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.Wall));
+            board.PlacePiece(Location, new Piece(board.ColorToPlay, PieceType.Wall));
         }
 
         public override string ToString()
@@ -66,7 +66,7 @@ namespace TakLib
         public PlaceStone(Coordinate location) : base(location) { }
         public override void Apply(Board board)
         {
-            board.PlacePiece(Location.Row, Location.Column, new Piece(board.ColorToPlay, PieceType.Stone));
+            board.PlacePiece(Location, new Piece(board.ColorToPlay, PieceType.Stone));
         }
         public override string ToString()
         {
@@ -153,9 +153,9 @@ namespace TakLib
 
         public override void Apply(Board board)
         {
-            PieceStack stack = board.PickStack(Location.Row, Location.Column, Carry);
+            PieceStack stack = board.PickStack(Location, Carry);
             Coordinate nextCoordinate = Location.GetNeighbor(Direction);
-            board.PlaceStack(nextCoordinate.Row, nextCoordinate.Column, stack);
+            board.PlaceStack(nextCoordinate, stack);
         }
     }
 }

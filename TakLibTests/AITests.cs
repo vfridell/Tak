@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TakLib;
+using System.Collections.Generic;
 
 namespace TakLibTests
 {
@@ -71,20 +72,19 @@ namespace TakLibTests
             game.ApplyMove(NotationParser.Parse("4c2>22"));
             game.ApplyMove(NotationParser.Parse("3a2+12"));
             var moves = game.GetAllMoves();
-            
+
             //there are two winning moves
             Assert.IsTrue(moves.Any(m => m.ToString() == "1b4>1"));
             Assert.IsTrue(moves.Any(m => m.ToString() == "1d4<1"));
             Move winningMove = moves.First(m => m.ToString() == "1b4>1");
 
-            BoardAnalyzer analyzer = new BoardAnalyzer(5);
-            BoardAnalysisData data = analyzer.Analyze(game.CurrentBoard, BoardAnalysisWeights.bestWeights);
+            IBoardAnalyzer analyzer = new BoardAnalyzer(5);
+            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard, BoardAnalysisWeights.bestWeights);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board winningBoard = game.CurrentBoard.Clone();
             winningMove.Apply(winningBoard);
-            
+
             data = analyzer.Analyze(winningBoard, BoardAnalysisWeights.bestWeights);
-            Assert.IsTrue(int.MinValue + 1000.0 > data.whiteAdvantage);
             Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
 
             JohnnyDeep jd = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 1);
@@ -93,6 +93,64 @@ namespace TakLibTests
             game.ApplyMove(move);
             data = analyzer.Analyze(game.CurrentBoard, BoardAnalysisWeights.bestWeights);
             Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
+        }
+
+
+        [TestMethod]
+        public void JustBlockAlready()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("e5"));
+            game.ApplyMove(NotationParser.Parse("a5"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("a3"));
+            game.ApplyMove(NotationParser.Parse("e3"));
+            game.ApplyMove(NotationParser.Parse("c5"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+
+            var moves = game.GetAllMoves();
+
+            //game.ApplyMove(NotationParser.Parse("c1"));
+            //game.ApplyMove(NotationParser.Parse("d1"));
+
+
+            //there are four blocking moves
+            // d1, Sd1, Cd1, 1c3>1
+            List<Move> blockingMoves = new List<Move>();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "d1"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "Sd1"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "Cd1"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "1c3>1"));
+            blockingMoves.AddRange(moves.Where(m => m.ToString() == "d1" || m.ToString() == "Sd1" || m.ToString() == "Cd1" || m.ToString() == "1c3>1"));
+
+            Move blockingMove = moves.First(m => m.ToString() == "Cd1");
+
+            BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
+
+            IBoardAnalyzer analyzer = new BoardAnalyzer(5);
+            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard, weights);
+            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
+            Board blockedBoard = game.CurrentBoard.Clone();
+            blockingMove.Apply(blockedBoard);
+
+            data = analyzer.Analyze(blockedBoard, weights);
+
+            JohnnyDeep jd = new JohnnyDeep(weights, 2);
+            jd.BeginNewGame(true, 5);
+            Move move = jd.PickBestMove(game.CurrentBoard);
+            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
         }
     }
 }

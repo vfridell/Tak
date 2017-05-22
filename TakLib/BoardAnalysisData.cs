@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
-    public class BoardAnalysisData
+    public class BoardAnalysisData : IAnalysisResult
     {
         public int blackCapStonesInHand;
         public int whiteCapStonesInHand;
@@ -51,7 +51,7 @@ namespace TakLib
         public double numberOfSubGraphsDiff  { get { return whiteNumberOfSubgraphs - blackNumberOfSubgraphs; } }
         // more is better
 
-        public GameResult gameResult;
+        public GameResult gameResult { get; set; }
         public int winningResultDiff
         {
             get
@@ -90,6 +90,11 @@ namespace TakLib
         public BoardAnalysisData() { }
 
         public override string ToString()
+        {
+            return $"White Advantage: {whiteAdvantage}";
+        }
+
+        public string ToStringDetailed()
         {
             return string.Format("capStoneDiff: {0} * {1} = {2}\n", capStoneDiff, weights.capStoneDiffWeight, capStoneDiff * weights.capStoneDiffWeight) +
                     string.Format("flatScore (Weighted): {0} * {1} = {2}\n", flatScore, weights.flatScoreWeight, flatScore * weights.flatScoreWeight) +
