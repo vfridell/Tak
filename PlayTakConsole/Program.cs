@@ -17,8 +17,8 @@ namespace PlayTakConsole
                     BoardSize = 5
                 };
 
-                ITakAI AI = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 4);
-                ITakAI AI2 = new JohnnyDeep(BoardAnalysisWeights.testingWeights, 4, "TestWeights");
+                ITakAI AI = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 2);
+                ITakAI AI2 = new JohnnyDeep(BoardAnalysisWeights.testingWeights, 2, "TestWeights");
                 //ITakAI AI2 = new RandomAI();
 
                 YesNo yn = PromptYesOrNo(string.Format("Is {0} playing white? ", AI.Name));

@@ -8,35 +8,35 @@ namespace TakLib
 {
     public struct BoardAnalysisWeights
     {
-        public double capStoneDiffWeight;
-        public double flatScoreWeight;
-        public double possibleMovesDiffWeight;
-        public double wallCountDiffWeight;
-        public double averageSubGraphDiffWeight;
-        public double movementPlacementDiffWeight;
-        public double longestSubGraphDiffWeight;
-        public double numberOfSubGraphsDiffWeight;
+        public int capStoneDiffWeight;
+        public int flatScoreWeight;
+        public int possibleMovesDiffWeight;
+        public int wallCountDiffWeight;
+        public int averageSubGraphDiffWeight;
+        public int movementPlacementDiffWeight;
+        public int longestSubGraphDiffWeight;
+        public int numberOfSubGraphsDiffWeight;
 
         public static BoardAnalysisWeights bestWeights = new BoardAnalysisWeights()
         {
-            capStoneDiffWeight = .1,
-            flatScoreWeight = 100.0,
-            possibleMovesDiffWeight = .1,
-            wallCountDiffWeight = 2.0,
-            averageSubGraphDiffWeight = 10.0,
-            longestSubGraphDiffWeight = 10.0,
-            numberOfSubGraphsDiffWeight = .1,
+            capStoneDiffWeight = 1,
+            flatScoreWeight = 100,
+            possibleMovesDiffWeight = 1,
+            wallCountDiffWeight = 2,
+            averageSubGraphDiffWeight = 10,
+            longestSubGraphDiffWeight = 10,
+            numberOfSubGraphsDiffWeight = 1,
         };
 
         public static BoardAnalysisWeights testingWeights = new BoardAnalysisWeights()
         {
-            capStoneDiffWeight = .1,
-            flatScoreWeight = 50.0,
-            possibleMovesDiffWeight = .1,
-            wallCountDiffWeight = 2.0,
-            averageSubGraphDiffWeight = 10.0,
-            longestSubGraphDiffWeight = 50.0,
-            numberOfSubGraphsDiffWeight = .1,
+            capStoneDiffWeight = 1,
+            flatScoreWeight = 50,
+            possibleMovesDiffWeight = 1,
+            wallCountDiffWeight = 2,
+            averageSubGraphDiffWeight = 10,
+            longestSubGraphDiffWeight = 50,
+            numberOfSubGraphsDiffWeight = 1,
         };
 
         public override string ToString()

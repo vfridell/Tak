@@ -8,6 +8,9 @@ namespace TakLib
 {
     public class BoardAnalysisData : IAnalysisResult
     {
+        public static readonly int MaxValue = int.MaxValue;
+        public static readonly int MinValue = int.MinValue;
+
         public int blackCapStonesInHand;
         public int whiteCapStonesInHand;
         // fewer is better
@@ -41,14 +44,14 @@ namespace TakLib
         // more is better
         public int longestSubGraphDiff { get { return whiteLongestSubgraph - blackLongestSubgraph; } }
 
-        public double blackAverageSubgraph;
-        public double whiteAverageSubgraph;
-        public double averageSubGraphDiff  { get { return whiteAverageSubgraph - blackAverageSubgraph; } }
+        public int blackAverageSubgraph;
+        public int whiteAverageSubgraph;
+        public int averageSubGraphDiff  { get { return whiteAverageSubgraph - blackAverageSubgraph; } }
         // more is better
 
         public int whiteNumberOfSubgraphs;
         public int blackNumberOfSubgraphs;
-        public double numberOfSubGraphsDiff  { get { return whiteNumberOfSubgraphs - blackNumberOfSubgraphs; } }
+        public int numberOfSubGraphsDiff  { get { return whiteNumberOfSubgraphs - blackNumberOfSubgraphs; } }
         // more is better
 
         public GameResult gameResult { get; set; }
@@ -60,10 +63,10 @@ namespace TakLib
                 {
                     case GameResult.WhiteFlat:
                     case GameResult.WhiteRoad:
-                        return int.MaxValue;
+                        return MaxValue;
                     case GameResult.BlackFlat:
                     case GameResult.BlackRoad:
-                        return int.MinValue;
+                        return MinValue;
                     default:
                         return 0;
                 }
@@ -72,16 +75,16 @@ namespace TakLib
 
         public BoardAnalysisWeights weights;
 
-        public double whiteAdvantage
+        public int whiteAdvantage
         {
             get
             {
+                if(winningResultDiff != 0) return winningResultDiff;
                 return (capStoneDiff * weights.capStoneDiffWeight) +
                         (flatScore * weights.flatScoreWeight) +
                         (possibleMovesDiff * weights.possibleMovesDiffWeight) +
                         (wallCountDiff * weights.wallCountDiffWeight) +
                         (averageSubGraphDiff * weights.averageSubGraphDiffWeight) +
-                        (winningResultDiff) +
                         (longestSubGraphDiff * weights.longestSubGraphDiffWeight) +
                         (numberOfSubGraphsDiff * weights.numberOfSubGraphsDiffWeight);
             }

@@ -208,6 +208,7 @@ namespace TakLib
 
         public IEnumerable<Move> GetAllMoves()
         {
+            if(GameResult != GameResult.Incomplete) return new List<Move>();
             if (_moves == null || _flatScoreDirty)
             {
                 _moves = MoveGenerator.GetAllMoves(this);

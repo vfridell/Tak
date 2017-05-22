@@ -50,7 +50,7 @@ namespace TakLib
         {
             Move bestMove;
             var cancelSource = new CancellationTokenSource();
-            double score = AnalyzeNextMoves(board, double.MinValue, double.MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
+            double score = AnalyzeNextMoves(board, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -58,7 +58,7 @@ namespace TakLib
         {
             return Task.Run(() => {
                 Move bestMove;
-                double score = AnalyzeNextMoves(board, double.MinValue, double.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                double score = AnalyzeNextMoves(board, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
                 return bestMove;
             });
         }
@@ -69,7 +69,7 @@ namespace TakLib
             _analyzer = new BoardAnalyzer(boardSize);
         }
 
-        private double AnalyzeNextMoves(Board board, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private int AnalyzeNextMoves(Board board, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || !board.GetAllMoves().Any())
@@ -82,14 +82,14 @@ namespace TakLib
             IOrderedEnumerable<KeyValuePair<Move, Tuple<IAnalysisResult, Board>>> orderedAnalysis;
 
             GetSortedMoves(board, aiCancelToken, out orderedAnalysis);
-            double bestScore = double.MinValue;
+            int bestScore = int.MinValue;
             Move localBestMove = orderedAnalysis.First().Key;
 
             foreach (var kvp in orderedAnalysis)
             {
                 Move subBestMove;
-                double score = -AnalyzeNextMoves(kvp.Value.Item2, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                double oldBestScore = bestScore;
+                int score = -AnalyzeNextMoves(kvp.Value.Item2, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
+                int oldBestScore = bestScore;
                 bestScore = Math.Max(score, bestScore);
                 if (oldBestScore != bestScore) localBestMove = kvp.Key;
                 alpha = Math.Max(alpha, bestScore);
@@ -117,6 +117,7 @@ namespace TakLib
                 nextMove.Apply(futureBoard);
                 futureBoard.EndPlayerMove();
                 if (futureBoard.Round % 2 != 0) futureBoard.EndTurn();
+                futureBoard.GameResult = GameResultService.GetGameResult(futureBoard);
 
                 localMovesData[nextMove] = new Tuple<IAnalysisResult, Board>(_analyzer.Analyze(futureBoard, _weights), futureBoard);
             //}

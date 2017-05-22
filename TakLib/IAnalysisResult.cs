@@ -2,7 +2,7 @@
 {
     public interface IAnalysisResult
     {
-        double whiteAdvantage { get; }
+        int whiteAdvantage { get; }
         GameResult gameResult { get; }
     }
 }
