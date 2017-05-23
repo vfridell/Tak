@@ -28,6 +28,38 @@ namespace TakLibTests
         }
 
         [TestMethod]
+        public void SpaceEquality()
+        {
+            Piece whiteStone = new Piece(PieceColor.White, PieceType.Stone);
+            Piece whiteWall = new Piece(PieceColor.White, PieceType.Wall);
+            Piece whiteCap = new Piece(PieceColor.White, PieceType.CapStone);
+            Piece blackStone = new Piece(PieceColor.Black, PieceType.Stone);
+            Piece blackWall = new Piece(PieceColor.Black, PieceType.Wall);
+            Piece blackCap = new Piece(PieceColor.Black, PieceType.CapStone);
+
+            PieceStack stack1 = new PieceStack();
+            stack1.Push(blackStone);
+            stack1.Push(blackStone);
+            stack1.Push(whiteStone);
+            stack1.Push(whiteWall);
+
+            PieceStack stack2 = new PieceStack();
+            stack2.Push(blackStone);
+            stack2.Push(whiteStone);
+            stack2.Push(whiteStone);
+
+            Space space1 = new Space(stack1, new Coordinate(1, 1), true);
+            Space space2 = new Space(stack2, new Coordinate(1, 1), true);
+            Space space3 = new Space(stack2, new Coordinate(1, 2), true);
+            Assert.AreNotEqual(space1, space2);
+            Assert.AreNotEqual(space2, space3);
+
+            stack2.Push(whiteWall);
+            Space space4 = new Space(stack2, new Coordinate(1, 1), true);
+            Assert.AreEqual(space1, space4);
+        }
+
+        [TestMethod]
         public void CornerCheck()
         {
             RoadFinder roadFinder = new RoadFinder(5);

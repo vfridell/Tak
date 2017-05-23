@@ -50,7 +50,11 @@ namespace TakLib
         {
             Move bestMove;
             var cancelSource = new CancellationTokenSource();
-            double score = AnalyzeNextMoves(board, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
+            int score;
+            if(playingWhite)
+                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, 1, cancelSource.Token, out bestMove);
+            else
+                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -58,7 +62,7 @@ namespace TakLib
         {
             return Task.Run(() => {
                 Move bestMove;
-                double score = AnalyzeNextMoves(board, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                int score = Negamax(board, null, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
                 return bestMove;
             });
         }
@@ -69,30 +73,27 @@ namespace TakLib
             _analyzer = new BoardAnalyzer(boardSize);
         }
 
-        private int AnalyzeNextMoves(Board board, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private int Negamax(Board board, Move fromMove, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
             aiCancelToken.ThrowIfCancellationRequested();
-            if (depth == 0 || !board.GetAllMoves().Any())
+            if (depth == 0 || board.GameResult != GameResult.Incomplete)
             {
                 bestMove = null;
                 return _analyzer.Analyze(board, _weights).whiteAdvantage * color;
             }
 
-            var localMovesData = new ConcurrentDictionary<Move, Tuple<IAnalysisResult, Board>>();
-            IOrderedEnumerable<KeyValuePair<Move, Tuple<IAnalysisResult, Board>>> orderedAnalysis;
-
-            GetSortedMoves(board, aiCancelToken, out orderedAnalysis);
+            IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
             int bestScore = int.MinValue;
-            Move localBestMove = orderedAnalysis.First().Key;
+            Move localBestMove = orderedAnalysis.First().Item1;
 
             foreach (var kvp in orderedAnalysis)
             {
                 Move subBestMove;
-                int score = -AnalyzeNextMoves(kvp.Value.Item2, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                int oldBestScore = bestScore;
-                bestScore = Math.Max(score, bestScore);
-                if (oldBestScore != bestScore) localBestMove = kvp.Key;
-                alpha = Math.Max(alpha, bestScore);
+                int score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
+                //int oldBestScore = bestScore;
+                bestScore = Math.Max(bestScore, score);
+                if (score == bestScore) localBestMove = kvp.Item1;
+                alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
                     break;
             };
@@ -101,37 +102,33 @@ namespace TakLib
             return bestScore;
         }
 
-        private void GetSortedMoves(Board board, CancellationToken aiCancelToken, out IOrderedEnumerable<KeyValuePair<Move, Tuple<IAnalysisResult, Board>>> orderedAnalysis)
+        private IEnumerable<Tuple<Move, Board>> GetSortedMoves(Board board, CancellationToken aiCancelToken)
         {
-            var localMovesData = new ConcurrentDictionary<Move, Tuple<IAnalysisResult, Board>>();
+            var localMovesData = new ConcurrentBag<Tuple<Move, Board>>();
 
             // I think this parallelism allows for randomness when picking multiple moves that all analyze to the same advantage number
             Parallel.ForEach(board.GetAllMoves(), (nextMove, parallelLoopState) =>
             {
                 if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
                 if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
-            //    foreach (Move nextMove in board.GetAllMoves())
-            //{
                 Board futureBoard = board.Clone();
 
                 nextMove.Apply(futureBoard);
                 futureBoard.EndPlayerMove();
                 if (futureBoard.Round % 2 != 0) futureBoard.EndTurn();
-                futureBoard.GameResult = GameResultService.GetGameResult(futureBoard);
 
-                localMovesData[nextMove] = new Tuple<IAnalysisResult, Board>(_analyzer.Analyze(futureBoard, _weights), futureBoard);
-            //}
+                localMovesData.Add(new Tuple<Move, Board>(nextMove, futureBoard));
             });
 
             aiCancelToken.ThrowIfCancellationRequested();
 
             if (board.WhiteToPlay)
             {
-                orderedAnalysis = localMovesData.OrderByDescending(m => m.Value.Item1.whiteAdvantage);
+                return localMovesData.OrderByDescending(m => m.Item2.GameResult == GameResult.Incomplete ? 0 : 1).ThenByDescending(m => m.Item2.FlatScore);
             }
             else
             {
-                orderedAnalysis = localMovesData.OrderBy(m => m.Value.Item1.whiteAdvantage);
+                return localMovesData.OrderByDescending(m => m.Item2.GameResult == GameResult.Incomplete ? 0 : 1).ThenBy(m => m.Item2.FlatScore);
             }
         }
 
@@ -142,5 +139,7 @@ namespace TakLib
         }
 
     }
+
+    
 
 }

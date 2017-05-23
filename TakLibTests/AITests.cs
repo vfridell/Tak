@@ -146,7 +146,7 @@ namespace TakLibTests
 
             data = analyzer.Analyze(blockedBoard, weights);
 
-            JohnnyDeep jd = new JohnnyDeep(weights, 3);
+            JohnnyDeep jd = new JohnnyDeep(weights, 2);
             jd.BeginNewGame(true, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
@@ -196,10 +196,9 @@ namespace TakLibTests
             // a3, 4a4-11
             // a3 doesn't win outright, but there is no white move after that can stop black
             List<Move> winningMoves = new List<Move>();
-            winningMoves.AddRange(moves.Where(m => m.ToString() == "4a4-112" || m.ToString() == "a3"));
+            winningMoves.AddRange(moves.Where(m => m.ToString() == "4a4-112"));
 
             Assert.IsTrue(moves.Any(m => m.ToString() == "4a4-112"));
-            Assert.IsTrue(moves.Any(m => m.ToString() == "a3"));
             Move winningMove = moves.First(m => m.ToString() == "4a4-112");
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
@@ -214,8 +213,8 @@ namespace TakLibTests
             Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
 
             // works with depth of 2 ?!?
-            JohnnyDeep jd = new JohnnyDeep(weights, 2);
-            //JohnnyDeep jd = new JohnnyDeep(weights, 3);
+            //JohnnyDeep jd = new JohnnyDeep(weights, 2);
+            JohnnyDeep jd = new JohnnyDeep(weights, 3);
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
@@ -267,7 +266,7 @@ namespace TakLibTests
 
             data = analyzer.Analyze(blockedBoard, weights);
 
-            JohnnyDeep jd = new JohnnyDeep(weights, 2);
+            JohnnyDeep jd = new JohnnyDeep(weights, 3);
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");

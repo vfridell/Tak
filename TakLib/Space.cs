@@ -24,6 +24,7 @@ namespace TakLib
 
         public bool ColorEquals(PieceColor color) =>  Piece.HasValue && Piece?.Color == color;
         public bool ColorEquals(Space other) => Piece?.Color == other.Piece?.Color;
+        public bool TypeEquals(Space other) => Piece?.Type == other.Piece?.Type;
 
         public override bool Equals(object obj)
         {
@@ -32,7 +33,7 @@ namespace TakLib
             return Equals(other);
         }
 
-        public bool Equals(Space other) => ColorEquals(other) && Coordinate.Equals(other.Coordinate);
+        public bool Equals(Space other) => ColorEquals(other) && TypeEquals(other) && Coordinate.Equals(other.Coordinate);
 
         public override int GetHashCode()
         {

@@ -37,7 +37,21 @@ namespace TakLib
         private SpaceGraph _whiteSpaceGraph;
         private SpaceGraph _blackSpaceGraph;
 
-        internal GameResult GameResult;
+
+        private GameResult _gameResult = GameResult.Incomplete;
+        private bool _gameResultSet = false;
+        public GameResult GameResult 
+        {
+            get
+            {
+                if (!_gameResultSet)
+                {
+                    _gameResult = GameResultService.GetGameResult(this);
+                    _gameResultSet = true;
+                }
+                return _gameResult;
+            }
+        }
 
         public int StonesInHand(PieceColor color) => _stonesInHand[(int)color];
         public int CapStonesInHand(PieceColor color) => _capStonesInHand[(int)color];
@@ -101,6 +115,7 @@ namespace TakLib
             _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
+            _gameResultSet = false;
             if (piece.Type == PieceType.CapStone) _capStonesInHand[StonePileIndex]--;
             else _stonesInHand[StonePileIndex]--;
             if(_capStonesInHand[StonePileIndex] < 0 || _stonesInHand[StonePileIndex] < 0) throw new Exception($"Cannot place: no pieces in hand for {ColorToPlay}");
@@ -132,6 +147,7 @@ namespace TakLib
             _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
+            _gameResultSet = false;
             return tempStack;
         }
 
@@ -146,6 +162,7 @@ namespace TakLib
             _whiteSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _blackSpaceGraph.ChangeStackVertex(this, oldSpace, newSpace);
             _flatScoreDirty = true;
+            _gameResultSet = false;
         }
 
         public ConnectedComponentsAlgorithm<Space, UndirectedEdge<Space>> ComputeConnectedComponents(PieceColor color)
@@ -246,6 +263,8 @@ namespace TakLib
                     clone._grid[r,c] = _grid[r,c].Clone();
             clone._whiteSpaceGraph = _whiteSpaceGraph.Clone();
             clone._blackSpaceGraph = _blackSpaceGraph.Clone();
+            clone._gameResult = _gameResult;
+            clone._gameResultSet = _gameResultSet;
             return clone;
         }
 

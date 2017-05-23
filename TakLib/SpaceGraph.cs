@@ -54,7 +54,7 @@ namespace TakLib
         {
             SpaceGraph clone = new SpaceGraph();
             foreach(Space s in Vertices) clone.AddVertex(s);
-            foreach (UndirectedEdge<Space> e in Edges) clone.AddEdge(e);
+            foreach (UndirectedEdge<Space> e in Edges) clone.AddEdge(new UndirectedEdge<Space>(e.Source, e.Target));
             clone._color = _color;
             return clone;
         }
