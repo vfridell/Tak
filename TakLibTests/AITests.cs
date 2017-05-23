@@ -89,7 +89,7 @@ namespace TakLibTests
             data = analyzer.Analyze(winningBoard, BoardAnalysisWeights.bestWeights);
             Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
 
-            JohnnyDeep jd = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 3);
+            JohnnyDeep jd = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 3, new BoardAnalyzer(game.CurrentBoard.Size));
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
@@ -146,7 +146,7 @@ namespace TakLibTests
 
             data = analyzer.Analyze(blockedBoard, weights);
 
-            JohnnyDeep jd = new JohnnyDeep(weights, 2);
+            JohnnyDeep jd = new JohnnyDeep(weights, 2, new BoardAnalyzer(game.CurrentBoard.Size));
             jd.BeginNewGame(true, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
@@ -213,8 +213,8 @@ namespace TakLibTests
             Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
 
             // works with depth of 2 ?!?
-            //JohnnyDeep jd = new JohnnyDeep(weights, 2);
-            JohnnyDeep jd = new JohnnyDeep(weights, 3);
+            //JohnnyDeep jd = new JohnnyDeep(weights, 2, new BoardAnalyzer(game.CurrentBoard.Size));
+            JohnnyDeep jd = new JohnnyDeep(weights, 3, new BoardAnalyzer(game.CurrentBoard.Size));
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
@@ -266,7 +266,7 @@ namespace TakLibTests
 
             data = analyzer.Analyze(blockedBoard, weights);
 
-            JohnnyDeep jd = new JohnnyDeep(weights, 3);
+            JohnnyDeep jd = new JohnnyDeep(weights, 3, new BoardAnalyzer(game.CurrentBoard.Size));
             jd.BeginNewGame(false, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
             Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");

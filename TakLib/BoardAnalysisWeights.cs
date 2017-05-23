@@ -39,6 +39,17 @@ namespace TakLib
             numberOfSubGraphsDiffWeight = 1,
         };
 
+        public static BoardAnalysisWeights zeroWeights = new BoardAnalysisWeights()
+        {
+            capStoneDiffWeight = 0,
+            flatScoreWeight = 0,
+            possibleMovesDiffWeight = 0,
+            wallCountDiffWeight = 0,
+            averageSubGraphDiffWeight = 0,
+            longestSubGraphDiffWeight = 0,
+            numberOfSubGraphsDiffWeight = 0,
+        };
+
         public override string ToString()
         {
             return string.Format("capStoneDiffWeight: {0} \n", capStoneDiffWeight) +

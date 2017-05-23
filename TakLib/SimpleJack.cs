@@ -8,26 +8,23 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
-    public class JohnnyDeep : Player, ITakAI
+    public class SimpleJack : Player, ITakAI
     {
         private bool _playingWhite;
         private int _depth;
         private IBoardAnalyzer _analyzer;
 
-        public JohnnyDeep(BoardAnalysisWeights weights, int depth, IBoardAnalyzer boardAnalyzer)
+        public SimpleJack(int depth, int boardSize)
         {
-            _analyzer = boardAnalyzer;
-            _weights = weights;
+            _analyzer = new SimpleAnalyzer(boardSize);
             _depth = depth;
         }
 
-        public JohnnyDeep(BoardAnalysisWeights weights, int depth, IBoardAnalyzer boardAnalyzer, string name)
-            : this(weights, depth, boardAnalyzer)
+        public SimpleJack(int depth, int boardSize, string name)
+            : this(depth, boardSize)
         {
             _name = name;
         }
-
-        private BoardAnalysisWeights _weights;
 
         public bool playingWhite { get { return _playingWhite; } }
 
@@ -53,9 +50,9 @@ namespace TakLib
             var cancelSource = new CancellationTokenSource();
             int score;
             if(playingWhite)
-                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, 1, cancelSource.Token, out bestMove);
+                score = Negamax(board, null, int.MinValue + 2, int.MaxValue - 2, _depth, 1, cancelSource.Token, out bestMove);
             else
-                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, -1, cancelSource.Token, out bestMove);
+                score = Negamax(board, null, int.MinValue + 2, int.MaxValue - 2, _depth, -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -79,7 +76,7 @@ namespace TakLib
             if (depth == 0 || board.GameResult != GameResult.Incomplete)
             {
                 bestMove = null;
-                return _analyzer.Analyze(board, _weights).whiteAdvantage * color;
+                return _analyzer.Analyze(board, BoardAnalysisWeights.zeroWeights).whiteAdvantage * color;
             }
 
             IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
@@ -107,7 +104,9 @@ namespace TakLib
             var localMovesData = new ConcurrentBag<Tuple<Move, Board>>();
 
             // I think this parallelism allows for randomness when picking multiple moves that all analyze to the same advantage number
-            Parallel.ForEach(board.GetAllMoves(), (nextMove, parallelLoopState) =>
+            ParallelOptions options = new ParallelOptions();
+            options.MaxDegreeOfParallelism = 16;
+            Parallel.ForEach(board.GetAllMoves(), options,(nextMove, parallelLoopState) =>
             {
                 if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
                 if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
@@ -122,20 +121,14 @@ namespace TakLib
 
             aiCancelToken.ThrowIfCancellationRequested();
 
-            if (board.WhiteToPlay)
-            {
-                return localMovesData.OrderByDescending(m => m.Item2.GameResult == GameResult.Incomplete ? 0 : 1).ThenByDescending(m => m.Item2.FlatScore);
-            }
-            else
-            {
-                return localMovesData.OrderByDescending(m => m.Item2.GameResult == GameResult.Incomplete ? 0 : 1).ThenBy(m => m.Item2.FlatScore);
-            }
+            return playingWhite ? localMovesData.OrderByDescending(m => m.Item2.FlatScore) :
+                                  localMovesData.OrderBy(m => m.Item2.FlatScore);
         }
 
         private string _name;
         public override string Name
         {
-            get { return string.IsNullOrEmpty(_name) ? string.Format("Johnny{0}Deep", _depth) : _name; }
+            get { return string.IsNullOrEmpty(_name) ? string.Format("{0}SimpleJack{0}", _depth) : _name; }
         }
 
     }

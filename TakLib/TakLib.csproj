@@ -58,8 +58,11 @@
   <ItemGroup>
     <Compile Include="ArrayMaker.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="SimpleJack.cs" />
+    <Compile Include="SimpleAnalysisData.cs" />
     <Compile Include="BoardAnalysisData.cs" />
     <Compile Include="BoardAnalysisWeights.cs" />
+    <Compile Include="SimpleAnalyzer.cs" />
     <Compile Include="BoardAnalyzer.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="CoordinateEnumerable.cs" />
