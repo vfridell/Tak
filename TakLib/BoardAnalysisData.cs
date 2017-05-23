@@ -63,10 +63,10 @@ namespace TakLib
                 {
                     case GameResult.WhiteFlat:
                     case GameResult.WhiteRoad:
-                        return MaxValue - 2;
+                        return MaxValue - 5000;
                     case GameResult.BlackFlat:
                     case GameResult.BlackRoad:
-                        return MinValue + 2;
+                        return MinValue + 5000;
                     default:
                         return 0;
                 }
