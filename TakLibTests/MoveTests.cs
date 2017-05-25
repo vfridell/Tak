@@ -542,5 +542,104 @@ namespace TakLibTests
 
             Assert.AreEqual(GameResult.Incomplete, game.GameResult);
         }
+
+
+        [TestMethod]
+        public void NextDoorCapCrush()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("c4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("Sd4"));
+            game.ApplyMove(NotationParser.Parse("Cd3"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+
+            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
+            Assert.AreEqual(GameResult.Incomplete, game.GameResult);
+            var moves = game.GetAllMoves();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "1d3+1"));
+
+        }
+
+        [TestMethod]
+        public void CarryLimitRespected()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("c4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d4<"));
+            game.ApplyMove(NotationParser.Parse("b4>"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("c5"));
+            game.ApplyMove(NotationParser.Parse("b4>"));
+            game.ApplyMove(NotationParser.Parse("d4<"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("c3+"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+
+
+            Assert.AreEqual(PieceColor.White, game.ColorToPlay);
+            Assert.AreEqual(GameResult.Incomplete, game.GameResult);
+            var moves = game.GetAllMoves();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "5c4>5"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "4c4>4"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "3c4>3"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "2c4>2"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "1c4>1"));
+
+            Assert.IsFalse(moves.Any(m => m.ToString() == "6c4>6"));
+            Assert.IsFalse(moves.Any(m => m.ToString().StartsWith("6c4>")));
+
+        }
+
+        [TestMethod]
+        public void MoveFullStack()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("c4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d4<"));
+            game.ApplyMove(NotationParser.Parse("b4>"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("c5"));
+            game.ApplyMove(NotationParser.Parse("b4>"));
+            game.ApplyMove(NotationParser.Parse("d4<"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+
+
+
+            Assert.AreEqual(PieceColor.White, game.ColorToPlay);
+            Assert.AreEqual(GameResult.Incomplete, game.GameResult);
+            var moves = game.GetAllMoves();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "5c4>5"));
+
+        }
     }
 }

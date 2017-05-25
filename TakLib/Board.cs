@@ -225,7 +225,7 @@ namespace TakLib
 
         public IEnumerable<Move> GetAllMoves()
         {
-            if(GameResult != GameResult.Incomplete) return new List<Move>();
+            if (GameResult != GameResult.Incomplete) throw new Exception("Game is over");
             if (_moves == null || _flatScoreDirty)
             {
                 _moves = MoveGenerator.GetAllMoves(this);

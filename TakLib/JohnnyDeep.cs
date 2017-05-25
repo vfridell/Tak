@@ -14,20 +14,17 @@ namespace TakLib
         private int _depth;
         private IBoardAnalyzer _analyzer;
 
-        public JohnnyDeep(BoardAnalysisWeights weights, int depth, IBoardAnalyzer boardAnalyzer)
+        public JohnnyDeep(int depth, IBoardAnalyzer boardAnalyzer)
         {
             _analyzer = boardAnalyzer;
-            _weights = weights;
             _depth = depth;
         }
 
-        public JohnnyDeep(BoardAnalysisWeights weights, int depth, IBoardAnalyzer boardAnalyzer, string name)
-            : this(weights, depth, boardAnalyzer)
+        public JohnnyDeep(int depth, IBoardAnalyzer boardAnalyzer, string name)
+            : this(depth, boardAnalyzer)
         {
             _name = name;
         }
-
-        private BoardAnalysisWeights _weights;
 
         public bool playingWhite { get { return _playingWhite; } }
 
@@ -73,13 +70,13 @@ namespace TakLib
             _playingWhite = playingWhite;
         }
 
-        private int Negamax(Board board, Move fromMove, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private int Negamax(Board board, Move fromMove, int alpha, int beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || board.GameResult != GameResult.Incomplete)
             {
                 bestMove = null;
-                return _analyzer.Analyze(board, _weights).whiteAdvantage * color;
+                return _analyzer.Analyze(board).whiteAdvantage * color;
             }
 
             IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
@@ -90,9 +87,8 @@ namespace TakLib
             {
                 Move subBestMove;
                 int score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                //int oldBestScore = bestScore;
+                if (score > bestScore) localBestMove = kvp.Item1;
                 bestScore = Math.Max(bestScore, score);
-                if (score == bestScore) localBestMove = kvp.Item1;
                 alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
                     break;

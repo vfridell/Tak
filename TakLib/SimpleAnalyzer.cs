@@ -15,7 +15,7 @@ namespace TakLib
             _boardSize = boardSize;
         }
 
-        public IAnalysisResult Analyze (Board board, BoardAnalysisWeights weights)
+        public IAnalysisResult Analyze (Board board)
         {
             return new SimpleAnalysisData() { gameResult = board.GameResult};
         }

@@ -2,6 +2,6 @@
 {
     public interface IBoardAnalyzer
     {
-        IAnalysisResult Analyze(Board board, BoardAnalysisWeights weights);
+        IAnalysisResult Analyze(Board boards);
     }
 }

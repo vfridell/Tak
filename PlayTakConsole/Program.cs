@@ -17,7 +17,8 @@ namespace PlayTakConsole
                     BoardSize = 5
                 };
 
-                ITakAI AI = new JohnnyDeep(BoardAnalysisWeights.bestWeights, 3, new BoardAnalyzer(gameSetup.BoardSize));
+                ITakAI AI = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
+                //ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
                 ITakAI AI2 = new SimpleJack(5, gameSetup.BoardSize);
                 //ITakAI AI2 = new RandomAI();
 

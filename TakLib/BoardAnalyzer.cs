@@ -10,15 +10,18 @@ namespace TakLib
     public class BoardAnalyzer : IBoardAnalyzer
     {
         private readonly int _boardSize;
-        public BoardAnalyzer(int boardSize)
+        private readonly BoardAnalysisWeights _weights;
+
+        public BoardAnalyzer(int boardSize, BoardAnalysisWeights weights)
         {
+            _weights = weights;
             _boardSize = boardSize;
         }
 
-        public IAnalysisResult Analyze (Board board, BoardAnalysisWeights weights)
+        public IAnalysisResult Analyze (Board board)
         {
             BoardAnalysisData d = new BoardAnalysisData();
-            d.weights = weights;
+            d.weights = _weights;
             d.gameResult = board.GameResult;
             d.blackCapStonesInHand = board.CapStonesInHand(PieceColor.Black);
             d.whiteCapStonesInHand = board.CapStonesInHand(PieceColor.White);

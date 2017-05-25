@@ -13,6 +13,10 @@ namespace TakLib
         private bool _playingWhite;
         private int _depth;
         private IBoardAnalyzer _analyzer;
+        public readonly int MinValue = SimpleAnalysisData.MinValue;
+        public readonly int MaxValue = SimpleAnalysisData.MaxValue;
+
+        private Dictionary<int, Move> _lastBestMoveAtDepth;
 
         public SimpleJack(int depth, int boardSize)
         {
@@ -49,10 +53,7 @@ namespace TakLib
             Move bestMove;
             var cancelSource = new CancellationTokenSource();
             int score;
-            if(playingWhite)
-                score = Negamax(board, null, int.MinValue + 2, int.MaxValue - 2, _depth, 1, cancelSource.Token, out bestMove);
-            else
-                score = Negamax(board, null, int.MinValue + 2, int.MaxValue - 2, _depth, -1, cancelSource.Token, out bestMove);
+            score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -60,7 +61,7 @@ namespace TakLib
         {
             return Task.Run(() => {
                 Move bestMove;
-                int score = Negamax(board, null, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                int score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
                 return bestMove;
             });
         }
@@ -70,26 +71,27 @@ namespace TakLib
             _playingWhite = playingWhite;
         }
 
-        private int Negamax(Board board, Move fromMove, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private int Negamax(Board board, Move fromMove, int alpha, int beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || board.GameResult != GameResult.Incomplete)
             {
                 bestMove = null;
-                return _analyzer.Analyze(board, BoardAnalysisWeights.zeroWeights).whiteAdvantage * color;
+                int score = _analyzer.Analyze(board).whiteAdvantage * color;
+                return score;
             }
 
             IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
-            int bestScore = int.MinValue;
+            int bestScore = MinValue;
             Move localBestMove = orderedAnalysis.First().Item1;
 
             foreach (var kvp in orderedAnalysis)
             {
                 Move subBestMove;
                 int score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                //int oldBestScore = bestScore;
+
+                if (score > bestScore) localBestMove = kvp.Item1;
                 bestScore = Math.Max(bestScore, score);
-                if (score == bestScore) localBestMove = kvp.Item1;
                 alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
                     break;
@@ -104,9 +106,7 @@ namespace TakLib
             var localMovesData = new ConcurrentBag<Tuple<Move, Board>>();
 
             // I think this parallelism allows for randomness when picking multiple moves that all analyze to the same advantage number
-            ParallelOptions options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 16;
-            Parallel.ForEach(board.GetAllMoves(), options,(nextMove, parallelLoopState) =>
+            Parallel.ForEach(board.GetAllMoves(), (nextMove, parallelLoopState) =>
             {
                 if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
                 if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
