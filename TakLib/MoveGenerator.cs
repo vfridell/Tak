@@ -54,7 +54,7 @@ namespace TakLib
             // movement moves
             DistanceAvailable maxDist = board.GetDistanceAvailable(location, dir);
             int possibleCarry = Math.Min(board.StackSize(location), board.Size);
-            if (maxDist.Distance == 0 || possibleCarry == 0) return;
+            if ((!maxDist.CapStoneTop && maxDist.Distance == 0) || possibleCarry == 0) return;
 
             List<List<int>> dropLists = GetAllDropLists(possibleCarry, maxDist);
             foreach (List<int> dropList in dropLists)

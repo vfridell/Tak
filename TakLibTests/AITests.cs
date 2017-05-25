@@ -330,10 +330,10 @@ namespace TakLibTests
             //winning move
             // a4+
             List<Move> winningMoves = new List<Move>();
-            winningMoves.AddRange(moves.Where(m => m.ToString() == "a4+"));
+            winningMoves.AddRange(moves.Where(m => m.ToString() == "1a4+1"));
 
-            Assert.IsTrue(moves.Any(m => m.ToString() == "a4+"));
-            Move winningMove = moves.First(m => m.ToString() == "a4+");
+            Assert.IsTrue(moves.Any(m => m.ToString() == "1a4+1"));
+            Move winningMove = moves.First(m => m.ToString() == "1a4+1");
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
 
@@ -344,10 +344,8 @@ namespace TakLibTests
             winningMove.Apply(winningBoard);
 
             data = analyzer.Analyze(winningBoard);
-            Assert.AreEqual(GameResult.BlackRoad, data.gameResult);
+            Assert.AreEqual(GameResult.WhiteRoad, data.gameResult);
 
-            // works with depth of 2 ?!?
-            //JohnnyDeep jd = new JohnnyDeep(weights, 2, new BoardAnalyzer(game.CurrentBoard.Size));
             JohnnyDeep jd = new JohnnyDeep(3, analyzer);
             jd.BeginNewGame(true, 5);
             Move move = jd.PickBestMove(game.CurrentBoard);
