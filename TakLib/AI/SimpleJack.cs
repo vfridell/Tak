@@ -128,7 +128,7 @@ namespace TakLib
         private string _name;
         public override string Name
         {
-            get { return string.IsNullOrEmpty(_name) ? string.Format("{0}SimpleJack{0}", _depth) : _name; }
+            get { return string.IsNullOrEmpty(_name) ? string.Format("SimpleJack{0}", _depth) : _name; }
         }
 
     }
