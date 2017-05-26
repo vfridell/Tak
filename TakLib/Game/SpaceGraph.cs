@@ -13,6 +13,30 @@ namespace TakLib
 
         private SpaceGraph() { }
 
+        public static SpaceGraph GetSpaceGraph(Board board, PieceColor color)
+        {
+            var sg = new SpaceGraph();
+            sg._color = color;
+            var finishedVertices = new HashSet<Space>();
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                var currentSpace = board.GetSpace(c);
+
+                var uSpace = board.GetSpace(c.GetNeighbor(Direction.Up));
+                var dSpace = board.GetSpace(c.GetNeighbor(Direction.Down));
+                var lSpace = board.GetSpace(c.GetNeighbor(Direction.Left));
+                var rSpace = board.GetSpace(c.GetNeighbor(Direction.Right));
+
+                if (!finishedVertices.Contains(uSpace)) sg.AddVertexAndEdge(currentSpace, uSpace);
+                if (!finishedVertices.Contains(dSpace)) sg.AddVertexAndEdge(currentSpace, dSpace);
+                if (!finishedVertices.Contains(lSpace)) sg.AddVertexAndEdge(currentSpace, lSpace);
+                if (!finishedVertices.Contains(rSpace)) sg.AddVertexAndEdge(currentSpace, rSpace);
+
+                finishedVertices.Add(currentSpace);
+            }
+            return sg;
+        }
+
         public SpaceGraph(Board board, PieceColor color)
         {
             _color = color;

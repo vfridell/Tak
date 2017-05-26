@@ -8,6 +8,8 @@ namespace TakLib
 {
     public enum PieceColor { White = 0, Black = 1 };
     public enum PieceType { Stone = 0, Wall = 1, CapStone = 2 };
+
+    [Serializable]
     public struct Piece
     {
         public Piece(PieceColor color, PieceType type)

@@ -30,6 +30,7 @@ namespace TakLib
 
     }
 
+    [Serializable]
     public class PlaceCapstone : Move
     {
         public PlaceCapstone(char r, char c) : base(r, c) { }
@@ -45,6 +46,7 @@ namespace TakLib
         }
     }
 
+    [Serializable]
     public class PlaceWall : Move
     {
         public PlaceWall(char r, char c) : base(r, c) { }
@@ -60,6 +62,7 @@ namespace TakLib
         }
     }
 
+    [Serializable]
     public class PlaceStone : Move
     {
         public PlaceStone(char r, char c) : base(r, c) { }
@@ -74,6 +77,7 @@ namespace TakLib
         }
     }
 
+    [Serializable]
     public class MoveStack : Move
     {
         public readonly char Carry;
@@ -138,6 +142,7 @@ namespace TakLib
         }
     }
 
+    [Serializable]
     public class MoveOneSquare : Move
     {
         public readonly int Carry;

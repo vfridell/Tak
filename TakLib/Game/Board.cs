@@ -3,9 +3,11 @@ using QuickGraph.Algorithms.ConnectedComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace TakLib
 {
+    [Serializable]
     public class Board
     {
         public int Size => _size;
@@ -35,7 +37,9 @@ namespace TakLib
         private int _emptySpaces;
         private bool _flatScoreDirty = true;
         private IEnumerable<Move> _moves;
+        [NonSerialized]
         private SpaceGraph _whiteSpaceGraph;
+        [NonSerialized]
         private SpaceGraph _blackSpaceGraph;
 
 
@@ -71,6 +75,7 @@ namespace TakLib
             {
                 if (!_grid[c.Row, c.Column].Equals(other._grid[c.Row, c.Column])) return false;
             }
+            if (GameResult != other.GameResult) return false;
             return true;
         }
 
@@ -297,6 +302,13 @@ namespace TakLib
             clone._gameResult = _gameResult;
             clone._gameResultSet = _gameResultSet;
             return clone;
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _whiteSpaceGraph = SpaceGraph.GetSpaceGraph(this, PieceColor.White);
+            _blackSpaceGraph = SpaceGraph.GetSpaceGraph(this, PieceColor.Black);
         }
 
         public void EndPlayerMove()

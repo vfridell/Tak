@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
+    [Serializable]
     public class PieceStack : Stack<Piece>
     {
         public PieceStack Clone()
