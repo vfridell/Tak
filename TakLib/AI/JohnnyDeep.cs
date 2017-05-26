@@ -13,6 +13,8 @@ namespace TakLib
         private bool _playingWhite;
         private int _depth;
         private IBoardAnalyzer _analyzer;
+        public readonly int MinValue = SimpleAnalysisData.MinValue;
+        public readonly int MaxValue = SimpleAnalysisData.MaxValue;
 
         public JohnnyDeep(int depth, IBoardAnalyzer boardAnalyzer)
         {
@@ -50,9 +52,9 @@ namespace TakLib
             var cancelSource = new CancellationTokenSource();
             int score;
             if(playingWhite)
-                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, 1, cancelSource.Token, out bestMove);
+                score = Negamax(board, null, MinValue, MaxValue, _depth, 1, cancelSource.Token, out bestMove);
             else
-                score = Negamax(board, null, int.MinValue + 14, int.MaxValue - 14, _depth, -1, cancelSource.Token, out bestMove);
+                score = Negamax(board, null, MinValue, MaxValue, _depth, -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -60,7 +62,7 @@ namespace TakLib
         {
             return Task.Run(() => {
                 Move bestMove;
-                int score = Negamax(board, null, int.MinValue, int.MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                int score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
                 return bestMove;
             });
         }
@@ -80,7 +82,7 @@ namespace TakLib
             }
 
             IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
-            int bestScore = int.MinValue;
+            int bestScore = MinValue;
             Move localBestMove = orderedAnalysis.First().Item1;
 
             foreach (var kvp in orderedAnalysis)
