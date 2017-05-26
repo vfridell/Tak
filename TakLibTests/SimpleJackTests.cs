@@ -517,7 +517,6 @@ namespace TakLibTests
             data = analyzer.Analyze(winningBoard);
             Assert.AreEqual(GameResult.WhiteRoad, data.gameResult);
 
-            // works with depth of 2 ?!?
             SimpleJack ai = new SimpleJack(3,game.CurrentBoard.Size);
             ai.BeginNewGame(true, 5);
             Move move = ai.PickBestMove(game.CurrentBoard);

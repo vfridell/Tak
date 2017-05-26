@@ -17,5 +17,23 @@ namespace TakLib
             }
             return clone;
         }
+
+        public override bool Equals(object obj)
+        {
+            PieceStack other = obj as PieceStack;
+            if (null == other) return false;
+            return Equals(other);
+        }
+
+        public bool Equals(PieceStack other)
+        {
+            if (other.Count != Count) return false;
+            return this.SequenceEqual(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return Peek().GetHashCode() ^ Count * 397;
+        }
     }
 }

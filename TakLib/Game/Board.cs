@@ -2,6 +2,7 @@
 using QuickGraph.Algorithms.ConnectedComponents;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TakLib
 {
@@ -51,6 +52,36 @@ namespace TakLib
                 }
                 return _gameResult;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            Board other = obj as Board;
+            if (null == other) return false;
+            return Equals(other);
+        }
+
+        public bool Equals(Board other)
+        {
+            if (_size != other._size) return false;
+            if (_whiteToPlay != other._whiteToPlay) return false;
+            if (!_capStonesInHand.SequenceEqual(other._capStonesInHand)) return false;
+            if (!_stonesInHand.SequenceEqual(other._stonesInHand)) return false;
+            foreach (Coordinate c in new CoordinateEnumerable(_size))
+            {
+                if (!_grid[c.Row, c.Column].Equals(other._grid[c.Row, c.Column])) return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = (_size * 397);
+            foreach (Coordinate c in new CoordinateEnumerable(_size))
+            {
+                hash = hash ^ (_grid[c.Row, c.Column].GetHashCode() * 397);
+            }
+            return hash;
         }
 
         public int StonesInHand(PieceColor color) => _stonesInHand[(int)color];
