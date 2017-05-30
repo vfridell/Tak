@@ -17,9 +17,9 @@ namespace PlayTakConsole
                     BoardSize = 5
                 };
 
-                ITakAI AI = new JohnnyDeep(4, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
+                ITakAI AI = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
                 //ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
-                ITakAI AI2 = new SimpleJack(4, gameSetup.BoardSize);
+                ITakAI AI2 = new SimpleJack(3, gameSetup.BoardSize);
                 //ITakAI AI2 = new RandomAI();
 
                 YesNo yn = PromptYesOrNo(string.Format("Is {0} playing white? ", AI.Name));
@@ -58,6 +58,8 @@ namespace PlayTakConsole
                     TimeSpan timespan = DateTime.Now.Subtract(beginTimestamp);
                     Console.WriteLine(string.Format("{0} seconds {1} Moved: {2}", timespan.TotalSeconds, currentAI.Name, move));
                 } while (game.GameResult == GameResult.Incomplete);
+
+                if(AI is JohnnyDeep)((JohnnyDeep)AI).WriteMemories();
 
                 Console.WriteLine(GetWinnerString(game));
                 if (PromptYesOrNo("Write out game transcript?") == YesNo.Yes)

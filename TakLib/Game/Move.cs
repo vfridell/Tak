@@ -6,6 +6,7 @@ using System.Net;
 
 namespace TakLib
 {
+    [Serializable]
     public abstract class Move
     {
         public readonly char Row;

@@ -34,6 +34,7 @@ namespace TakLib
 
         public override int GetHashCode()
         {
+            if (Count == 0) return 0;
             return Peek().GetHashCode() ^ Count * 397;
         }
     }

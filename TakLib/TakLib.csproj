@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AnalysisMemory.cs" />
     <Compile Include="Game\ArrayMaker.cs" />
     <Compile Include="Game\Board.cs" />
     <Compile Include="AI\SimpleJack.cs" />

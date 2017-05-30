@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
+    [Serializable]
     public struct Coordinate
     {
         public Coordinate(int row, int column)
