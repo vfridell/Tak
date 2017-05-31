@@ -16,7 +16,6 @@ namespace TakLib
         private IBoardAnalyzer _analyzer;
         public readonly int MinValue = SimpleAnalysisData.MinValue;
         public readonly int MaxValue = SimpleAnalysisData.MaxValue;
-        private AnalysisMemoryCollection _memories;
 
         public JohnnyDeep(int depth, IBoardAnalyzer boardAnalyzer)
         {
@@ -53,23 +52,7 @@ namespace TakLib
             Move bestMove;
             var cancelSource = new CancellationTokenSource();
             int score;
-
-            AnalysisMemory memory;
-            if (_memories.TryGetValue(board, out memory))
-            {
-                bestMove = memory.BestMove;
-            }
-            else
-            {
-                score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
-                _memories.Add(board, new AnalysisMemory()
-                {
-                    AnalysisDepth = _depth,
-                    BestMove = bestMove,
-                    AnalysisKey = _memories.Key,
-                    Score = score
-                });
-            }
+            score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
 
@@ -85,18 +68,10 @@ namespace TakLib
         public void BeginNewGame(bool playingWhite, int boardSize)
         {
             _playingWhite = playingWhite;
-            _memories = AnalysisMemoryCollection.LoadMemories("JohnnyDeep", _depth);
         }
 
         private int Negamax(Board board, Move fromMove, int alpha, int beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
-            AnalysisMemory memory;
-            if (_memories.TryGetValue(board, out memory))
-            {
-                bestMove = memory.BestMove;
-                return memory.Score;
-            }
-
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || board.GameResult != GameResult.Incomplete)
             {
@@ -158,13 +133,5 @@ namespace TakLib
         {
             get { return string.IsNullOrEmpty(_name) ? string.Format("Johnny{0}Deep", _depth) : _name; }
         }
-
-        public void WriteMemories()
-        {
-            _memories.Write();
-        }
     }
-
-    
-
 }

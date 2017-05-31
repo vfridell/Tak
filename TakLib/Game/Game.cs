@@ -124,11 +124,26 @@ namespace TakLib
             return sb.ToString();
         }
 
+        public string GetGameHeaderTranscript()
+        {
+            //[Date "2017.05.25"]
+            //[Player1 "White"]
+            //[Player2 "Black"]
+            //[Result ""]
+            //[Size "5"]
+            return $"[Date \"{DateTime.Today:yyyy.MM.dd}\"]\n" + 
+                    $"[Player1 \"{WhitePlayer.Name}\"]\n" +
+                    $"[Player2 \"{BlackPlayer.Name}\"]\n" +
+                    $"[Result \"{GameResult}\"]\n" +
+                    $"[Size \"{CurrentBoard.Size}\"]\n";
+        }
+
         public static string WriteGameTranscript(Game game)
         {
             string filename = string.Format("transcript_{0}", DateTime.Now.ToString("yyyy.MM.dd.HHmmss"));
             using (System.IO.StreamWriter writer = new System.IO.StreamWriter(filename + ".txt"))
             {
+                writer.Write(game.GetGameHeaderTranscript());
                 writer.Write(game.GetMoveTranscript());
             }
 
@@ -138,6 +153,24 @@ namespace TakLib
             //    formatter.Serialize(stream, game);
             //}
             return filename;
+        }
+
+        public static Game CreateGameFromTranscript(string filename)
+        {
+            string fullNotation;
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(filename))
+            {
+                fullNotation = reader.ReadToEnd();
+            }
+
+            GameSetup setup = NotationParser.ParseGameFileHeaderString(fullNotation);
+            Game loadedGame = GetNewGame(setup);
+            List<Move> moves = NotationParser.ParseMoveLines(fullNotation);
+            foreach (Move move in moves)
+            {
+                loadedGame.ApplyMove(move);
+            }
+            return loadedGame;
         }
     }
 }

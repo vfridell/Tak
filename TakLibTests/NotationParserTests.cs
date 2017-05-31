@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TakLib;
 
@@ -7,6 +8,49 @@ namespace TakLibTests
     [TestClass]
     public class NotationParserTests
     {
+
+        [TestMethod]
+        public void ParseFullNotation()
+        {
+            Game game = Game.CreateGameFromTranscript("NotationFiles\\White vs Black 0-R 2017.02.17.ptn");
+            Assert.AreEqual(GameResult.BlackRoad, game.GameResult);
+        }
+
+        [TestMethod]
+        public void ParseNotationHeader()
+        {
+            string header = "[Date \"2017.05.25\"]\n[Player1 \"Superman\"]\n[Player2 \"Batman\"]\n[Result \"\"]\n[Size \"3\"]\n";
+            GameSetup setup = NotationParser.ParseGameFileHeaderString(header);
+            Assert.AreEqual(3, setup.BoardSize);
+            Assert.AreEqual("Superman", setup.WhitePlayer.Name);
+            Assert.AreEqual("Batman", setup.BlackPlayer.Name);
+        }
+
+        [TestMethod]
+        public void ParseMoveLines()
+        {
+            string moveLines = @"1. e3 e1
+1. c1 d2
+2. b3 d3
+3. a1 c2
+4. b1 1c2-1
+5. c5 c2
+6. c3 d1
+7. a2 d4
+8. d5 e4
+9. 1c3>1 1e3<1
+10. e5 3d3<12
+11. b5 a5
+12. d3 1d2+1
+13. a3 1a5>1
+14. 1c5<1 c4
+15. c5 1e4+1
+16. 3b5-12
+";
+            List<Move> moves = NotationParser.ParseMoveLines(moveLines);
+            Assert.AreEqual(33, moves.Count);
+        }
+
         [TestMethod]
         public void ParsePlacement()
         {

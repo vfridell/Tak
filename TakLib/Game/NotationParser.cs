@@ -77,6 +77,64 @@ namespace TakLib
             }
             else { throw new Exception($"Unrecognized notation: {notation}");}
         }
+
+        public static Regex MoveLineRegex = new Regex(@"^[0-9]+\.\s+(\S+)\s+(\S+)", RegexOptions.Multiline);
+        public static Regex MoveLineRegexOnlyOne = new Regex(@"^[0-9]+\.\s+(\S+)");
+
+        public static List<Move> ParseMoveLines(string fullNotation)
+        {
+            List<Move> moves = new List<Move>();
+            MatchCollection matchCollection = MoveLineRegex.Matches(fullNotation);
+            foreach (Match match in matchCollection)
+            {
+                string move1 = match.Groups[1].Value;
+                string move2 = match.Groups[2].Value;
+                moves.Add(Parse(move1));
+                moves.Add(Parse(move2));
+            }
+            Match matchOne = MoveLineRegexOnlyOne.Match(fullNotation);
+            if(matchOne.Groups.Count > 1) moves.Add(Parse(matchOne.Groups[1].Value));
+            return moves;
+        }
+
+        public static Regex HeaderRegex = new Regex(@"\[(Date|Player1|Player2|Result|Size) ""(.*)""\]");
+        public static GameSetup ParseGameFileHeaderString(string fullNotation)
+        {
+            //[Date "2017.05.25"]
+            //[Player1 "White"]
+            //[Player2 "Black"]
+            //[Result ""]
+            //[Size "5"]
+            GameSetup setup = new GameSetup();
+            MatchCollection matchCollection = HeaderRegex.Matches(fullNotation);
+            foreach (Match match in matchCollection)
+            {
+                string key = match.Groups[1].Value;
+                string value = match.Groups[2].Value;
+                switch (key)
+                {
+                    case "Date":
+                    case "Result":
+                    break;
+                    case "Player1":
+                        setup.WhitePlayer = new Player() {Name = value};
+                        break;
+                    case "Player2":
+                        setup.BlackPlayer = new Player() {Name = value};
+                        break;
+                    case "Size":
+                        setup.BoardSize = int.Parse(value);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            //if(setup.BoardSize == 0) throw new ArgumentException("Missing board size in notation");
+            if (setup.BoardSize == 0) setup.BoardSize = 5;
+            if(setup.WhitePlayer == null) setup.WhitePlayer = new Player() {Name = "White"};
+            if(setup.BlackPlayer == null) setup.BlackPlayer = new Player() {Name = "Black"};
+            return setup;
+        }
     }
 
     

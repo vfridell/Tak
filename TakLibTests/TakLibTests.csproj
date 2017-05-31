@@ -70,7 +70,9 @@
     <None Include="NotationFiles\Capstone stack flatten.ptn" />
     <None Include="NotationFiles\nqeron vs Anonymous 0-F 2016.07.26-14.52.50.ptn" />
     <None Include="NotationFiles\White vs Black 0-F 2017.02.17.ptn" />
-    <None Include="NotationFiles\White vs Black 0-R 2017.02.17.ptn" />
+    <None Include="NotationFiles\White vs Black 0-R 2017.02.17.ptn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="NotationFiles\White vs Black 1-2-1-2 2017.02.17.ptn" />
     <None Include="NotationFiles\White vs Black F-0 2017.02.17.ptn" />
     <None Include="NotationFiles\White vs Black R-0 2017.02.17.ptn" />

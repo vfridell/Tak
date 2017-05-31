@@ -59,8 +59,6 @@ namespace PlayTakConsole
                     Console.WriteLine(string.Format("{0} seconds {1} Moved: {2}", timespan.TotalSeconds, currentAI.Name, move));
                 } while (game.GameResult == GameResult.Incomplete);
 
-                if(AI is JohnnyDeep)((JohnnyDeep)AI).WriteMemories();
-
                 Console.WriteLine(GetWinnerString(game));
                 if (PromptYesOrNo("Write out game transcript?") == YesNo.Yes)
                 {
