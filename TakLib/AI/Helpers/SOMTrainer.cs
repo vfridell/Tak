@@ -34,10 +34,10 @@ namespace TakLib.AI.Helpers
             return Math.Exp(-(distSq) / (2 * radiusSq));
         }
 
-        // Train the given lattice based on a vector of input vectors
+        // Train the given lattice based on a list of input vectors
         public void Train(SOMLattice lattice, List<SOMWeightsVector> inputVectorsList, IProgress<int> progressReport, CancellationToken token)
         {
-            _latticeRadius = Math.Max(lattice.Height, lattice.Width) / 2;
+            _latticeRadius = lattice.Size / 2d;
             _timeConstant = _numIterations / Math.Log(_latticeRadius);
             int iteration = 0;
             double distanceFallOff;

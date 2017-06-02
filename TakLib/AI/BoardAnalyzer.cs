@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TakLib.AI.Helpers;
 
 namespace TakLib
 {
@@ -67,6 +68,21 @@ namespace TakLib
                         data.blackWallCount++;
                 }
             }
+        }
+
+        public SOMWeightsVector GetSomWeightsVector(Board board)
+        {
+            SOMWeightsVector vector = new SOMWeightsVector();
+            BoardAnalysisData analysis = (BoardAnalysisData)Analyze(board);
+            vector.Add(analysis.flatScore);
+            vector.Add(analysis.averageSubGraphDiff);
+            vector.Add(analysis.longestSubGraphDiff);
+            vector.Add(analysis.capStoneDiff);
+            vector.Add(analysis.numberOfSubGraphsDiff);
+            vector.Add(analysis.wallCountDiff);
+            vector.Add(analysis.possibleMovesDiff);
+            vector.Add(analysis.winningResultDiff);
+            return vector;
         }
     }
 

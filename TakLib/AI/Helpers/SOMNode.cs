@@ -11,16 +11,15 @@ namespace TakLib.AI.Helpers
     {
         private static Random _rand = new Random();
         private SOMWeightsVector _weightsVector;
-        private int _x, _y;
+        private Coordinate _coordinate;
 
-        public int X => _x;
-        public int Y => _y;
+        public int X => _coordinate.Column;
+        public int Y => _coordinate.Row;
         public SOMWeightsVector WeightsVector => _weightsVector;
 
-        public SOMNode(int numWeights, int x, int y)
+        public SOMNode(int numWeights, Coordinate c)
         {
-            _x = x;
-            _y = y;
+            _coordinate = c;
             _weightsVector = new SOMWeightsVector();
             for (int i = 0; i < numWeights; i++)
             {

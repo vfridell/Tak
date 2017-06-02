@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TakLib.AI.Helpers;
 
 namespace TakLib
 {
@@ -18,6 +19,11 @@ namespace TakLib
         public IAnalysisResult Analyze (Board board)
         {
             return new SimpleAnalysisData() { gameResult = board.GameResult};
+        }
+
+        public SOMWeightsVector GetSomWeightsVector(Board board)
+        {
+            throw new NotImplementedException("SimpleAnalyzer not suitable for SOM analysis");
         }
     }
 }

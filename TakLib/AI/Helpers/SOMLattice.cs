@@ -12,56 +12,49 @@ namespace TakLib.AI.Helpers
     public class SOMLattice
     {
         private SOMNode[,] _nodes;
-        private int _height;
-        private int _width;
+        private int _size;
         private int _numWeights;
         private double[] _maxWeights;
         private double[] _minWeights;
 
-        public int Height => _height;
-        public int Width => _width;
+        public int Size => _size;
         public int NumWeights => _numWeights;
+        public readonly IBoardAnalyzer Analyzer;
 
         public double MaxWeight(int i) => _maxWeights[i];
         public double MinWeight(int i) => _minWeights[i];
 
-        public SOMLattice(int height, int width, int numWeights)
+        public SOMLattice(int size, int numWeights, IBoardAnalyzer analyzer)
         {
-            _nodes = new SOMNode[width, height];
-            _height = height;
-            _width = width;
+            _nodes = new SOMNode[size, size];
+            _size = size;
+
             _numWeights = numWeights;
             _maxWeights = new double[_numWeights];
             _minWeights = new double[_numWeights];
+            Analyzer = analyzer;
         }
 
         public void Initialize()
         {
-            for (int x = 0; x < _height; x++)
+            foreach(Coordinate c in new CoordinateEnumerable(_size))
             {
-                for (int y = 0; y < _width; y++)
-                {
-                    _nodes[x, y] = new SOMNode(_numWeights, x, y);
-                    AdjustMaxMinWeights(_nodes[x, y]);
-                }
+                _nodes[c.Row, c.Column] = new SOMNode(_numWeights, c);
+                AdjustMaxMinWeights(_nodes[c.Row, c.Column]);
             }
         }
 
         public void InitializeTest()
         {
-            double xstep = .5f / (float)_width;
-            double ystep = .5f / (float)_height;
-            for (int x = 0; x < _height; x++)
+            double step = .5f / (float)_size;
+            foreach (Coordinate c in new CoordinateEnumerable(_size))
             {
-                for (int y = 0; y < _width; y++)
-                {
-                    _nodes[x, y] = new SOMNode(_numWeights, x, y);
-                    _nodes[x, y].SetWeight(0, (xstep * x) + (ystep * y));
-                    _nodes[x, y].SetWeight(1, (xstep * x) + (ystep * y));
-                    _nodes[x, y].SetWeight(2, (xstep * x) + (ystep * y));
+                _nodes[c.Row, c.Column] = new SOMNode(_numWeights, c);
+                _nodes[c.Row, c.Column].SetWeight(0, (step * c.Row) + (step * c.Column));
+                _nodes[c.Row, c.Column].SetWeight(1, (step * c.Row) + (step * c.Column));
+                _nodes[c.Row, c.Column].SetWeight(2, (step * c.Row) + (step * c.Column));
 
-                    AdjustMaxMinWeights(_nodes[x, y]);
-                }
+                AdjustMaxMinWeights(_nodes[c.Row, c.Column]);
             }
         }
 
@@ -76,7 +69,13 @@ namespace TakLib.AI.Helpers
 
         public SOMNode GetNode(int x, int y)
         {
-            return _nodes[x, y];
+            //Coordinate c = new Coordinate(y, x);
+            return _nodes[y, x];
+        }
+
+        public SOMNode GetNode(Coordinate c)
+        {
+            return _nodes[c.Row, c.Column];
         }
 
         public SOMNode GetBestMatchingUnitNode(SOMWeightsVector input)
@@ -85,30 +84,27 @@ namespace TakLib.AI.Helpers
             double bestDistance = input.EuclideanDistance(bmuNode.WeightsVector);
             double currentDistance;
 
-            for (int x = 0; x < _height; x++)
+            foreach (Coordinate c in new CoordinateEnumerable(_size))
             {
-                for (int y = 0; y < _width; y++)
+                currentDistance = input.EuclideanDistance(_nodes[c.Row, c.Column].WeightsVector);
+                if (currentDistance < bestDistance)
                 {
-                    currentDistance = input.EuclideanDistance(_nodes[x, y].WeightsVector);
-                    if (currentDistance < bestDistance)
-                    {
-                        bmuNode = _nodes[x, y];
-                        bestDistance = currentDistance;
-                    }
+                    bmuNode = _nodes[c.Row, c.Column];
+                    bestDistance = currentDistance;
                 }
             }
             return bmuNode;
         }
 
-        public void AdjustWeights(int x, int y, SOMWeightsVector input, double learningRate, double distanceFallOff)
+        public void AdjustWeights(Coordinate c, SOMWeightsVector input, double learningRate, double distanceFallOff)
         {
-            GetNode(x, y).AdjustWeights(input, learningRate, distanceFallOff);
-            AdjustMaxMinWeights(GetNode(x, y));
+            GetNode(c).AdjustWeights(input, learningRate, distanceFallOff);
+            AdjustMaxMinWeights(GetNode(c));
         }
 
         public static string WriteLatticeData(SOMLattice lattice)
         {
-            string filename = $"lattice_{lattice.Height}X{lattice.Width}_{DateTime.Now.ToString("yyyy.MM.dd.HHmmss")}";
+            string filename = $"lattice_{lattice.Size}X{lattice.Size}_{DateTime.Now.ToString("yyyy.MM.dd.HHmmss")}";
             BinaryFormatter formatter = new BinaryFormatter();
             using (Stream stream = new FileStream(filename + ".bin", FileMode.Create, FileAccess.Write, FileShare.None))
             {
