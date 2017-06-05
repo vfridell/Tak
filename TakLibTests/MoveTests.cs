@@ -54,6 +54,13 @@ namespace TakLibTests
             IEnumerable<Move> moves = game.GetAllMoves();
             MoveStack ems = new MoveStack('2', '1', 'e', new[] {'1', '1'}, '+');
             Assert.IsNotNull(moves.FirstOrDefault(m => m is MoveStack && m.ToString() == ems.ToString()));
+
+            game.ApplyMove(NotationParser.Parse("2e1+11"));
+            PieceStack ps = game.CurrentBoard.GetPieceStack(new Coordinate(2, 4)).Clone();
+            Piece p = ps.Pop();
+            Assert.AreEqual(PieceType.CapStone, p.Type);
+            p = ps.Pop();
+            Assert.AreEqual(PieceType.Stone, p.Type);
         }
 
         [TestMethod]

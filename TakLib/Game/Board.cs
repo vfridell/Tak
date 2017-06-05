@@ -192,6 +192,15 @@ namespace TakLib
             CheckGridRange(c);
             if(heldStack.Count == 0) throw new Exception($"There are no stones in the held stack");
             Space oldSpace = GetSpace(c);
+            if (_grid[c.Row, c.Column].Count > 0)
+            {
+                if (_grid[c.Row, c.Column].Peek().Type == PieceType.Wall)
+                {
+                    Piece wall = _grid[c.Row, c.Column].Pop();
+                    Piece smashedPiece = new Piece(wall.Color, PieceType.Stone);
+                    _grid[c.Row, c.Column].Push(smashedPiece);
+                }
+            }
             while (heldStack.Count > 0)
                 _grid[c.Row,c.Column].Push(heldStack.Pop());
             Space newSpace = GetSpace(c);
