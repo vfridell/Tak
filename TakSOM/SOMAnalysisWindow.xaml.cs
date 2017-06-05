@@ -78,7 +78,7 @@ namespace TakSOM
             Canvas.SetZIndex(tb, 99);
             Canvas.SetLeft(tb, (loc.Column * 11) + 2);
             Canvas.SetBottom(tb, (loc.Row * 11) - 2);
-            tb.MouseLeftButtonDown += (sender, args) => { detailsTextBlock.Text = fileAnalysisDataList.Aggregate("", (result, f) => $"{f.Filename.Substring(f.Filename.LastIndexOf(@"\"))}\n" + result); };
+            //tb.MouseLeftButtonDown += (sender, args) => { detailsTextBlock.Text = fileAnalysisDataList.Aggregate("", (result, f) => $"{f.Filename.Substring(f.Filename.LastIndexOf(@"\"))}\n" + result); };
 
             MainCanvas.Children.Add(tb);
 

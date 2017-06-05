@@ -247,6 +247,13 @@ namespace TakLib
         public bool IsWall(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.Wall);
         public bool IsCapStone(int r, int c) => _grid[r, c].Count > 0 && (_grid[r, c].Peek().Type == PieceType.CapStone);
 
+        public PieceStack GetPieceStack(Coordinate c)
+        {
+            CheckGridRange(c);
+            CheckNonEmpty(c);
+            return _grid[c.Row, c.Column].Clone();
+        }
+
         public Piece GetPiece(Coordinate c)
         {
             CheckGridRange(c);

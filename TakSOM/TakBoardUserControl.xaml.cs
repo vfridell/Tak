@@ -35,13 +35,17 @@ namespace TakSOM
             {
                 MainCanvas.Children.Clear();
                 _imageToPieceStackMap.Clear();
-                foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+                double squareSize = Math.Min(CanvasDockPanel.ActualHeight - 50, CanvasDockPanel.ActualWidth - 50) / board.Size;
+                BoardGridDrawing boardGrid = new BoardGridDrawing(board, squareSize);
+                                
+                foreach (Rectangle r in boardGrid.Rectangles)
                 {
-                    HexagonDrawing hexWithImage = HexagonDrawing.GetHexagonDrawing(kvp.Value, _drawSize, kvp.Key, _mainCanvasOffsetPoint);
-                    MainCanvas.Children.Add(hexWithImage.image);
-                    MainCanvas.Children.Add(hexWithImage.polygon);
-                    _imageToPieceStackMap[hexWithImage.polygon] = kvp.Key;
-                    hexWithImage.polygon.MouseLeftButtonDown += polygon_MouseLeftButtonDown;
+                    MainCanvas.Children.Add(r);
+
+                    Tuple<Space, PieceStack> sps = (Tuple<Space, PieceStack>)r.DataContext;
+                    var pieceStackDrawing = new PieceStackDrawing(sps.Item2, sps.Item1, board.Size, squareSize);
+                    foreach (Shape s in pieceStackDrawing.Shapes)
+                        MainCanvas.Children.Add(s);
                 }
             }
             catch (Exception ex)
