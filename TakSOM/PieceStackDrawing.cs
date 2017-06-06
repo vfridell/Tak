@@ -50,9 +50,11 @@ namespace TakSOM
         {
             double height = (squareSize - 10) / 1.5d;
             double wallWidth = (squareSize - 10) / 4d;
-            double sideMargin = (squareSize - wallWidth) / 2;
-            double topMargin = (squareSize - height) / 2;
+            double stackHeightOffset = (height * .08d) * stackHeight;
+            double topMargin = ((squareSize - height) / 2) - stackHeightOffset;
+            double sideMargin = ((squareSize - wallWidth) / 2) - stackHeightOffset;
             Rectangle r = new Rectangle() { Height = height, Width = wallWidth, Margin = new Thickness(sideMargin, topMargin, sideMargin, topMargin) };
+            r.RadiusX = r.RadiusY = wallWidth * .25d;
             Canvas.SetLeft(r, space.Coordinate.Column * squareSize);
             Canvas.SetTop(r, ((boardSize - 1) * squareSize) - space.Coordinate.Row * squareSize);
             Matrix m = r.RenderTransform.Value;
@@ -65,7 +67,8 @@ namespace TakSOM
         {
             double height = (squareSize - 10) / 1.5d;
             double width = (squareSize - 10) / 1.5d;
-            double margin = (squareSize - height) / 2;
+            double stackHeightOffset = (height * .08d) * stackHeight;
+            double margin = ((squareSize - height) / 2) - stackHeightOffset;
             Ellipse e = new Ellipse() { Height = height, Width = width, Margin = new Thickness(margin) };
             Canvas.SetLeft(e, space.Coordinate.Column * squareSize);
             Canvas.SetTop(e, ((boardSize - 1) * squareSize) - space.Coordinate.Row * squareSize);
@@ -76,8 +79,10 @@ namespace TakSOM
         {
             double height = (squareSize - 10) / 1.5d;
             double width = (squareSize - 10) / 1.5d;
-            double margin = (squareSize - height) / 2;
+            double stackHeightOffset = (height * .08d) * stackHeight;
+            double margin = ((squareSize - height) / 2) - stackHeightOffset;
             Rectangle r = new Rectangle() { Height = height, Width = width, Margin = new Thickness(margin)};
+            r.RadiusX = r.RadiusY = width * .25d;
             Canvas.SetLeft(r, space.Coordinate.Column * squareSize);
             Canvas.SetTop(r, ((boardSize - 1) * squareSize) - space.Coordinate.Row * squareSize);
             return r;

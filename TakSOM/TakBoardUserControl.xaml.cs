@@ -40,6 +40,7 @@ namespace TakSOM
                                 
                 foreach (Rectangle r in boardGrid.Rectangles)
                 {
+                    //Panel.SetZIndex(r, -1);
                     MainCanvas.Children.Add(r);
 
                     Tuple<Space, PieceStack> sps = (Tuple<Space, PieceStack>)r.DataContext;
