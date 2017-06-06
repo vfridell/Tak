@@ -5,16 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TakSOM"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <DockPanel Name="CanvasDockPanel">
-        <Canvas Name="MainCanvas" ClipToBounds="True" Width="{Binding ActualWidth, ElementName=CanvasDockPanel}" Height="{Binding ActualHeight, ElementName=CanvasDockPanel}"
-                        VerticalAlignment="Top" HorizontalAlignment="Left" Background="Aqua" Margin="0,0,0,0">
-            <Canvas.RenderTransform>
-                <TransformGroup x:Name="TransformGroup">
-                    <ScaleTransform x:Name="ScaleTransform"/>
-                    <TranslateTransform x:Name="TranslateTransform"/>
-                </TransformGroup>
-            </Canvas.RenderTransform>
-        </Canvas>
-    </DockPanel>
+             d:DesignHeight="300" d:DesignWidth="500">
+        <Grid Name="MainDock" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="195"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Padding="5" Margin="1">
+                <ListBox Name="MovesListBox" Background="White"  Margin="0,0,0,0" FontFamily="Consolas" FontSize="16">
+                    <ScrollViewer />
+                </ListBox>
+            </Border>
+        <GridSplitter Background="DarkGray"  ResizeDirection="Columns" Grid.Column="1" 
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                  ResizeBehavior="PreviousAndNext" />
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="0" Padding="5" Margin="5,5,5,0" Background="White">
+                <DockPanel Name="CanvasDockPanel">
+                    <Canvas Name="MainCanvas" Background="Aqua"/>
+                </DockPanel>
+            </Border>
+    </Grid>
 </UserControl>

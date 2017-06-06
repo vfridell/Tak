@@ -20,18 +20,11 @@ namespace TakSOM
     /// </summary>
     public partial class BoardDisplayTest : Window
     {
-        Board _board;
 
         public BoardDisplayTest(Board board)
         {
             InitializeComponent();
-            _board = board;
-        }
-
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            base.OnRenderSizeChanged(sizeInfo);
-            BoardUserControl.DrawBoard(_board);
+            BoardUserControl.Board = board;
         }
     }
 }
