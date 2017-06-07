@@ -18,12 +18,13 @@ namespace TakLib
 
     public class Game
     {
-        private IList<Board> _boards;
+        private List<Board> _boards;
         private Player _whitePlayer;
         private Player _blackPlayer;
 
         private List<Move> _movesMade = new List<Move>();
         public IReadOnlyList<Move> movesMade { get { return _movesMade.AsReadOnly(); } }
+        public IReadOnlyList<Board> Boards { get { return _boards.AsReadOnly(); } }
 
         public Player WhitePlayer => _whitePlayer;
         public Player BlackPlayer => _blackPlayer;

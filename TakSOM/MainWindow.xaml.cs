@@ -119,7 +119,7 @@ namespace TakSOM
             game.ApplyMove(NotationParser.Parse("3e3+"));
             game.ApplyMove(NotationParser.Parse("e3"));
 
-            BoardDisplayTest boardDisplayTest = new BoardDisplayTest(game.CurrentBoard);
+            BoardDisplayTest boardDisplayTest = new BoardDisplayTest(game.Boards.ToList());
             boardDisplayTest.Show();
         }
 

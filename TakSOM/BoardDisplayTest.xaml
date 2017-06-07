@@ -13,6 +13,7 @@
         </LinearGradientBrush>
     </Window.Background>
     <DockPanel>
-        <local:TakBoardUserControl x:Name="BoardUserControl"></local:TakBoardUserControl>
+        <ListView Name="BoardListView"><ScrollViewer/></ListView>
+        <local:TakBoardUserControl x:Name="BoardUserControl" DockPanel.Dock="Right"/>
     </DockPanel>
 </Window>

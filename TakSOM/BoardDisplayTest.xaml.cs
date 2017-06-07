@@ -21,10 +21,20 @@ namespace TakSOM
     public partial class BoardDisplayTest : Window
     {
 
-        public BoardDisplayTest(Board board)
+        public BoardDisplayTest(IList<Board> boards)
         {
             InitializeComponent();
-            BoardUserControl.Board = board;
+            BoardListView.SelectionChanged += BoardListViewOnSelectionChanged;
+            if (boards != null && boards.Count > 0)
+            {
+                BoardUserControl.Board = boards[0];
+                BoardListView.DataContext = boards;
+            }
+        }
+
+        private void BoardListViewOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            BoardUserControl.Board = (Board)selectionChangedEventArgs.AddedItems[0];
         }
     }
 }
