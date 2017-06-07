@@ -6,24 +6,24 @@
              xmlns:local="clr-namespace:TakSOM"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-        <Grid Name="MainDock" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"></ColumnDefinition>
-                <ColumnDefinition Width="5"></ColumnDefinition>
-                <ColumnDefinition Width="195"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Padding="5" Margin="1">
-                <ListBox Name="MovesListBox" Background="White"  Margin="0,0,0,0" FontFamily="Consolas" FontSize="16">
-                    <ScrollViewer />
-                </ListBox>
-            </Border>
-        <GridSplitter Background="DarkGray"  ResizeDirection="Columns" Grid.Column="1" 
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                  ResizeBehavior="PreviousAndNext" />
+        <DockPanel Name="MainDock" >
+            <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Padding="5" Margin="1" DockPanel.Dock="Right">
+            <Grid Width="Auto">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Name="GeneralInfo" Background="White" Padding="5" Text="General Text" Grid.Row="0" />
+                <TextBlock Name="WhiteInfo" Background="Orange" Padding="5" Grid.Row="1"/>
+                <TextBlock Name="BlackInfo" Background="Navy" Foreground="White" Padding="5" Grid.Row="3" />
+            </Grid>
+        </Border>
+
         <Border BorderBrush="Black" BorderThickness="1" Grid.Column="0" Padding="5" Margin="5,5,5,0" Background="White">
                 <DockPanel Name="CanvasDockPanel">
-                    <Canvas Name="MainCanvas" Background="Aqua"/>
+                    <Canvas Name="MainCanvas" Background="LightBlue" MinWidth="150" MinHeight="150"/>
                 </DockPanel>
             </Border>
-    </Grid>
+    </DockPanel>
 </UserControl>

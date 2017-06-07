@@ -28,21 +28,12 @@ namespace TakSOM
         public TakBoardUserControl()
         {
             InitializeComponent();
-            CanvasDockPanel.SizeChanged += (sender, args) =>
-            {
-                if (Board != null) DrawBoard();
-            };
-        }
-
-        protected override void OnRender(DrawingContext drawingContext)
-        {
-            base.OnRender(drawingContext);
-            _canvasSize = Math.Min(MainCanvas.ActualHeight, MainCanvas.ActualWidth);
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
+            _canvasSize = Math.Min(MainCanvas.ActualHeight, MainCanvas.ActualWidth);
             if(Board != null) DrawBoard();
         }
 
@@ -60,7 +51,6 @@ namespace TakSOM
                                 
                 foreach (Rectangle r in boardGrid.Rectangles)
                 {
-                    //Panel.SetZIndex(r, -1);
                     MainCanvas.Children.Add(r);
 
                     Tuple<Space, PieceStack> sps = (Tuple<Space, PieceStack>)r.DataContext;
@@ -68,6 +58,8 @@ namespace TakSOM
                     foreach (Shape s in pieceStackDrawing.Shapes)
                         MainCanvas.Children.Add(s);
                 }
+
+                WriteInfo();
             }
             catch (Exception ex)
             {
@@ -75,6 +67,41 @@ namespace TakSOM
             }
         }
 
+        private void WriteInfo()
+        {
+            StringBuilder generalSB = new StringBuilder();
+            StringBuilder whiteSB = new StringBuilder();
+            StringBuilder blackSB = new StringBuilder();
+            generalSB.AppendLine($"FlatScore: {Board.FlatScore}");
+            generalSB.AppendLine($"Result: {Board.GameResult}");
 
+            whiteSB.AppendLine($"Stones Held: {Board.StonesInHand(PieceColor.White)}");
+            whiteSB.AppendLine($"CapStones Held: {Board.CapStonesInHand(PieceColor.White)}");
+            
+            blackSB.AppendLine($"Black");
+            blackSB.AppendLine($"Stones Held: {Board.StonesInHand(PieceColor.Black)}");
+            blackSB.AppendLine($"CapStones Held: {Board.CapStonesInHand(PieceColor.Black)}");
+
+            GeneralInfo.Text = generalSB.ToString();
+            GeneralInfo.FontSize = GetFontSize();
+            WhiteInfo.Text = whiteSB.ToString();
+            WhiteInfo.FontSize = GetFontSize();
+            BlackInfo.Text = blackSB.ToString();
+            BlackInfo.FontSize = GetFontSize();
+        }
+
+        private double GetFontSize()
+        {
+            if (_canvasSize > 600)
+                return 16.0;
+            else if (_canvasSize > 400)
+                return 14.0;
+            else if (_canvasSize > 200)
+                return 12.0;
+            else if (_canvasSize > 100)
+                return 10.0;
+            else
+                return 8.0;
+        }
     }
 }
