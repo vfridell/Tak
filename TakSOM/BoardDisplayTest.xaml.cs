@@ -24,17 +24,35 @@ namespace TakSOM
         public BoardDisplayTest(IList<Board> boards)
         {
             InitializeComponent();
+            BoardListView.ItemsSource = boards;
             BoardListView.SelectionChanged += BoardListViewOnSelectionChanged;
             if (boards != null && boards.Count > 0)
             {
                 BoardUserControl.Board = boards[0];
-                BoardListView.DataContext = boards;
+            }
+        }
+
+        public BoardDisplayTest(IList<Tuple<IAnalysisResult, Board>> boards)
+        {
+            InitializeComponent();
+            BoardListView.ItemsSource = boards;
+            BoardListView.SelectionChanged += BoardAnalysisListViewOnSelectionChanged;
+            if (boards != null && boards.Count > 0)
+            {
+                BoardUserControl.Board = boards[0].Item2;
             }
         }
 
         private void BoardListViewOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             BoardUserControl.Board = (Board)selectionChangedEventArgs.AddedItems[0];
+            BoardUserControl.DrawBoard();
+        }
+
+        private void BoardAnalysisListViewOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            BoardUserControl.Board = ((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item2;
+            BoardUserControl.DrawBoard();
         }
     }
 }

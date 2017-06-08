@@ -12,8 +12,28 @@
             <GradientStop Color="#FF9C9595" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
+    <Window.Resources>
+        <DataTemplate x:Key="BoardItemTemplate">
+            <WrapPanel>
+                <TextBlock Text="Turn: "/>
+                <TextBlock Text="{Binding Turn}"/>
+                <TextBlock Text=" Round: "/>
+                <TextBlock Text="{Binding Round}"/>
+                <TextBlock Text=" Color: "/>
+                <TextBlock Text="{Binding ColorToPlay}"/>
+            </WrapPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="BoardAnalysisTemplate">
+            <WrapPanel>
+                <TextBlock Text="WhiteAdvantage: "/>
+                <TextBlock Text="{Binding Item1.whiteAdvantage}"/>
+            </WrapPanel>
+        </DataTemplate>
+        <local:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>
+    </Window.Resources>
     <DockPanel>
-        <ListView Name="BoardListView"><ScrollViewer/></ListView>
+        <ListView Name="BoardListView" SelectionMode="Single" ItemTemplateSelector="{StaticResource boardListViewItemTemplateSelector}">
+        </ListView>
         <local:TakBoardUserControl x:Name="BoardUserControl" DockPanel.Dock="Right"/>
     </DockPanel>
 </Window>

@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="BoardGridDrawing.cs" />
     <Compile Include="BoardInfoSidebarDrawing.cs" />
+    <Compile Include="BoardListViewItemTemplateSelector.cs" />
     <Compile Include="PieceStackDrawing.cs" />
     <Compile Include="SOMAnalysisWindow.xaml.cs">
       <DependentUpon>SOMAnalysisWindow.xaml</DependentUpon>
