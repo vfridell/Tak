@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +23,24 @@ namespace TakSOM
     /// </summary>
     public partial class MainWindow : Window
     {
+        CommonOpenFileDialog _openFolderDialog;
+        List<Tuple<BoardAnalysisData, Board>> _boardsToAnalyze = new List<Tuple<BoardAnalysisData, Board>>();
+
         public MainWindow()
         {
             InitializeComponent();
+            _openFolderDialog = new CommonOpenFileDialog("Open PTN Folder");
+            _openFolderDialog.IsFolderPicker = true;
+            _openFolderDialog.InitialDirectory = null;
+            _openFolderDialog.AddToMostRecentlyUsedList = false;
+            _openFolderDialog.AllowNonFileSystemItems = false;
+            _openFolderDialog.EnsureFileExists = true;
+            _openFolderDialog.EnsurePathExists = true;
+            _openFolderDialog.EnsureReadOnly = false;
+            _openFolderDialog.EnsureValidNames = true;
+            _openFolderDialog.Multiselect = false;
+            _openFolderDialog.ShowPlacesList = true;
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -207,14 +224,38 @@ namespace TakSOM
             boardDisplayTest.Show();
         }
 
-        private void TextBox_OnPreviewDragOver(object sender, DragEventArgs e)
+        private void LoadFiles_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            FileTextBox.Clear();
+            _boardsToAnalyze.Clear();
+            CommonFileDialogResult result = _openFolderDialog.ShowDialog();
+            if(result == CommonFileDialogResult.Ok)
+            {
+                string directory = _openFolderDialog.FileName;
+
+                IEnumerable<string> files = Directory.EnumerateFiles(directory, "*.ptn", SearchOption.TopDirectoryOnly);
+
+                List<Game> games = new List<Game>();
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        games.Add(Game.CreateGameFromTranscript(file));
+                        FileTextBox.Text += $"Loaded file {file}\n";
+                    }
+                    catch(Exception ex)
+                    {
+                        FileTextBox.Text += $"Error loading file {file}: {ex.Message}\n";
+                    }
+                }
+
+                foreach(Game game in games)
+                {
+                    BoardAnalyzer analyzer = new BoardAnalyzer(game.CurrentBoard.Size, BoardAnalysisWeights.bestWeights);
+                    _boardsToAnalyze.AddRange(game.Boards.Select(b => new Tuple<BoardAnalysisData, Board>((BoardAnalysisData)analyzer.Analyze(b), b)));
+                }
+            }
         }
 
-        private void TextBox_OnDrop(object sender, DragEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

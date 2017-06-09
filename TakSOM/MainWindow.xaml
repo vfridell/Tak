@@ -10,15 +10,17 @@
             </ToolBar>
         </ToolBarTray>
         <Grid Height ="50" DockPanel.Dock="Bottom" >
-            <Button Click="Analyze_OnClick" Height="25" Width="50" VerticalAlignment="Center">Analyze</Button>
-            <Button Click="Test_OnClick" Height="26" Width="50" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,12,166,12">Test</Button>
+            <Button Click="LoadFiles_OnClick" Height="25" Width="78" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="129,15,0,10">Load Files</Button>
+            <Button Click="Analyze_OnClick" Height="25" VerticalAlignment="Center" Margin="212,15,234,10">Analyze</Button>
+            <Button Click="Test_OnClick" Height="26" Width="64" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,14,165,10">Test</Button>
             <ProgressBar Name="ProgressBar1" HorizontalAlignment="Left" Height="10" Margin="396,12,0,0" VerticalAlignment="Top" Width="100"/>
         </Grid>
         <Grid DockPanel.Dock="Bottom" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBox PreviewDragOver="TextBox_OnPreviewDragOver" Name="TextBox" Drop="TextBox_OnDrop" AllowDrop="True" >Drop file here</TextBox>
+            <TextBox Name="FileTextBox"/>
         </Grid>
+        <StackPanel Height="274" VerticalAlignment="Top" Width="100"/>
     </DockPanel>
 </Window>
