@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TakLib.AI.Helpers;
 
 namespace TakLib
 {
@@ -109,6 +110,18 @@ namespace TakLib
         }
 
 
-
+        public SOMWeightsVector GetSomWeightsVector()
+        {
+            SOMWeightsVector vector = new SOMWeightsVector();
+            vector.Add(flatScore);
+            vector.Add(averageSubGraphDiff);
+            vector.Add(longestSubGraphDiff);
+            vector.Add(capStoneDiff);
+            vector.Add(numberOfSubGraphsDiff);
+            vector.Add(wallCountDiff);
+            vector.Add(possibleMovesDiff);
+            //vector.Add(winningResultDiff);
+            return vector;
+        }
     }
 }

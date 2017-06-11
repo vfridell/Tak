@@ -8,6 +8,7 @@ using TakLib.AI.Helpers;
 namespace TakLib
 {
     // this class must be thread safe
+    [Serializable]
     public class BoardAnalyzer : IBoardAnalyzer
     {
         private readonly int _boardSize;
@@ -81,7 +82,7 @@ namespace TakLib
             vector.Add(analysis.numberOfSubGraphsDiff);
             vector.Add(analysis.wallCountDiff);
             vector.Add(analysis.possibleMovesDiff);
-            vector.Add(analysis.winningResultDiff);
+            //vector.Add(analysis.winningResultDiff);
             return vector;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TakLib.AI.Helpers;
 
 namespace TakLib
 {
@@ -39,5 +40,9 @@ namespace TakLib
             return $"White Advantage: {whiteAdvantage}";
         }
 
+        public SOMWeightsVector GetSomWeightsVector()
+        {
+            throw new NotImplementedException("SimpleAnalyzer not suitable for SOM analysis");
+        }
     }
 }

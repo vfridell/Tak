@@ -49,6 +49,7 @@ namespace TakLibTests
 ";
             List<Move> moves = NotationParser.ParseMoveLines(moveLines);
             Assert.AreEqual(33, moves.Count);
+            Assert.AreEqual("3b5-12", moves[32].ToString());
         }
 
         [TestMethod]

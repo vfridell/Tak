@@ -1,9 +1,12 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TakLib;
+using TakLib.AI.Helpers;
 
 namespace TakSOM
 {
@@ -45,7 +49,7 @@ namespace TakSOM
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenLatticeFileExecute, OpenLatticeFileCanExecute));
         }
 
         private void Analyze_OnClick(object sender, RoutedEventArgs e)
@@ -73,63 +77,6 @@ namespace TakSOM
             game.ApplyMove(NotationParser.Parse("c5"));
             game.ApplyMove(NotationParser.Parse("e4"));
             game.ApplyMove(NotationParser.Parse("Sc4"));
-            game.ApplyMove(NotationParser.Parse("Cd3"));
-            game.ApplyMove(NotationParser.Parse("c4<"));
-            game.ApplyMove(NotationParser.Parse("e5"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("b2>"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("e5-"));
-            game.ApplyMove(NotationParser.Parse("Cb2"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("e2"));
-            game.ApplyMove(NotationParser.Parse("Sd2"));
-            game.ApplyMove(NotationParser.Parse("b2>"));
-            game.ApplyMove(NotationParser.Parse("2e4<11"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("d4>"));
-            game.ApplyMove(NotationParser.Parse("b5"));
-            game.ApplyMove(NotationParser.Parse("d3<"));
-            game.ApplyMove(NotationParser.Parse("2c1+"));
-            game.ApplyMove(NotationParser.Parse("2c3+"));
-            game.ApplyMove(NotationParser.Parse("e3+"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("3c2+"));
-            game.ApplyMove(NotationParser.Parse("d1"));
-            game.ApplyMove(NotationParser.Parse("2c3-"));
-            game.ApplyMove(NotationParser.Parse("Sb1"));
-            game.ApplyMove(NotationParser.Parse("e5"));
-            game.ApplyMove(NotationParser.Parse("b1>"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("d2<"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("2c2>11"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("4c4-"));
-            game.ApplyMove(NotationParser.Parse("2e4<"));
-            game.ApplyMove(NotationParser.Parse("b3"));
-            game.ApplyMove(NotationParser.Parse("3d4+"));
-            game.ApplyMove(NotationParser.Parse("Sa5"));
-            game.ApplyMove(NotationParser.Parse("3c1>"));
-            game.ApplyMove(NotationParser.Parse("a3"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("d3"));
-            game.ApplyMove(NotationParser.Parse("4d1>"));
-            game.ApplyMove(NotationParser.Parse("d2+"));
-            game.ApplyMove(NotationParser.Parse("e3<"));
-            game.ApplyMove(NotationParser.Parse("2e2+"));
-            game.ApplyMove(NotationParser.Parse("5e1+41"));
-            game.ApplyMove(NotationParser.Parse("2c3>"));
-            game.ApplyMove(NotationParser.Parse("Sd2"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("3b4>"));
-            game.ApplyMove(NotationParser.Parse("a5>"));
-            game.ApplyMove(NotationParser.Parse("c5>"));
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("e4"));
-            game.ApplyMove(NotationParser.Parse("4d3+"));
-            game.ApplyMove(NotationParser.Parse("3e3+"));
-            game.ApplyMove(NotationParser.Parse("e3"));
 
             BoardAnalyzer analyzer = new BoardAnalyzer(game.CurrentBoard.Size, BoardAnalysisWeights.bestWeights);
             
@@ -137,91 +84,25 @@ namespace TakSOM
             boardDisplayTest.Show();
         }
 
-        private void Test_OnClick(object sender, RoutedEventArgs e)
+        private async void Train_OnClick(object sender, RoutedEventArgs e)
         {
-            GameSetup gameSetup = new GameSetup()
-            {
-                WhitePlayer = new Player() { Name = "Player1" },
-                BlackPlayer = new Player() { Name = "Player2" },
-                BoardSize = 5
-            };
-            Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("e1"));
-            game.ApplyMove(NotationParser.Parse("b4"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("d4"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("a4"));
-            game.ApplyMove(NotationParser.Parse("a5-"));
-            game.ApplyMove(NotationParser.Parse("b4<"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("2a4>"));
-            game.ApplyMove(NotationParser.Parse("a2"));
-            game.ApplyMove(NotationParser.Parse("Sb2"));
-            game.ApplyMove(NotationParser.Parse("c5"));
-            game.ApplyMove(NotationParser.Parse("e4"));
-            game.ApplyMove(NotationParser.Parse("Sc4"));
-            game.ApplyMove(NotationParser.Parse("Cd3"));
-            game.ApplyMove(NotationParser.Parse("c4<"));
-            game.ApplyMove(NotationParser.Parse("e5"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("b2>"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("e5-"));
-            game.ApplyMove(NotationParser.Parse("Cb2"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("e2"));
-            game.ApplyMove(NotationParser.Parse("Sd2"));
-            game.ApplyMove(NotationParser.Parse("b2>"));
-            game.ApplyMove(NotationParser.Parse("2e4<11"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("d4>"));
-            game.ApplyMove(NotationParser.Parse("b5"));
-            game.ApplyMove(NotationParser.Parse("d3<"));
-            game.ApplyMove(NotationParser.Parse("2c1+"));
-            game.ApplyMove(NotationParser.Parse("2c3+"));
-            game.ApplyMove(NotationParser.Parse("e3+"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("3c2+"));
-            game.ApplyMove(NotationParser.Parse("d1"));
-            game.ApplyMove(NotationParser.Parse("2c3-"));
-            game.ApplyMove(NotationParser.Parse("Sb1"));
-            game.ApplyMove(NotationParser.Parse("e5"));
-            game.ApplyMove(NotationParser.Parse("b1>"));
-            game.ApplyMove(NotationParser.Parse("c2-"));
-            game.ApplyMove(NotationParser.Parse("d2<"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("2c2>11"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("4c4-"));
-            game.ApplyMove(NotationParser.Parse("2e4<"));
-            game.ApplyMove(NotationParser.Parse("b3"));
-            game.ApplyMove(NotationParser.Parse("3d4+"));
-            game.ApplyMove(NotationParser.Parse("Sa5"));
-            game.ApplyMove(NotationParser.Parse("3c1>"));
-            game.ApplyMove(NotationParser.Parse("a3"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("d3"));
-            game.ApplyMove(NotationParser.Parse("4d1>"));
-            game.ApplyMove(NotationParser.Parse("d2+"));
-            game.ApplyMove(NotationParser.Parse("e3<"));
-            game.ApplyMove(NotationParser.Parse("2e2+"));
-            game.ApplyMove(NotationParser.Parse("5e1+41"));
-            game.ApplyMove(NotationParser.Parse("2c3>"));
-            game.ApplyMove(NotationParser.Parse("Sd2"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("3b4>"));
-            game.ApplyMove(NotationParser.Parse("a5>"));
-            game.ApplyMove(NotationParser.Parse("c5>"));
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("e4"));
-            game.ApplyMove(NotationParser.Parse("4d3+"));
-            game.ApplyMove(NotationParser.Parse("3e3+"));
-            game.ApplyMove(NotationParser.Parse("e3"));
+            if (_boardsToAnalyze.Count == 0) return;
+            BoardAnalyzer analyzer = new BoardAnalyzer(_boardsToAnalyze[0].Item2.Size, BoardAnalysisWeights.bestWeights);
+            SOMWeightsVector v = analyzer.GetSomWeightsVector(_boardsToAnalyze[0].Item2);
+            SOMTrainer trainer = new SOMTrainer();
+            SOMLattice lattice = new SOMLattice(50, v.Count, analyzer);
+            lattice.Initialize();
+            List<SOMWeightsVector> weightsList = _boardsToAnalyze.Select(a => a.Item1.GetSomWeightsVector()).ToList();
 
-            BoardDisplayTest boardDisplayTest = new BoardDisplayTest(game.Boards.ToList());
-            boardDisplayTest.Show();
+            SOMAnalysisWindow analysisWindow = new SOMAnalysisWindow(lattice);
+            Progress<int> progressReport = new Progress<int>((i) => ProgressBar1.Value = i);
+            await Task.Run(() => trainer.Train(lattice, weightsList, progressReport, CancellationToken.None), CancellationToken.None);
+            analysisWindow.CategorizeData(_boardsToAnalyze.Select(a => a.Item2));
+            analysisWindow.RenderColors();
+            analysisWindow.RenderCounts();
+            analysisWindow.Show();
+            SOMLattice.WriteLatticeData(lattice);
+
         }
 
         private void LoadFiles_OnClick(object sender, RoutedEventArgs e)
@@ -257,5 +138,28 @@ namespace TakSOM
             }
         }
 
+        private void OpenLatticeFileExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog(this).Value)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                using (
+                    Stream stream = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read,
+                        FileShare.None))
+                {
+                    var lattice = (SOMLattice)formatter.Deserialize(stream);
+                    SOMAnalysisWindow analysisWindow = new SOMAnalysisWindow(lattice);
+                    analysisWindow.RenderColors();
+                    analysisWindow.RenderCounts();
+                    analysisWindow.Show();
+                }
+            }
+        }
+
+        void OpenLatticeFileCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
     }
 }

@@ -24,6 +24,8 @@ namespace TakSOM
     {
         public double MaxWeight = Double.MaxValue;
         public double MinWeight = 0;
+        int _rectSize = 15;
+
 
         private SOMLattice _lattice;
         private Dictionary<Coordinate, List<Board>> _analysisDictionary = new Dictionary<Coordinate, List<Board>>();
@@ -74,11 +76,16 @@ namespace TakSOM
             tb.Text = fileAnalysisDataList.Count.ToString();
             tb.Foreground = new SolidColorBrush(Colors.White);
             tb.FontSize = 10.0;
+            if (fileAnalysisDataList.Any(b => b.GameResult != GameResult.Incomplete))
+            {
+                tb.Foreground = new SolidColorBrush(Colors.Coral);
+                tb.FontSize = 12.0;
+            }
 
             Canvas.SetZIndex(tb, 99);
-            Canvas.SetLeft(tb, (loc.Column * 11) + 2);
-            Canvas.SetBottom(tb, (loc.Row * 11) - 2);
-            //tb.MouseLeftButtonDown += (sender, args) => { detailsTextBlock.Text = fileAnalysisDataList.Aggregate("", (result, f) => $"{f.Filename.Substring(f.Filename.LastIndexOf(@"\"))}\n" + result); };
+            Canvas.SetLeft(tb, (loc.Column * (_rectSize + 1)) + 2);
+            Canvas.SetBottom(tb, (loc.Row * (_rectSize + 1)) - 2);
+            tb.MouseLeftButtonDown += (sender, args) => { BoardDisplayTest boardsDisplay = new BoardDisplayTest(fileAnalysisDataList); boardsDisplay.Show(); };
 
             MainCanvas.Children.Add(tb);
 
@@ -86,10 +93,9 @@ namespace TakSOM
 
         private void DrawNode(SOMNode node)
         {
-            int rectSize = 10;
             Rectangle rect = new Rectangle();
-            rect.Width = rectSize;
-            rect.Height = rectSize;
+            rect.Width = _rectSize;
+            rect.Height = _rectSize;
 
             byte red = GetColorFromWeight(node.GetWeight(0));
             byte green = GetColorFromWeight(node.GetWeight(1));
@@ -101,8 +107,8 @@ namespace TakSOM
             //double imageYOffset = rect.Height / 2;
 
             Canvas.SetZIndex(rect, -1);
-            Canvas.SetLeft(rect, node.X * 11);
-            Canvas.SetBottom(rect, node.Y * 11);
+            Canvas.SetLeft(rect, node.X * (_rectSize + 1));
+            Canvas.SetBottom(rect, node.Y * (_rectSize + 1));
             rect.MouseLeftButtonDown += (sender, args) => { detailsTextBlock.Text = $"{node.X},{node.Y}\n" + node.WeightsVector.Aggregate("", (result, d) => $"{result}\n{d.ToString(CultureInfo.InvariantCulture)}"); };
             MainCanvas.Children.Add(rect);
         }

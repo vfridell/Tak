@@ -5,13 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TakSOM"
         mc:Ignorable="d"
-        Title="SOMAnalysisWindow" Height="300" Width="473.304">
+        Title="SOMAnalysisWindow" Height="505.607" Width="691.061">
     <Grid Name="AppGrid">
-        <Canvas Name="MainCanvas" ClipToBounds="True" 
-                        VerticalAlignment="Top" HorizontalAlignment="Left"
-                        Height="250"
-                        Width="272"
-                            Grid.Column="0" Background="Aqua" Margin="10,10,0,0">
+        <Canvas Name="MainCanvas" ClipToBounds="True"
+                            Grid.Column="0" Background="Aqua" Margin="10,10,183,9">
             <Canvas.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Open" Command="{Binding OpenCommand}"></MenuItem>
@@ -24,7 +21,7 @@
                 </TransformGroup>
             </Canvas.RenderTransform>
         </Canvas>
-        <TextBlock x:Name="detailsTextBlock" HorizontalAlignment="Left" Height="250" Margin="287,10,0,0" TextWrapping="Wrap" Text="Node Details" VerticalAlignment="Top" Width="168"/>
+        <TextBlock x:Name="detailsTextBlock" Margin="0,10,10,9" TextWrapping="Wrap" Text="Node Details" HorizontalAlignment="Right" Width="168"/>
 
     </Grid>
 </Window>

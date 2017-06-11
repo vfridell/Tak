@@ -21,8 +21,6 @@ namespace TakSOM
     /// </summary>
     public partial class TakBoardUserControl : UserControl
     {
-        Dictionary<Rectangle, PieceStack> _imageToPieceStackMap = new Dictionary<Rectangle, PieceStack>();
-        Dictionary<Rectangle, Space> _imageToSpaceMap = new Dictionary<Rectangle, Space>();
         private double _canvasSize;
 
         public TakBoardUserControl()
@@ -34,10 +32,13 @@ namespace TakSOM
         {
             base.OnRenderSizeChanged(sizeInfo);
             _canvasSize = Math.Min(MainCanvas.ActualHeight, MainCanvas.ActualWidth);
-            if(Board != null) DrawBoard();
+            if(Board != null && Data != null)
+                DrawBoard(Data);
+            else if (Board != null) DrawBoard();
         }
 
         public Board Board { get; set; }
+        public BoardAnalysisData Data { get; set; }
 
         public void DrawBoard()
         {
@@ -45,7 +46,6 @@ namespace TakSOM
             try
             {
                 MainCanvas.Children.Clear();
-                _imageToPieceStackMap.Clear();
                 double squareSize = _canvasSize / Board.Size;
                 BoardGridDrawing boardGrid = new BoardGridDrawing(Board, squareSize);
                                 
@@ -65,6 +65,23 @@ namespace TakSOM
             {
                 throw;
             }
+        }
+
+        public void DrawBoard(BoardAnalysisData data)
+        {
+            DrawBoard();
+            Data = data;
+
+            StringBuilder generalSB = new StringBuilder();
+            generalSB.AppendLine($"avgSubgraphDiff: {data.averageSubGraphDiff}");
+            generalSB.AppendLine($"capStoneDiff: {data.capStoneDiff}");
+            generalSB.AppendLine($"longestSubGraphDiff: {data.longestSubGraphDiff}");
+            generalSB.AppendLine($"numberOfSubGraphsDiff: {data.numberOfSubGraphsDiff}");
+            generalSB.AppendLine($"possibleMovesDiff: {data.possibleMovesDiff}");
+            generalSB.AppendLine($"wallCountDiff: {data.wallCountDiff}");
+            generalSB.AppendLine($"winningResultDiff: {data.winningResultDiff}");
+            GeneralInfo.Text += generalSB.ToString();
+            GeneralInfo.FontSize = GetFontSize();
         }
 
         private void WriteInfo()

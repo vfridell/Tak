@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
+    [Serializable]
     public struct BoardAnalysisWeights
     {
         public int capStoneDiffWeight;

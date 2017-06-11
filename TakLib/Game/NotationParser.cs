@@ -79,7 +79,7 @@ namespace TakLib
         }
 
         public static Regex MoveLineRegex = new Regex(@"^[0-9]+\.\s+(\S+)\s+(\S+)", RegexOptions.Multiline);
-        public static Regex MoveLineRegexOnlyOne = new Regex(@"^[0-9]+\.\s+(\S+)$");
+        public static Regex MoveLineRegexOnlyOne = new Regex(@"^[0-9]+\.\s+(\S+)\s+$", RegexOptions.Multiline);
 
         public static List<Move> ParseMoveLines(string fullNotation)
         {

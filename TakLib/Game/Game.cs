@@ -90,12 +90,9 @@ namespace TakLib
         public void EndPlayerMove()
         {
             GameResult = CurrentBoard.GameResult;
-            if (GameResult == GameResult.Incomplete)
-            {
-                CurrentBoard.EndPlayerMove();
-                if (CurrentBoard.Round % 2 != 0) EndTurn();
-                _boards.Add(CurrentBoard.Clone());
-            }
+            CurrentBoard.EndPlayerMove();
+            if (CurrentBoard.Round % 2 != 0) EndTurn();
+            _boards.Add(CurrentBoard.Clone());
         }
 
         public void EndTurn()

@@ -23,7 +23,8 @@ namespace TakLib.AI.Helpers
             _weightsVector = new SOMWeightsVector();
             for (int i = 0; i < numWeights; i++)
             {
-                _weightsVector.Add(_rand.Next(0, 99));
+                //_weightsVector.Add(_rand.Next(-10, 10));
+                _weightsVector.Add(_rand.NextDouble());
             }
         }
 

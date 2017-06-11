@@ -24,8 +24,9 @@ namespace TakSOM
         public BoardDisplayTest(IList<Board> boards)
         {
             InitializeComponent();
-            BoardListView.ItemsSource = boards;
-            BoardListView.SelectionChanged += BoardListViewOnSelectionChanged;
+            BoardAnalyzer analyzer = new BoardAnalyzer(boards[0].Size, BoardAnalysisWeights.bestWeights);
+            BoardListView.ItemsSource = boards.Select(b => new Tuple<IAnalysisResult, Board>(analyzer.Analyze(b), b));
+            BoardListView.SelectionChanged += BoardAnalysisListViewOnSelectionChanged;
             if (boards != null && boards.Count > 0)
             {
                 BoardUserControl.Board = boards[0];
@@ -52,7 +53,7 @@ namespace TakSOM
         private void BoardAnalysisListViewOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             BoardUserControl.Board = ((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item2;
-            BoardUserControl.DrawBoard();
+            BoardUserControl.DrawBoard((BoardAnalysisData)((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item1);
         }
     }
 }
