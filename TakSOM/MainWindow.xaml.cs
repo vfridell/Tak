@@ -89,7 +89,7 @@ namespace TakSOM
             if (_boardsToAnalyze.Count == 0) return;
             BoardAnalyzer analyzer = new BoardAnalyzer(_boardsToAnalyze[0].Item2.Size, BoardAnalysisWeights.bestWeights);
             SOMWeightsVector v = analyzer.GetSomWeightsVector(_boardsToAnalyze[0].Item2);
-            SOMTrainer trainer = new SOMTrainer();
+            SOMTrainer trainer = new SOMTrainer(.1, 1000);
             SOMLattice lattice = new SOMLattice(50, v.Count, analyzer);
             lattice.Initialize();
             List<SOMWeightsVector> weightsList = _boardsToAnalyze.Select(a => a.Item1.GetSomWeightsVector()).ToList();

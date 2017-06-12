@@ -81,8 +81,8 @@ namespace TakLib
             vector.Add(analysis.capStoneDiff);
             vector.Add(analysis.numberOfSubGraphsDiff);
             vector.Add(analysis.wallCountDiff);
-            vector.Add(analysis.possibleMovesDiff);
-            //vector.Add(analysis.winningResultDiff);
+            //vector.Add(analysis.possibleMovesDiff);
+            vector.Add(analysis.winningResultDiff);
             return vector;
         }
     }

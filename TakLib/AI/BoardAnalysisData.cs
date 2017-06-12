@@ -119,8 +119,8 @@ namespace TakLib
             vector.Add(capStoneDiff);
             vector.Add(numberOfSubGraphsDiff);
             vector.Add(wallCountDiff);
-            vector.Add(possibleMovesDiff);
-            //vector.Add(winningResultDiff);
+            //vector.Add(possibleMovesDiff);
+            vector.Add(winningResultDiff);
             return vector;
         }
     }
