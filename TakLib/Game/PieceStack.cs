@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace TakLib
 {
+    public enum StackType
+    {
+        Empty = 0,
+        WhiteSoft = 1,
+        WhiteHard = 2,
+        BlackSoft = -1,
+        BlackHard = -2
+    };
+
     [Serializable]
     public class PieceStack : Stack<Piece>
     {
+        private int[] _pieces = {0, 0};
+
         public PieceStack Clone()
         {
             PieceStack clone = new PieceStack();
@@ -18,6 +29,22 @@ namespace TakLib
             }
             return clone;
         }
+
+        public new void Push(Piece p)
+        {
+            base.Push(p);
+            _pieces[(int) p.Color]++;
+        }
+
+        public new Piece Pop()
+        {
+            Piece p = base.Pop();
+            _pieces[(int) p.Color]--;
+            return p;
+        }
+
+        public int OwnerPieceCount => Count > 0 ? _pieces[(int) Peek().Color] : 0;
+        public int CapturedPieceCount => Count > 0 ? (Peek().Color == PieceColor.White? _pieces[(int)PieceColor.Black] : _pieces[(int)PieceColor.White]) : 0;
 
         public override bool Equals(object obj)
         {

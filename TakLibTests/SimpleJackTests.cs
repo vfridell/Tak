@@ -270,6 +270,59 @@ namespace TakLibTests
         }
 
         [TestMethod]
+        public void UnwinnableSituation()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("a5"));
+            game.ApplyMove(NotationParser.Parse("c4"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+            game.ApplyMove(NotationParser.Parse("e3"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("c2"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("a3"));
+            game.ApplyMove(NotationParser.Parse("1c3<1"));
+            game.ApplyMove(NotationParser.Parse("1a3>1"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("Ce4"));
+
+            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
+            var moves = game.GetAllMoves();
+
+            //there are no valid blocking moves
+            List<Move> blockingMoves = new List<Move>();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "a3"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "Sa3"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "Ca3"));
+            blockingMoves.AddRange(moves.Where(m => m.ToString() == "a3" || m.ToString() == "Sa3" || m.ToString() == "Ca3"));
+
+            Move blockingMove = moves.First(m => m.ToString() == "Ca3");
+
+            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
+
+            IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
+            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
+            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
+            Board blockedBoard = game.CurrentBoard.Clone();
+            blockingMove.Apply(blockedBoard);
+
+            data = analyzer.Analyze(blockedBoard);
+
+            SimpleJack ai = new SimpleJack(4, game.CurrentBoard.Size);
+            ai.BeginNewGame(false, 5);
+            Move move = ai.PickBestMove(game.CurrentBoard);
+            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
+        }
+
+        [TestMethod]
         public void UnwinnableSituation2()
         {
             GameSetup gameSetup = new GameSetup()
@@ -307,59 +360,6 @@ namespace TakLibTests
             blockingMoves.AddRange(moves.Where(m => m.ToString() == "1d5>1"));
 
             Move blockingMove = moves.First(m => m.ToString() == "1d5>1");
-
-            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
-
-            IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
-            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
-            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
-            Board blockedBoard = game.CurrentBoard.Clone();
-            blockingMove.Apply(blockedBoard);
-
-            data = analyzer.Analyze(blockedBoard);
-
-            SimpleJack ai = new SimpleJack(4, game.CurrentBoard.Size);
-            ai.BeginNewGame(false, 5);
-            Move move = ai.PickBestMove(game.CurrentBoard);
-            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
-        }
-
-        [TestMethod]
-        public void UnwinnableSituation()
-        {
-            GameSetup gameSetup = new GameSetup()
-            {
-                WhitePlayer = new Player() { Name = "Player1" },
-                BlackPlayer = new Player() { Name = "Player2" },
-                BoardSize = 5
-            };
-
-            Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("b3"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("b4"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("d4"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("a3"));
-            game.ApplyMove(NotationParser.Parse("1c3<1"));
-            game.ApplyMove(NotationParser.Parse("1a3>1"));
-            game.ApplyMove(NotationParser.Parse("d2"));
-            game.ApplyMove(NotationParser.Parse("Ce4"));
-
-            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
-            var moves = game.GetAllMoves();
-
-            //there are no valid blocking moves
-            List<Move> blockingMoves = new List<Move>();
-            Assert.IsTrue(moves.Any(m => m.ToString() == "a3"));
-            Assert.IsTrue(moves.Any(m => m.ToString() == "Sa3"));
-            Assert.IsTrue(moves.Any(m => m.ToString() == "Ca3"));
-            blockingMoves.AddRange(moves.Where(m => m.ToString() == "a3" || m.ToString() == "Sa3" || m.ToString() == "Ca3"));
-
-            Move blockingMove = moves.First(m => m.ToString() == "Ca3");
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 

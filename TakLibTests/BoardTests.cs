@@ -110,6 +110,65 @@ namespace TakLibTests
         }
 
         [TestMethod]
+        public void StackCounts()
+        {
+            Piece whiteStone = new Piece(PieceColor.White, PieceType.Stone);
+            Piece whiteWall = new Piece(PieceColor.White, PieceType.Wall);
+            Piece whiteCap = new Piece(PieceColor.White, PieceType.CapStone);
+            Piece blackStone = new Piece(PieceColor.Black, PieceType.Stone);
+            Piece blackWall = new Piece(PieceColor.Black, PieceType.Wall);
+            Piece blackCap = new Piece(PieceColor.Black, PieceType.CapStone);
+
+            PieceStack stack1 = new PieceStack();
+            stack1.Push(blackStone);
+            Assert.AreEqual(1, stack1.OwnerPieceCount);
+            Assert.AreEqual(0, stack1.CapturedPieceCount);
+            stack1.Push(blackStone);
+            Assert.AreEqual(2, stack1.OwnerPieceCount);
+            Assert.AreEqual(0, stack1.CapturedPieceCount);
+            stack1.Push(whiteStone);
+            Assert.AreEqual(1, stack1.OwnerPieceCount);
+            Assert.AreEqual(2, stack1.CapturedPieceCount);
+            stack1.Push(whiteWall);
+            Assert.AreEqual(2, stack1.OwnerPieceCount);
+            Assert.AreEqual(2, stack1.CapturedPieceCount);
+
+            PieceStack stack2 = new PieceStack();
+            stack2.Push(blackStone);
+            stack2.Push(whiteStone);
+            stack2.Push(blackCap);
+            Assert.AreEqual(2, stack2.OwnerPieceCount);
+            Assert.AreEqual(1, stack2.CapturedPieceCount);
+            stack2.Pop();
+            Assert.AreEqual(1, stack2.OwnerPieceCount);
+            Assert.AreEqual(1, stack2.CapturedPieceCount);
+            stack2.Pop();
+            Assert.AreEqual(1, stack2.OwnerPieceCount);
+            Assert.AreEqual(0, stack2.CapturedPieceCount);
+
+            PieceStack stack3 = new PieceStack();
+            stack3.Push(blackStone);
+            stack3.Push(blackStone);
+            stack3.Push(blackStone);
+            Assert.AreEqual(3, stack3.OwnerPieceCount);
+            Assert.AreEqual(0, stack3.CapturedPieceCount);
+
+            PieceStack stack4 = new PieceStack();
+            stack4.Push(whiteStone);
+            stack4.Push(whiteStone);
+            stack4.Push(whiteStone);
+            stack4.Push(whiteStone);
+            stack4.Push(whiteStone);
+            stack4.Push(blackStone);
+            Assert.AreEqual(1, stack4.OwnerPieceCount);
+            Assert.AreEqual(5, stack4.CapturedPieceCount);
+
+            PieceStack stack5 = new PieceStack();
+            Assert.AreEqual(0, stack5.OwnerPieceCount);
+            Assert.AreEqual(0, stack5.CapturedPieceCount);
+        }
+
+        [TestMethod]
         public void CornerCheck()
         {
             RoadFinder roadFinder = new RoadFinder(5);
