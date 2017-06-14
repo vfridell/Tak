@@ -9,18 +9,18 @@ namespace TakLib
 {
     // this class must be thread safe
     [Serializable]
-    public class BoardAnalyzer : IBoardAnalyzer
+    public class BoardStacksAnalyzer : IBoardAnalyzer
     {
         protected readonly int _boardSize;
         protected BoardAnalysisWeights _weights;
 
-        public BoardAnalyzer(int boardSize, BoardAnalysisWeights weights)
+        public BoardStacksAnalyzer(int boardSize, BoardAnalysisWeights weights)
         {
             _weights = weights;
             _boardSize = boardSize;
         }
 
-        public virtual IAnalysisResult Analyze (Board board)
+        public IAnalysisResult Analyze (Board board)
         {
             BoardAnalysisData d = new BoardAnalysisData();
             d.weights = _weights;
@@ -56,7 +56,7 @@ namespace TakLib
             return d;
         }
 
-        protected virtual void CountWalls(Board board, BoardAnalysisData data)
+        private void CountWalls(Board board, BoardAnalysisData data)
         {
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
@@ -71,7 +71,22 @@ namespace TakLib
             }
         }
 
-        public virtual SOMWeightsVector GetSomWeightsVector(Board board)
+        private void AnalyzeStacks(Board board, BoardAnalysisData data)
+        {
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                Space space = board.GetSpace(c);
+                if (space.Piece?.Type == PieceType.Wall)
+                {
+                    if (space.Piece?.Color == PieceColor.White)
+                        data.whiteWallCount++;
+                    else
+                        data.blackWallCount++;
+                }
+            }
+        }
+
+        public SOMWeightsVector GetSomWeightsVector(Board board)
         {
             SOMWeightsVector vector = new SOMWeightsVector();
             BoardAnalysisData analysis = (BoardAnalysisData)Analyze(board);

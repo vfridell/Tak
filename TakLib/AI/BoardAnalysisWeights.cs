@@ -17,6 +17,7 @@ namespace TakLib
         public int movementPlacementDiffWeight;
         public int longestSubGraphDiffWeight;
         public int numberOfSubGraphsDiffWeight;
+        public int stacksAdvantageDiffWeight;
 
         public static BoardAnalysisWeights bestWeights = new BoardAnalysisWeights()
         {
@@ -27,6 +28,7 @@ namespace TakLib
             averageSubGraphDiffWeight = 10,
             longestSubGraphDiffWeight = 10,
             numberOfSubGraphsDiffWeight = 1,
+            stacksAdvantageDiffWeight = 1,
         };
 
         public static BoardAnalysisWeights testingWeights = new BoardAnalysisWeights()
@@ -38,6 +40,7 @@ namespace TakLib
             averageSubGraphDiffWeight = 10,
             longestSubGraphDiffWeight = 50,
             numberOfSubGraphsDiffWeight = 1,
+            stacksAdvantageDiffWeight = 1,
         };
 
         public static BoardAnalysisWeights zeroWeights = new BoardAnalysisWeights()
@@ -49,7 +52,9 @@ namespace TakLib
             averageSubGraphDiffWeight = 0,
             longestSubGraphDiffWeight = 0,
             numberOfSubGraphsDiffWeight = 0,
+            stacksAdvantageDiffWeight = 0,
         };
+
 
         public override string ToString()
         {
