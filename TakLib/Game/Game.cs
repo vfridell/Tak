@@ -105,19 +105,21 @@ namespace TakLib
         public string GetMoveTranscript()
         {
             StringBuilder sb = new StringBuilder();
-            int i = 1;
-            while(i <= _movesMade.Count)
+            int move = 1;
+            int round = 1;
+            while(move <= _movesMade.Count)
             {
-                string turnNumber = $"{Math.Max((int)(Math.Floor(i / 2m)), 1).ToString()}. ";
-                sb.Append(turnNumber).Append(_movesMade[i-1]).Append(" ");
-                i++;
-                if (i > _movesMade.Count)
+                string roundNumber = $"{round}. ";
+                sb.Append(roundNumber).Append(_movesMade[move-1]).Append(" ");
+                move++;
+                if (move > _movesMade.Count)
                 {
                     sb.Append("\n");
                     break;
                 }
-                sb.Append(_movesMade[i-1]).Append("\n");
-                i++;
+                sb.Append(_movesMade[move-1]).Append("\n");
+                move++;
+                round++;
             }
             return sb.ToString();
         }
@@ -129,10 +131,17 @@ namespace TakLib
             //[Player2 "Black"]
             //[Result ""]
             //[Size "5"]
+            string resultString = "";
+            if (GameResult == GameResult.BlackFlat) resultString = "0-F";
+            if (GameResult == GameResult.BlackRoad) resultString = "0-R";
+            if (GameResult == GameResult.WhiteFlat) resultString = "F-0";
+            if (GameResult == GameResult.WhiteRoad) resultString = "R-0";
+            if (GameResult == GameResult.Draw) resultString = "0-0-0";
+
             return $"[Date \"{DateTime.Today:yyyy.MM.dd}\"]\n" + 
                     $"[Player1 \"{WhitePlayer.Name}\"]\n" +
                     $"[Player2 \"{BlackPlayer.Name}\"]\n" +
-                    $"[Result \"{GameResult}\"]\n" +
+                    $"[Result \"{resultString}\"]\n" +
                     $"[Size \"{CurrentBoard.Size}\"]\n";
         }
 

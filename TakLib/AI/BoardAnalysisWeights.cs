@@ -28,7 +28,7 @@ namespace TakLib
             averageSubGraphDiffWeight = 10,
             longestSubGraphDiffWeight = 10,
             numberOfSubGraphsDiffWeight = 1,
-            stacksAdvantageDiffWeight = 1,
+            stacksAdvantageDiffWeight = 100,
         };
 
         public static BoardAnalysisWeights testingWeights = new BoardAnalysisWeights()
@@ -64,7 +64,8 @@ namespace TakLib
                     string.Format("wallCountDiffWeight: {0} \n", wallCountDiffWeight) +
                     string.Format("averageSubGraphDiffWeight: {0} \n", averageSubGraphDiffWeight) +
                     string.Format("numberOfSubGraphsDiffWeight: {0} \n", numberOfSubGraphsDiffWeight) +
-                    string.Format("longestSubGraphDiffWeight: {0} \n", longestSubGraphDiffWeight);
+                    string.Format("longestSubGraphDiffWeight: {0} \n", longestSubGraphDiffWeight) +
+                    string.Format("stacksAdvantageDiffWeight: {0} \n", stacksAdvantageDiffWeight);
         }
     }
 }

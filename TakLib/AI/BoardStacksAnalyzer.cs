@@ -22,7 +22,7 @@ namespace TakLib
 
         public IAnalysisResult Analyze (Board board)
         {
-            BoardAnalysisData d = new BoardAnalysisData();
+            BoardStacksAnalysis d = new BoardStacksAnalysis();
             d.weights = _weights;
             d.gameResult = board.GameResult;
             d.blackCapStonesInHand = board.CapStonesInHand(PieceColor.Black);
@@ -56,7 +56,7 @@ namespace TakLib
             return d;
         }
 
-        private void CountWalls(Board board, BoardAnalysisData data)
+        private void CountWalls(Board board, BoardStacksAnalysis data)
         {
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
@@ -71,25 +71,33 @@ namespace TakLib
             }
         }
 
-        private void AnalyzeStacks(Board board, BoardAnalysisData data)
+        private void AnalyzeStacks(Board board, BoardStacksAnalysis data)
         {
+
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
-                if (space.Piece?.Type == PieceType.Wall)
-                {
-                    if (space.Piece?.Color == PieceColor.White)
-                        data.whiteWallCount++;
-                    else
-                        data.blackWallCount++;
-                }
+                if (space.IsEmpty) continue;
+                PieceStack stack = board.GetPieceStack(c);
+                DistanceAvailable up = board.GetDistanceAvailable(c, Direction.Up);
+                DistanceAvailable down = board.GetDistanceAvailable(c, Direction.Down);
+                DistanceAvailable left = board.GetDistanceAvailable(c, Direction.Left);
+                DistanceAvailable right = board.GetDistanceAvailable(c, Direction.Right);
+                int stackAdvantage = (stack.OwnerPieceCount * up.Distance) +
+                    (stack.OwnerPieceCount * down.Distance) +
+                    (stack.OwnerPieceCount * left.Distance) +
+                    (stack.OwnerPieceCount * right.Distance);
+                if (space.ColorEquals(PieceColor.White))
+                    data.whiteStackAdvantage += stackAdvantage;
+                else
+                    data.blackStackAdvantage += stackAdvantage;
             }
         }
 
         public SOMWeightsVector GetSomWeightsVector(Board board)
         {
             SOMWeightsVector vector = new SOMWeightsVector();
-            BoardAnalysisData analysis = (BoardAnalysisData)Analyze(board);
+            BoardStacksAnalysis analysis = (BoardStacksAnalysis)Analyze(board);
             vector.Add(analysis.flatScore);
             vector.Add(analysis.averageSubGraphDiff);
             vector.Add(analysis.longestSubGraphDiff);
@@ -98,6 +106,7 @@ namespace TakLib
             vector.Add(analysis.wallCountDiff);
             //vector.Add(analysis.possibleMovesDiff);
             vector.Add(analysis.winningResultDiff);
+            vector.Add(analysis.stacksAdvantageDiff);
             return vector;
         }
     }
