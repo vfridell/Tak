@@ -76,20 +76,7 @@ namespace TakLib
 
         public BoardAnalysisWeights weights;
 
-        public int whiteAdvantage
-        {
-            get
-            {
-                if(winningResultDiff != 0) return winningResultDiff;
-                return (capStoneDiff * weights.capStoneDiffWeight) +
-                        (flatScore * weights.flatScoreWeight) +
-                        (possibleMovesDiff * weights.possibleMovesDiffWeight) +
-                        (wallCountDiff * weights.wallCountDiffWeight) +
-                        (averageSubGraphDiff * weights.averageSubGraphDiffWeight) +
-                        (longestSubGraphDiff * weights.longestSubGraphDiffWeight) +
-                        (numberOfSubGraphsDiff * weights.numberOfSubGraphsDiffWeight);
-            }
-        }
+        public int whiteAdvantage { get; set; }
 
         public BoardAnalysisData() { }
 

@@ -34,13 +34,13 @@ namespace TakLib
         public static BoardAnalysisWeights bestStackWeights = new BoardAnalysisWeights()
         {
             capStoneDiffWeight = 1,
-            flatScoreWeight = 33,
-            possibleMovesDiffWeight = 1,
+            flatScoreWeight = 86,
+            possibleMovesDiffWeight = 0,
             wallCountDiffWeight = 5,
-            averageSubGraphDiffWeight = 13,
-            longestSubGraphDiffWeight = 13,
+            averageSubGraphDiffWeight = 15,
+            longestSubGraphDiffWeight = 15,
             numberOfSubGraphsDiffWeight = 1,
-            stacksAdvantageDiffWeight = 20,
+            stacksAdvantageDiffWeight = 10,
         };
 
         public static BoardAnalysisWeights zeroWeights = new BoardAnalysisWeights()

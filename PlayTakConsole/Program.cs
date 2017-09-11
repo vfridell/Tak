@@ -21,8 +21,8 @@ namespace PlayTakConsole
 
                 //ITakAI AI = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
                 ITakAI AI = new JohnnyDeep(3,
-                    new BoardStacksAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights), "Johnny3Stacks");
-                ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestStackWeights));
+                    new BoardStacksAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestStackWeights), "Johnny3Stacks");
+                ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
                 //ITakAI AI2 = new SimpleJack(3, gameSetup.BoardSize);
                 //ITakAI AI2 = new RandomAI();
 

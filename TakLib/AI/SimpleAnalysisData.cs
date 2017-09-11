@@ -31,7 +31,11 @@ namespace TakLib
             }
         }
 
-        public int whiteAdvantage => winningResultDiff;
+        public int whiteAdvantage
+        {
+            get { return winningResultDiff; }
+            set { }
+        }
 
         public SimpleAnalysisData() { }
 

@@ -38,6 +38,11 @@ namespace TakLib
             d.flatScore = board.FlatScore;
             d.emptySpaces = board.EmptySpaces;
             d.gameResult = GameResultService.GetGameResult(board);
+            if (d.winningResultDiff != 0)
+            {
+                d.whiteAdvantage = d.winningResultDiff;
+                return d;
+            }
             d.whiteToPlay = board.WhiteToPlay;
             d.turnNumber = board.Turn;
             CountWalls(board, d);
@@ -52,6 +57,14 @@ namespace TakLib
             d.blackLongestSubgraph = roadFinder.LongestSubGraphLength;
             d.blackAverageSubgraph = roadFinder.AverageSubGraphLength;
             d.blackNumberOfSubgraphs = roadFinder.SubGraphCount;
+
+            d.whiteAdvantage = (d.capStoneDiff * d.weights.capStoneDiffWeight) +
+                               (d.flatScore * d.weights.flatScoreWeight) +
+                               (d.possibleMovesDiff * d.weights.possibleMovesDiffWeight) +
+                               (d.wallCountDiff * d.weights.wallCountDiffWeight) +
+                               (d.averageSubGraphDiff * d.weights.averageSubGraphDiffWeight) +
+                               (d.longestSubGraphDiff * d.weights.longestSubGraphDiffWeight) +
+                               (d.numberOfSubGraphsDiff * d.weights.numberOfSubGraphsDiffWeight);
 
             return d;
         }
