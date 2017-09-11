@@ -10,6 +10,8 @@ namespace PlayTakConsole
 
         static void Main(string[] args)
         {
+            int gamesToPlay = 15;
+            bool AIWhite = true;
             do
             {
                 GameSetup gameSetup = new GameSetup()
@@ -18,24 +20,26 @@ namespace PlayTakConsole
                 };
 
                 //ITakAI AI = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
-                ITakAI AI = new JohnnyDeep(3, new BoardStacksAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights), "Johnny3Stacks");
-                //ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
+                ITakAI AI = new JohnnyDeep(3,
+                    new BoardStacksAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights), "Johnny3Stacks");
+                ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestStackWeights));
                 //ITakAI AI2 = new SimpleJack(3, gameSetup.BoardSize);
-                ITakAI AI2 = new RandomAI();
+                //ITakAI AI2 = new RandomAI();
 
-                YesNo yn = PromptYesOrNo(string.Format("Is {0} playing white? ", AI.Name));
+                YesNo yn = YesNo.Yes;
 
                 Game game;
-                if (yn == YesNo.Yes)
+                if (AIWhite)
                 {
-                    gameSetup.WhitePlayer = (Player)AI;
-                    gameSetup.BlackPlayer = (Player)AI2;
+                    gameSetup.WhitePlayer = (Player) AI;
+                    gameSetup.BlackPlayer = (Player) AI2;
                 }
                 else
                 {
-                    gameSetup.WhitePlayer = (Player)AI2;
-                    gameSetup.BlackPlayer = (Player)AI;
+                    gameSetup.WhitePlayer = (Player) AI2;
+                    gameSetup.BlackPlayer = (Player) AI;
                 }
+
                 game = Game.GetNewGame(gameSetup);
 
                 AI.BeginNewGame(yn == YesNo.Yes, gameSetup.BoardSize);
@@ -57,17 +61,16 @@ namespace PlayTakConsole
                     DateTime beginTimestamp = DateTime.Now;
                     move = currentAI.MakeBestMove(game);
                     TimeSpan timespan = DateTime.Now.Subtract(beginTimestamp);
-                    Console.WriteLine(string.Format("{0} seconds {1} Moved: {2}", timespan.TotalSeconds, currentAI.Name, move));
+                    Console.WriteLine(string.Format("{0} seconds {1} Moved: {2}", timespan.TotalSeconds, currentAI.Name,
+                        move));
                 } while (game.GameResult == GameResult.Incomplete);
 
                 Console.WriteLine(GetWinnerString(game));
-                if (PromptYesOrNo("Write out game transcript?") == YesNo.Yes)
-                {
-                    string filename = Game.WriteGameTranscript(game);
-                    Console.WriteLine("Written to " + filename);
-                }
+                string filename = Game.WriteGameTranscript(game);
+                Console.WriteLine("Written to " + filename);
 
-            } while (PromptYesOrNo("Play again?") == YesNo.Yes);
+                AIWhite = !AIWhite;
+            } while (gamesToPlay-- > 0);
         }
 
         private static string GetWinnerString(Game game)

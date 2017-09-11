@@ -41,6 +41,7 @@ namespace TakLib
             d.whiteToPlay = board.WhiteToPlay;
             d.turnNumber = board.Turn;
             CountWalls(board, d);
+            AnalyzeStacks(board, d);
 
             RoadFinder roadFinder = new RoadFinder(_boardSize);
             roadFinder.Analyze(board, PieceColor.White);
@@ -79,6 +80,7 @@ namespace TakLib
                 Space space = board.GetSpace(c);
                 if (space.IsEmpty) continue;
                 PieceStack stack = board.GetPieceStack(c);
+                if(stack.Count == 1) continue;
                 DistanceAvailable up = board.GetDistanceAvailable(c, Direction.Up);
                 DistanceAvailable down = board.GetDistanceAvailable(c, Direction.Down);
                 DistanceAvailable left = board.GetDistanceAvailable(c, Direction.Left);

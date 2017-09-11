@@ -135,7 +135,7 @@ namespace TakLibTests
 
             Move blockingMove = moves.First(m => m.ToString() == "Cd1");
 
-            BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
+            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
             IBoardAnalyzer analyzer = new SimpleAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
@@ -199,7 +199,7 @@ namespace TakLibTests
             Assert.IsTrue(moves.Any(m => m.ToString() == "4a4-112"));
             Move winningMove = moves.First(m => m.ToString() == "4a4-112");
 
-            BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
+            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
             IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
@@ -506,7 +506,7 @@ namespace TakLibTests
             Assert.IsTrue(moves.Any(m => m.ToString() == "1a4+1"));
             Move winningMove = moves.First(m => m.ToString() == "1a4+1");
 
-            BoardAnalysisWeights weights = BoardAnalysisWeights.testingWeights;
+            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
             IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);

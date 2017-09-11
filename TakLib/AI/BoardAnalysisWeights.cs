@@ -28,19 +28,19 @@ namespace TakLib
             averageSubGraphDiffWeight = 10,
             longestSubGraphDiffWeight = 10,
             numberOfSubGraphsDiffWeight = 1,
-            stacksAdvantageDiffWeight = 100,
+            stacksAdvantageDiffWeight = 0,
         };
 
-        public static BoardAnalysisWeights testingWeights = new BoardAnalysisWeights()
+        public static BoardAnalysisWeights bestStackWeights = new BoardAnalysisWeights()
         {
             capStoneDiffWeight = 1,
-            flatScoreWeight = 50,
+            flatScoreWeight = 33,
             possibleMovesDiffWeight = 1,
-            wallCountDiffWeight = 2,
-            averageSubGraphDiffWeight = 10,
-            longestSubGraphDiffWeight = 50,
+            wallCountDiffWeight = 5,
+            averageSubGraphDiffWeight = 13,
+            longestSubGraphDiffWeight = 13,
             numberOfSubGraphsDiffWeight = 1,
-            stacksAdvantageDiffWeight = 1,
+            stacksAdvantageDiffWeight = 20,
         };
 
         public static BoardAnalysisWeights zeroWeights = new BoardAnalysisWeights()
