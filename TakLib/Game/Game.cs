@@ -136,7 +136,7 @@ namespace TakLib
             if (GameResult == GameResult.BlackRoad) resultString = "0-R";
             if (GameResult == GameResult.WhiteFlat) resultString = "F-0";
             if (GameResult == GameResult.WhiteRoad) resultString = "R-0";
-            if (GameResult == GameResult.Draw) resultString = "0-0-0";
+            if (GameResult == GameResult.Draw) resultString = "1/2-1/2";
 
             return $"[Date \"{DateTime.Today:yyyy.MM.dd}\"]\n" + 
                     $"[Player1 \"{WhitePlayer.Name}\"]\n" +
