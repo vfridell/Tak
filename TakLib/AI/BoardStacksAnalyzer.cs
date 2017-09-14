@@ -117,6 +117,7 @@ namespace TakLib
                     (stack.OwnerPieceCount * down.Distance) +
                     (stack.OwnerPieceCount * left.Distance) +
                     (stack.OwnerPieceCount * right.Distance);
+                stackAdvantage -= stack.CapturedPieceCount;
                 if (space.ColorEquals(PieceColor.White))
                     data.whiteStackAdvantage += stackAdvantage;
                 else
