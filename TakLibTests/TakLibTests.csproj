@@ -52,13 +52,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="OptimusDeepTests.cs" />
     <Compile Include="SimpleJackTests.cs" />
     <Compile Include="GameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NotationParserTests.cs" />
     <Compile Include="BoardTests.cs" />
     <Compile Include="MoveTests.cs" />
-    <Compile Include="AITests.cs" />
+    <Compile Include="JohnnyDeepTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TakLib\TakLib.csproj">

@@ -14,8 +14,8 @@ namespace TakLib
         private bool _playingWhite;
         private int _depth;
         private IBoardAnalyzer _analyzer;
-        public readonly int MinValue = SimpleAnalysisData.MinValue;
-        public readonly int MaxValue = SimpleAnalysisData.MaxValue;
+        public readonly double MinValue = SimpleAnalysisData.MinValue;
+        public readonly double MaxValue = SimpleAnalysisData.MaxValue;
 
         public JohnnyDeep(int depth, IBoardAnalyzer boardAnalyzer)
         {

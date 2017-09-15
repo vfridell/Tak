@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace TakLibTests
 {
     [TestClass]
-    public class AITests
+    public class JohnnyDeepTests
     {
         [TestMethod]
         public void JustWinAlready()

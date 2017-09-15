@@ -14,7 +14,7 @@ namespace TakLib
         public double possibleMovesDiffWeight;
         public double wallCountDiffWeight;
         public double averageSubGraphDiffWeight;
-        public double movementPlacementDiffWeight;
+        //public double movementPlacementDiffWeight;
         public double longestSubGraphDiffWeight;
         public double numberOfSubGraphsDiffWeight;
         public double stacksAdvantageDiffWeight;

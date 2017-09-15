@@ -63,6 +63,7 @@
     <Compile Include="AI\Helpers\SOMNode.cs" />
     <Compile Include="AI\Helpers\SOMTrainer.cs" />
     <Compile Include="AI\Helpers\SOMWeightsVector.cs" />
+    <Compile Include="AI\OptimusDeep.cs" />
     <Compile Include="Game\ArrayMaker.cs" />
     <Compile Include="Game\Board.cs" />
     <Compile Include="AI\SimpleJack.cs" />
