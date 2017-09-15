@@ -51,7 +51,7 @@ namespace TakLib
         {
             Move bestMove;
             var cancelSource = new CancellationTokenSource();
-            int score;
+            double score;
             score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
             return bestMove;
         }
@@ -60,7 +60,7 @@ namespace TakLib
         {
             return Task.Run(() => {
                 Move bestMove;
-                int score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                double score = Negamax(board, null, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
                 return bestMove;
             });
         }
@@ -70,7 +70,7 @@ namespace TakLib
             _playingWhite = playingWhite;
         }
 
-        private int Negamax(Board board, Move fromMove, int alpha, int beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private double Negamax(Board board, Move fromMove, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
         {
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || board.GameResult != GameResult.Incomplete)
@@ -80,13 +80,13 @@ namespace TakLib
             }
 
             IEnumerable<Tuple<Move,Board>> orderedAnalysis = GetSortedMoves(board, aiCancelToken);
-            int bestScore = MinValue;
+            double bestScore = MinValue;
             Move localBestMove = orderedAnalysis.First().Item1;
 
             foreach (var kvp in orderedAnalysis)
             {
                 Move subBestMove;
-                int score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
+                double score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
                 if (score > bestScore) localBestMove = kvp.Item1;
                 bestScore = Math.Max(bestScore, score);
                 alpha = Math.Max(alpha, score);

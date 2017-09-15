@@ -80,7 +80,7 @@ namespace TakLib
 
         public BoardAnalysisWeights weights;
 
-        public int whiteAdvantage { get; set; }
+        public double whiteAdvantage { get; set; }
         public BoardStacksAnalysis() { }
 
         public override string ToString()

@@ -1,0 +1,13 @@
+[Date "2017.09.11"]
+[Player1 "Johnny3Deep"]
+[Player2 "Johnny3Stacks"]
+[Result "0-R"]
+[Size "5"]
+1. a1 e5
+2. e4 b1
+3. d3 c2
+4. d4 b3
+5. d1 Cd2
+6. a2 c3
+7. c4 e2
+8. c1 b2

@@ -9,15 +9,15 @@ namespace TakLib
     [Serializable]
     public struct BoardAnalysisWeights
     {
-        public int capStoneDiffWeight;
-        public int flatScoreWeight;
-        public int possibleMovesDiffWeight;
-        public int wallCountDiffWeight;
-        public int averageSubGraphDiffWeight;
-        public int movementPlacementDiffWeight;
-        public int longestSubGraphDiffWeight;
-        public int numberOfSubGraphsDiffWeight;
-        public int stacksAdvantageDiffWeight;
+        public double capStoneDiffWeight;
+        public double flatScoreWeight;
+        public double possibleMovesDiffWeight;
+        public double wallCountDiffWeight;
+        public double averageSubGraphDiffWeight;
+        public double movementPlacementDiffWeight;
+        public double longestSubGraphDiffWeight;
+        public double numberOfSubGraphsDiffWeight;
+        public double stacksAdvantageDiffWeight;
 
         public static BoardAnalysisWeights bestWeights = new BoardAnalysisWeights()
         {

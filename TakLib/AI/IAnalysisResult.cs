@@ -4,7 +4,7 @@ namespace TakLib
 {
     public interface IAnalysisResult
     {
-        int whiteAdvantage { get; set; }
+        double whiteAdvantage { get; set; }
         GameResult gameResult { get; }
         SOMWeightsVector GetSomWeightsVector();
     }
