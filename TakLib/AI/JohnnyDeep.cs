@@ -87,7 +87,7 @@ namespace TakLib
             {
                 Move subBestMove;
                 double score = -Negamax(kvp.Item2, kvp.Item1, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                if (score > bestScore) localBestMove = kvp.Item1;
+                if (score >= bestScore) localBestMove = kvp.Item1;
                 bestScore = Math.Max(bestScore, score);
                 alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
