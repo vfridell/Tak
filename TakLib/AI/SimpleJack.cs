@@ -103,7 +103,6 @@ namespace TakLib
 
             IEnumerable<NegamaxContext> orderedAnalysis = GetSortedMoves(context.Board, color, aiCancelToken);
             double bestScore = MinValue;
-            Move localBestMove = orderedAnalysis.First().Move;
 
             foreach (var nextContext in orderedAnalysis)
             {
@@ -132,8 +131,9 @@ namespace TakLib
 
             aiCancelToken.ThrowIfCancellationRequested();
 
-            return color == 1 ? localMovesData.OrderByDescending(m => m.Board.FlatScore) :
-                                  localMovesData.OrderBy(m => m.Board.FlatScore);
+            return color == 1
+                ? localMovesData.OrderBy( m => m.Board.GameResult == GameResult.WhiteFlat || m.Board.GameResult == GameResult.WhiteRoad ? 1 : 2)
+                : localMovesData.OrderBy( m => m.Board.GameResult == GameResult.BlackFlat || m.Board.GameResult == GameResult.BlackRoad ? 1 : 2);
         }
 
         private string _name;

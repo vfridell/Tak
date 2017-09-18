@@ -20,10 +20,10 @@ namespace PlayTakConsole
                 };
 
                 //ITakAI AI = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
-                ITakAI AI = new OptimusDeep(3,
+                ITakAI AI = new OptimusDeep(4,
                     new BoardStacksAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestStackWeights));
-                ITakAI AI2 = new JohnnyDeep(3, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
-                //ITakAI AI2 = new SimpleJack(3, gameSetup.BoardSize);
+                ITakAI AI2 = new JohnnyDeep(4, new BoardAnalyzer(gameSetup.BoardSize, BoardAnalysisWeights.bestWeights));
+                //ITakAI AI2 = new SimpleJack(4, gameSetup.BoardSize);
                 //ITakAI AI2 = new RandomAI();
 
                 YesNo yn = YesNo.Yes;
@@ -42,8 +42,8 @@ namespace PlayTakConsole
 
                 game = Game.GetNewGame(gameSetup);
 
-                AI.BeginNewGame(yn == YesNo.Yes, gameSetup.BoardSize);
-                AI2.BeginNewGame(yn == YesNo.No, gameSetup.BoardSize);
+                AI.BeginNewGame(AIWhite, gameSetup.BoardSize);
+                AI2.BeginNewGame(!AIWhite, gameSetup.BoardSize);
 
                 do
                 {
@@ -61,8 +61,7 @@ namespace PlayTakConsole
                     DateTime beginTimestamp = DateTime.Now;
                     move = currentAI.MakeBestMove(game);
                     TimeSpan timespan = DateTime.Now.Subtract(beginTimestamp);
-                    Console.WriteLine(string.Format("{0} seconds {1} Moved: {2}", timespan.TotalSeconds, currentAI.Name,
-                        move));
+                    Console.WriteLine($"{timespan.TotalSeconds} seconds {currentAI.Name} Moved: {move}");
                 } while (game.GameResult == GameResult.Incomplete);
 
                 Console.WriteLine(GetWinnerString(game));

@@ -180,11 +180,11 @@ namespace TakLibTests
             Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
             var moves = game.GetAllMoves();
 
-            //there are four blocking moves
-            // d1, Sd1, Cd1, 1c3>1
+            //there are two winning moves
+            // d1, Cd1
             List<Move> winningMoves = new List<Move>();
-            Assert.IsTrue(moves.Any(m => m.ToString() == "d1"));
-            winningMoves.AddRange(moves.Where(m => m.ToString() == "d1"));
+            Assert.IsTrue(moves.Any(m => m.ToString() == "d1" || m.ToString() == "Cd1"));
+            winningMoves.AddRange(moves.Where(m => m.ToString() == "d1" || m.ToString() == "Cd1"));
 
             Move winningMove = moves.First(m => m.ToString() == "d1");
 

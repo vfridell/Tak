@@ -47,22 +47,20 @@ namespace TakLib
             return move;
         }
 
+
         public Move PickBestMove(Board board)
         {
-            Move bestMove;
             var cancelSource = new CancellationTokenSource();
-            double score;
             var initialContext = new NegamaxContext(null, board, 0, false);
-            score = Negamax(initialContext, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token, out bestMove);
+            Move bestMove = NegamaxRoot(initialContext, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, cancelSource.Token);
             return bestMove;
         }
 
         public Task<Move> PickBestMoveAsync(Board board, CancellationToken aiCancelToken)
         {
             return Task.Run(() => {
-                Move bestMove;
                 var initialContext = new NegamaxContext(null, board, 0, false);
-                double score = Negamax(initialContext, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken, out bestMove);
+                Move bestMove = NegamaxRoot(initialContext, MinValue, MaxValue, _depth, playingWhite ? 1 : -1, aiCancelToken);
                 return bestMove;
             });
         }
@@ -72,12 +70,32 @@ namespace TakLib
             _playingWhite = playingWhite;
         }
 
-        private double Negamax(NegamaxContext context, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken, out Move bestMove)
+        private Move NegamaxRoot(NegamaxContext context, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken)
+        {
+            aiCancelToken.ThrowIfCancellationRequested();
+
+            IEnumerable<NegamaxContext> orderedAnalysis = GetSortedMoves(context.Board, color, aiCancelToken);
+            double bestScore = MinValue;
+            Move localBestMove = orderedAnalysis.First().Move;
+
+            foreach (var nextContext in orderedAnalysis)
+            {
+                double score = -Negamax(nextContext, -beta, -alpha, depth - 1, -color, aiCancelToken);
+                if (score > bestScore) localBestMove = nextContext.Move;
+                bestScore = Math.Max(bestScore, score);
+                alpha = Math.Max(alpha, score);
+                if (alpha >= beta)
+                    break;
+            };
+
+            return localBestMove;
+        }
+
+        private double Negamax(NegamaxContext context, double alpha, double beta, int depth, int color, CancellationToken aiCancelToken)
         {
             aiCancelToken.ThrowIfCancellationRequested();
             if (depth == 0 || context.Board.GameResult != GameResult.Incomplete)
             {
-                bestMove = null;
                 if(context.ScoreCalculated) return context.Score * color;
                 else
                 {
@@ -87,53 +105,53 @@ namespace TakLib
 
             IEnumerable<NegamaxContext> orderedAnalysis = GetSortedMoves(context.Board, color, aiCancelToken);
             double bestScore = MinValue;
-            Move localBestMove = orderedAnalysis.First().Move;
 
             foreach (var nextContext in orderedAnalysis)
             {
-                Move subBestMove;
-                double score = -Negamax(nextContext, -beta, -alpha, depth - 1, -color, aiCancelToken, out subBestMove);
-                if (score >= bestScore) localBestMove = nextContext.Move;
+                double score = -Negamax(nextContext, -beta, -alpha, depth - 1, -color, aiCancelToken);
                 bestScore = Math.Max(bestScore, score);
                 alpha = Math.Max(alpha, score);
                 if (alpha >= beta)
                     break;
             };
 
-            bestMove = localBestMove;
             return bestScore;
         }
 
         private IEnumerable<NegamaxContext> GetSortedMoves(Board board, int color, CancellationToken aiCancelToken)
         {
-            var advantageDict = new SortedDictionary<double, HashSet<NegamaxContext>>();
-            var allMoves = board.GetAllMoves();
-            foreach (Move move in allMoves)
-            {
-                var futureBoard = Board.ComputeFutureBoard(board, move);
-                double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage;
-                if (!advantageDict.ContainsKey(currentAdvantage))
-                    advantageDict.Add(currentAdvantage, new HashSet<NegamaxContext>());
-                advantageDict[currentAdvantage].Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
-            }
-
-            //Parallel.ForEach(allMoves, (move, parallelLoopState) =>
+            //var advantageDict = new SortedDictionary<double, HashSet<NegamaxContext>>();
+            //var allMoves = board.GetAllMoves();
+            //foreach (Move move in allMoves)
             //{
-            //    if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
-            //    if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
             //    var futureBoard = Board.ComputeFutureBoard(board, move);
             //    double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage;
             //    if (!advantageDict.ContainsKey(currentAdvantage))
-            //        advantageDict.AddOrUpdate(currentAdvantage, (v) => { return new HashSet<NegamaxContext> { new NegamaxContext(move, futureBoard, currentAdvantage, true) }; }, new NegamaxContext(move, futureBoard, currentAdvantage, true));
+            //        advantageDict.Add(currentAdvantage, new HashSet<NegamaxContext>());
             //    advantageDict[currentAdvantage].Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
-            //});
+            //}
+            //foreach (var kvp in color == 1 ? advantageDict.Reverse() : advantageDict)
+            //{
+            //    foreach (var pair in kvp.Value) yield return pair;
+            //}
 
-
-            foreach (var kvp in color == 1 ? advantageDict.Reverse() : advantageDict)
+            var advantageBag = new ConcurrentBag<NegamaxContext>();
+            var allMoves = board.GetAllMoves();
+            Parallel.ForEach(allMoves, (move, parallelLoopState) =>
             {
-                foreach (var pair in kvp.Value) yield return pair;
-            }
+                if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
+                if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
+                var futureBoard = Board.ComputeFutureBoard(board, move);
+                double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage;
+                advantageBag.Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
+            });
 
+            IEnumerable<NegamaxContext> sortedContexts = color == 1 ? advantageBag.ToList().OrderByDescending(c => c.Score) : advantageBag.ToList().OrderBy(c => c.Score);
+
+            foreach (var context in sortedContexts)
+            {
+                yield return context;
+            }
         }
 
 
