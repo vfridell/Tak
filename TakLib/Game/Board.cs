@@ -140,6 +140,15 @@ namespace TakLib
             return newBoard;
         }
 
+        public static Board ComputeFutureBoard(Board currentBoard, Move move)
+        {
+            Board futureBoard = currentBoard.Clone();
+            move.Apply(futureBoard);
+            futureBoard.EndPlayerMove();
+            if (futureBoard.Round % 2 != 0) futureBoard.EndTurn();
+            return futureBoard;
+        }
+
         public void PlacePiece(Coordinate c, Piece piece)
         {
             CheckGridRange(c);

@@ -145,11 +145,64 @@ namespace TakLibTests
 
             data = analyzer.Analyze(blockedBoard);
 
-            SimpleJack ai = new SimpleJack(2,game.CurrentBoard.Size);
+            SimpleJack ai = new SimpleJack(3,game.CurrentBoard.Size);
             ai.BeginNewGame(true, 5);
             Move move = ai.PickBestMove(game.CurrentBoard);
             game.ApplyMove(move);
             Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
+        }
+
+        [TestMethod]
+        public void JustWinAlready3()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("e5"));
+            game.ApplyMove(NotationParser.Parse("a5"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("a3"));
+            game.ApplyMove(NotationParser.Parse("e3"));
+            game.ApplyMove(NotationParser.Parse("c5"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("1b2>1"));
+
+            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
+            var moves = game.GetAllMoves();
+
+            //there are four blocking moves
+            // d1, Sd1, Cd1, 1c3>1
+            List<Move> winningMoves = new List<Move>();
+            Assert.IsTrue(moves.Any(m => m.ToString() == "d1"));
+            winningMoves.AddRange(moves.Where(m => m.ToString() == "d1"));
+
+            Move winningMove = moves.First(m => m.ToString() == "d1");
+
+            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
+
+            IBoardAnalyzer analyzer = new SimpleAnalyzer(5);
+            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
+            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
+            Board blockedBoard = game.CurrentBoard.Clone();
+            winningMove.Apply(blockedBoard);
+
+            data = analyzer.Analyze(blockedBoard);
+
+            SimpleJack ai = new SimpleJack(2, game.CurrentBoard.Size);
+            ai.BeginNewGame(false, 5);
+            Move move = ai.PickBestMove(game.CurrentBoard);
+            game.ApplyMove(move);
+            Assert.IsTrue(winningMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
         }
 
         [TestMethod]
@@ -269,178 +322,7 @@ namespace TakLibTests
             Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
         }
 
-        [TestMethod]
-        public void UnwinnableSituation()
-        {
-            GameSetup gameSetup = new GameSetup()
-            {
-                WhitePlayer = new Player() { Name = "Player1" },
-                BlackPlayer = new Player() { Name = "Player2" },
-                BoardSize = 5
-            };
 
-            Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("b3"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("b4"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("d4"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("a3"));
-            game.ApplyMove(NotationParser.Parse("1c3<1"));
-            game.ApplyMove(NotationParser.Parse("1a3>1"));
-            game.ApplyMove(NotationParser.Parse("d2"));
-            game.ApplyMove(NotationParser.Parse("Ce4"));
-
-            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
-            var moves = game.GetAllMoves();
-
-            //there are no valid blocking moves
-            List<Move> blockingMoves = new List<Move>();
-            Assert.IsTrue(moves.Any(m => m.ToString() == "a3"));
-            Assert.IsTrue(moves.Any(m => m.ToString() == "Sa3"));
-            Assert.IsTrue(moves.Any(m => m.ToString() == "Ca3"));
-            blockingMoves.AddRange(moves.Where(m => m.ToString() == "a3" || m.ToString() == "Sa3" || m.ToString() == "Ca3"));
-
-            Move blockingMove = moves.First(m => m.ToString() == "Ca3");
-
-            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
-
-            IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
-            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
-            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
-            Board blockedBoard = game.CurrentBoard.Clone();
-            blockingMove.Apply(blockedBoard);
-
-            data = analyzer.Analyze(blockedBoard);
-
-            SimpleJack ai = new SimpleJack(4, game.CurrentBoard.Size);
-            ai.BeginNewGame(false, 5);
-            Move move = ai.PickBestMove(game.CurrentBoard);
-            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
-        }
-
-        [TestMethod]
-        public void UnwinnableSituation2()
-        {
-            GameSetup gameSetup = new GameSetup()
-            {
-                WhitePlayer = new Player() { Name = "Player1" },
-                BlackPlayer = new Player() { Name = "Player2" },
-                BoardSize = 5
-            };
-
-            Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("e5"));
-            game.ApplyMove(NotationParser.Parse("d4"));
-            game.ApplyMove(NotationParser.Parse("a2"));
-            game.ApplyMove(NotationParser.Parse("e4"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("d2"));
-            game.ApplyMove(NotationParser.Parse("d5"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("b1"));
-            game.ApplyMove(NotationParser.Parse("d3"));
-            game.ApplyMove(NotationParser.Parse("d1"));
-            game.ApplyMove(NotationParser.Parse("e2"));
-            game.ApplyMove(NotationParser.Parse("e1"));
-            game.ApplyMove(NotationParser.Parse("1e2-1"));
-
-
-            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
-            var moves = game.GetAllMoves();
-
-            //there are no blocking moves here.  White wins in 4 no matter what
-            // most delay comes from 1d5>1
-            List<Move> blockingMoves = new List<Move>();
-            Assert.IsTrue(moves.Any(m => m.ToString() == "1d5>1"));
-            blockingMoves.AddRange(moves.Where(m => m.ToString() == "1d5>1"));
-
-            Move blockingMove = moves.First(m => m.ToString() == "1d5>1");
-
-            BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
-
-            IBoardAnalyzer analyzer = new BoardAnalyzer(5, BoardAnalysisWeights.bestWeights);
-            IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
-            Assert.AreEqual(GameResult.Incomplete, data.gameResult);
-            Board blockedBoard = game.CurrentBoard.Clone();
-            blockingMove.Apply(blockedBoard);
-
-            data = analyzer.Analyze(blockedBoard);
-
-            SimpleJack ai = new SimpleJack(4, game.CurrentBoard.Size);
-            ai.BeginNewGame(false, 5);
-            Move move = ai.PickBestMove(game.CurrentBoard);
-            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
-        }
-
-        [TestMethod]
-        public void UnwinnableSituation3()
-        {
-            GameSetup gameSetup = new GameSetup()
-            {
-                WhitePlayer = new Player() { Name = "Player1" },
-                BlackPlayer = new Player() { Name = "Player2" },
-                BoardSize = 5
-            };
-
-            Game game = Game.GetNewGame(gameSetup);
-            game.ApplyMove(NotationParser.Parse("e1"));
-            game.ApplyMove(NotationParser.Parse("b2"));
-            game.ApplyMove(NotationParser.Parse("c3"));
-            game.ApplyMove(NotationParser.Parse("a5"));
-            game.ApplyMove(NotationParser.Parse("d3"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("d4"));
-            game.ApplyMove(NotationParser.Parse("b1"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-            game.ApplyMove(NotationParser.Parse("1c1+1"));
-            game.ApplyMove(NotationParser.Parse("1b2>1"));
-            game.ApplyMove(NotationParser.Parse("c1"));
-            game.ApplyMove(NotationParser.Parse("2c2-2"));
-            game.ApplyMove(NotationParser.Parse("1b1>1"));
-            game.ApplyMove(NotationParser.Parse("1c2-1"));
-            game.ApplyMove(NotationParser.Parse("a3"));
-            game.ApplyMove(NotationParser.Parse("d5"));
-            game.ApplyMove(NotationParser.Parse("Cc2"));
-            game.ApplyMove(NotationParser.Parse("d2"));
-            game.ApplyMove(NotationParser.Parse("Sd1"));
-            game.ApplyMove(NotationParser.Parse("b4"));
-            game.ApplyMove(NotationParser.Parse("c5"));
-            game.ApplyMove(NotationParser.Parse("b3"));
-            game.ApplyMove(NotationParser.Parse("e4"));
-            game.ApplyMove(NotationParser.Parse("b2"));
-            game.ApplyMove(NotationParser.Parse("1c5>1"));
-            game.ApplyMove(NotationParser.Parse("b1"));
-            game.ApplyMove(NotationParser.Parse("1c2<1"));
-            game.ApplyMove(NotationParser.Parse("e3"));
-            game.ApplyMove(NotationParser.Parse("2b2+2"));
-            game.ApplyMove(NotationParser.Parse("c4"));
-            game.ApplyMove(NotationParser.Parse("3b3>111"));
-            game.ApplyMove(NotationParser.Parse("2c3<11"));
-            game.ApplyMove(NotationParser.Parse("2e3<2"));
-            game.ApplyMove(NotationParser.Parse("b2"));
-            game.ApplyMove(NotationParser.Parse("4d3<13"));
-            game.ApplyMove(NotationParser.Parse("c2"));
-
-            Assert.AreEqual(PieceColor.Black, game.ColorToPlay);
-            Assert.AreEqual(GameResult.Incomplete, game.GameResult);
-            var moves = game.GetAllMoves();
-
-            //there are no blocking moves here.  White wins in 4 no matter what
-            // most delay comes from 4b3>4
-            List<Move> blockingMoves = new List<Move>();
-            Assert.IsTrue(moves.Any(m => m.ToString() == "4b3>4"));
-            blockingMoves.AddRange(moves.Where(m => m.ToString() == "4b3>4"));
-
-            SimpleJack ai = new SimpleJack(4, game.CurrentBoard.Size);
-            ai.BeginNewGame(false, 5);
-            Move move = ai.PickBestMove(game.CurrentBoard);
-            Assert.IsTrue(blockingMoves.Any(m => m.ToString() == move.ToString()), $"Move selected was {move}");
-        }
 
         [TestMethod]
         public void JustWinAlreadyCapCrush()

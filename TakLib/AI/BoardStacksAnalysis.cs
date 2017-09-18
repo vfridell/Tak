@@ -9,8 +9,8 @@ namespace TakLib
 {
     public class BoardStacksAnalysis : IAnalysisResult
     {
-        public static readonly int MaxValue = int.MaxValue - 10;
-        public static readonly int MinValue = int.MinValue + 10;
+        public static readonly double MaxValue = int.MaxValue - 10;
+        public static readonly double MinValue = int.MinValue + 10;
 
         public int blackCapStonesInHand;
         public int whiteCapStonesInHand;
@@ -60,7 +60,7 @@ namespace TakLib
         public int stacksAdvantageDiff => whiteStackAdvantage - blackStackAdvantage;
 
         public GameResult gameResult { get; set; }
-        public int winningResultDiff
+        public double winningResultDiff
         {
             get
             {

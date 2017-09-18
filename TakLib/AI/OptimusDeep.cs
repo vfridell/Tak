@@ -78,14 +78,14 @@ namespace TakLib
             if (depth == 0 || context.Board.GameResult != GameResult.Incomplete)
             {
                 bestMove = null;
-                if(context.ScoreCalculated) return context.Score;
+                if(context.ScoreCalculated) return context.Score * color;
                 else
                 {
                     return _analyzer.Analyze(context.Board).whiteAdvantage * color;
                 }
             }
 
-            IEnumerable<NegamaxContext> orderedAnalysis = GetSortedMoves(context.Board, color, depth);
+            IEnumerable<NegamaxContext> orderedAnalysis = GetSortedMoves(context.Board, color, aiCancelToken);
             double bestScore = MinValue;
             Move localBestMove = orderedAnalysis.First().Move;
 
@@ -104,65 +104,44 @@ namespace TakLib
             return bestScore;
         }
 
-        private IEnumerable<NegamaxContext> GetSortedMoves(Board board, int color, int depth)
+        private IEnumerable<NegamaxContext> GetSortedMoves(Board board, int color, CancellationToken aiCancelToken)
         {
             var advantageDict = new SortedDictionary<double, HashSet<NegamaxContext>>();
             var allMoves = board.GetAllMoves();
-            if (depth == _depth)
+            foreach (Move move in allMoves)
             {
-                foreach (Move move in allMoves)
-                {
-                    var futureBoard = ComputeFutureBoard(board, move);
-                    double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage * color;
-                    if (!advantageDict.ContainsKey(currentAdvantage))
-                        advantageDict.Add(currentAdvantage, new HashSet<NegamaxContext>());
-                    advantageDict[currentAdvantage].Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
-                }
+                var futureBoard = Board.ComputeFutureBoard(board, move);
+                double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage;
+                if (!advantageDict.ContainsKey(currentAdvantage))
+                    advantageDict.Add(currentAdvantage, new HashSet<NegamaxContext>());
+                advantageDict[currentAdvantage].Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
+            }
 
-                foreach (var kvp in (color == 1 ? advantageDict.Reverse() : advantageDict))
-                {
-                    foreach (var pair in kvp.Value) yield return pair;
-                }
-            }
-            else
+            //Parallel.ForEach(allMoves, (move, parallelLoopState) =>
+            //{
+            //    if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
+            //    if (aiCancelToken.IsCancellationRequested) parallelLoopState.Stop();
+            //    var futureBoard = Board.ComputeFutureBoard(board, move);
+            //    double currentAdvantage = _analyzer.Analyze(futureBoard).whiteAdvantage;
+            //    if (!advantageDict.ContainsKey(currentAdvantage))
+            //        advantageDict.AddOrUpdate(currentAdvantage, (v) => { return new HashSet<NegamaxContext> { new NegamaxContext(move, futureBoard, currentAdvantage, true) }; }, new NegamaxContext(move, futureBoard, currentAdvantage, true));
+            //    advantageDict[currentAdvantage].Add(new NegamaxContext(move, futureBoard, currentAdvantage, true));
+            //});
+
+
+            foreach (var kvp in color == 1 ? advantageDict.Reverse() : advantageDict)
             {
-                foreach (var move in allMoves)
-                {
-                    var futureBoard = ComputeFutureBoard(board, move);
-                    yield return new NegamaxContext(move, futureBoard, 0, false);
-                }
+                foreach (var pair in kvp.Value) yield return pair;
             }
+
         }
 
-        private Board ComputeFutureBoard(Board currentBoard, Move move)
-        {
-            Board futureBoard = currentBoard.Clone();
-            move.Apply(futureBoard);
-            futureBoard.EndPlayerMove();
-            if (futureBoard.Round % 2 != 0) futureBoard.EndTurn();
-            return futureBoard;
-        }
+
 
         private string _name;
         public override string Name
         {
             get { return string.IsNullOrEmpty(_name) ? string.Format("Optimus{0}Deep", _depth) : _name; }
         }
-    }
-
-    public struct NegamaxContext
-    {
-        public NegamaxContext(Move move, Board board, double score, bool calculated)
-        {
-            Move = move;
-            Board = board;
-            Score = score;
-            ScoreCalculated = calculated;
-        }
-
-        public Move Move;
-        public Board Board;
-        public double Score;
-        public bool ScoreCalculated;
     }
 }

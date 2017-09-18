@@ -9,11 +9,11 @@ namespace TakLib
 {
     public class SimpleAnalysisData : IAnalysisResult
     {
-        public static readonly int MaxValue = int.MaxValue - 10;
-        public static readonly int MinValue = int.MinValue + 10;
+        public static readonly double MaxValue = double.MaxValue;
+        public static readonly double MinValue = double.MinValue;
 
         public GameResult gameResult { get; set; }
-        public int winningResultDiff
+        public double winningResultDiff
         {
             get
             {
@@ -21,9 +21,10 @@ namespace TakLib
                 {
                     case GameResult.WhiteFlat:
                     case GameResult.WhiteRoad:
+                        return MaxValue;
                     case GameResult.BlackFlat:
                     case GameResult.BlackRoad:
-                        return MaxValue;
+                        return MinValue;
                     default:
                         return 0;
                 }
