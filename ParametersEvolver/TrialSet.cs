@@ -11,7 +11,6 @@ namespace ParametersEvolver
     public class TrialSet
     {
         public List<Game> Games { get; set; }
-
         public void LoadFiles()
         {
             string directory = "./TrainingGames/";
@@ -32,5 +31,38 @@ namespace ParametersEvolver
                 }
             }
         }
+
+        public IEnumerable<Trial> GetTrials()
+        {
+            if(null == Games || !Games.Any()) throw new Exception("No games!");
+
+            foreach (Game game in Games)
+            {
+                if(!game.WinnerColor.HasValue) continue;
+                bool WhiteTrial = game.WinnerColor.Value == PieceColor.White;
+                for(int i=0; i<game.Boards.Count - 1; i++)
+                {
+                    if (i == 0)
+                    {
+                        if(WhiteTrial)
+                            yield return new Trial(game.GetInitialBoard(), null, game.movesMade[0]);
+                    }
+                    else if (i == 1)
+                    {
+                        if(!WhiteTrial)
+                            yield return new Trial(game.Boards[0], game.movesMade[0], game.movesMade[1]);
+                    }
+                    else
+                    {
+                        if (game.Boards[i-1].WhiteToPlay == WhiteTrial)
+                        {
+                            yield return new Trial(game.Boards[i-1], game.movesMade[i-1], game.movesMade[i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        
     }
 }

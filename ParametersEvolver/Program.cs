@@ -12,6 +12,15 @@ namespace ParametersEvolver
     {
         static void Main(string[] args)
         {
+
+            TrialSet trialSet = new TrialSet();
+            trialSet.LoadFiles();
+            int i = 0;
+            foreach (Trial trial in trialSet.GetTrials())
+            {
+                Console.WriteLine($"{trial.PriorMove} -> {trial.CorrectMove}");
+                i++;
+            }
         }
 
 

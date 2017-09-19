@@ -1,0 +1,22 @@
+[Date "2017.09.19"]
+[Player1 "Optimus4Deep"]
+[Player2 "Johnny4Deep"]
+[Result "R-0"]
+[Size "5"]
+1. a5 c5
+2. b5 a4
+3. b4 d2
+4. c4 c2
+5. d4 c3
+6. d5 b2
+7. Sc1 1a5>1
+8. 1c5<1 1c3+1
+9. 1b4>1 d3
+10. 1c1+1 Cb4
+11. 3c4>12 1b4+1
+12. 2d4-11 c4
+13. e3 e5
+14. Cc5 d4
+15. 1d5-1 1b2+1
+16. d1 3b5-21
+17. d5 

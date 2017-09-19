@@ -1,0 +1,24 @@
+[Date "2017.09.18"]
+[Player1 "Optimus4Deep"]
+[Player2 "SimpleJack4"]
+[Result "R-0"]
+[Size "5"]
+1. c1 d1
+2. 1d1<1 Ca4
+3. d1 b1
+4. 2c1<2 b5
+5. a2 c1
+6. 1d1<1 d1
+7. b2 1d1+1
+8. d1 Se1
+9. 1d1+1 d1
+10. e2 1d1+1
+11. 1e2<1 1a4-1
+12. c2 1a3-1
+13. a1 1e1+1
+14. 4d2+22 e1
+15. c3 2a2>11
+16. d5 Sb3
+17. Cd2 Sd1
+18. 1d2-1 1c2+1
+19. 1d1+1 

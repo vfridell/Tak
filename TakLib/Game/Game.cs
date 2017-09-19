@@ -35,6 +35,24 @@ namespace TakLib
         public int Turn => CurrentBoard.Turn;
         public GameResult GameResult { get; private set; }
 
+        public PieceColor? WinnerColor
+        {
+            get
+            {
+                switch (GameResult)
+                {
+                    case GameResult.BlackFlat:
+                    case GameResult.BlackRoad:
+                        return PieceColor.Black;
+                    case GameResult.WhiteFlat:
+                    case GameResult.WhiteRoad:
+                        return PieceColor.White;
+                    default:
+                        return null;
+                }
+            }
+        }
+
         public static readonly Dictionary<int, Tuple<int, int>> InitialPieceSetup = new Dictionary<int, Tuple<int, int>>
         {
             [3] = new Tuple<int, int>(10, 0),
@@ -69,6 +87,19 @@ namespace TakLib
                 BoardSize = boardSize
             };
             return GetNewGame(gameSetup);
+        }
+
+        public Board GetInitialBoard()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = WhitePlayer,
+                BlackPlayer = BlackPlayer,
+                BoardSize = _boards[0].Size,
+                NumCapstones = InitialPieceSetup[_boards[0].Size].Item2,
+                NumStonesPerSide = InitialPieceSetup[_boards[0].Size].Item1,
+            };
+            return Board.GetInitialBoard(gameSetup);
         }
 
         public IEnumerable<Move> GetAllMoves()
@@ -172,6 +203,7 @@ namespace TakLib
 
             GameSetup setup = NotationParser.ParseGameFileHeaderString(fullNotation);
             Game loadedGame = GetNewGame(setup);
+            
             List<Move> moves = NotationParser.ParseMoveLines(fullNotation);
             foreach (Move move in moves)
             {
