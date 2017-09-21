@@ -27,7 +27,7 @@ namespace ParametersEvolver
 
         public override Gene GenerateGene(int geneIndex)
         {
-            return new Gene(RandomizationProvider.Current.GetDouble(0, 1000));
+            return new Gene(RandomizationProvider.Current.GetDouble(-100, 100));
         }
 
         public BoardAnalysisWeights GetWeights()
@@ -46,16 +46,5 @@ namespace ParametersEvolver
         }
     }
 
-    public class WeightsFitness : IFitness
-    {
-        public double Evaluate(IChromosome chromosome)
-        {
-            var weightsChromosome = chromosome as WeightsChromosome;
-            if(null == weightsChromosome) throw new ArgumentException("chromosome must be of type WeightsChromosome");
-            BoardAnalysisWeights weights = weightsChromosome.GetWeights();
-            throw new NotImplementedException();
-        }
 
-
-    }
 }

@@ -58,11 +58,14 @@
   <ItemGroup>
     <Compile Include="AI\AnalysisMemory.cs" />
     <Compile Include="AI\BoardStacksAnalysis.cs" />
+    <Compile Include="AI\MaximumRatioAnalyzer.cs" />
     <Compile Include="AI\BoardStacksAnalyzer.cs" />
     <Compile Include="AI\Helpers\SOMLattice.cs" />
     <Compile Include="AI\Helpers\SOMNode.cs" />
     <Compile Include="AI\Helpers\SOMTrainer.cs" />
     <Compile Include="AI\Helpers\SOMWeightsVector.cs" />
+    <Compile Include="AI\MaximumRatioAnalysisData.cs" />
+    <Compile Include="AI\MoveSorter.cs" />
     <Compile Include="AI\NegamaxContext.cs" />
     <Compile Include="AI\OptimusDeep.cs" />
     <Compile Include="Game\ArrayMaker.cs" />

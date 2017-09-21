@@ -55,8 +55,13 @@ namespace TakLib
         public int numberOfSubGraphsDiff  { get { return whiteNumberOfSubgraphs - blackNumberOfSubgraphs; } }
         // more is better
 
+        public int whiteStackAdvantage;
+        public int blackStackAdvantage;
+        public int stacksAdvantageDiff => whiteStackAdvantage - blackStackAdvantage;
+
+
         public GameResult gameResult { get; set; }
-        public double winningResultDiff
+        public virtual double winningResultDiff
         {
             get
             {
@@ -85,7 +90,7 @@ namespace TakLib
             return $"White Advantage: {whiteAdvantage}";
         }
 
-        public string ToStringDetailed()
+        public virtual string ToStringDetailed()
         {
             return string.Format("capStoneDiff: {0} * {1} = {2}\n", capStoneDiff, weights.capStoneDiffWeight, capStoneDiff * weights.capStoneDiffWeight) +
                     string.Format("flatScore (Weighted): {0} * {1} = {2}\n", flatScore, weights.flatScoreWeight, flatScore * weights.flatScoreWeight) +
