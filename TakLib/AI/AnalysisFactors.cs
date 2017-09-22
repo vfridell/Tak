@@ -17,6 +17,12 @@ namespace TakLib
             }
         }
 
+        // If growthRate is negative, the weight applies in full on turn 1 and becomes less important toward the last turn
+        // If positive, the weight applies hardly at all in the beginning and fully at endgame
+        // Greater negative numbers make the weight irrelevant sooner
+        // Greater positive numbers make the weight relevant sooner
+        // Around +-0.5 there is an S-curve beginning at turn 10 and ending at turn 26
+        // Values in excess of +-10 will not produce much weight variance over the length of the game
         private static double Activation(double turnNumber, double growthRate)
         {
             if (growthRate >= 0 && growthRate <= .1) return 0;
@@ -47,6 +53,13 @@ namespace TakLib
 
         public static AnalysisFactors GetBestAnalysisFactorsTemplate()
         {
+            //public int BlackCornerSpacesOwned { get; set; }
+            //public int WhiteCornerSpacesOwned { get; set; }
+            //public int BlackEdgeSpacesOwned { get; set; }
+            //public int WhiteEdgeSpacesOwned { get; set; }
+            //public int CenterTerritoryBlack { get; set; }
+            //public int CenterTerritoryWhite { get; set; }
+            
             Dictionary<string, Tuple<double, double>> bestWeightsGrowth = new Dictionary<string, Tuple<double, double>>()
             {
                 {"capStoneDiff", new Tuple<double, double>(1, 1)},

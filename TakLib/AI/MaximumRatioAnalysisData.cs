@@ -11,12 +11,7 @@ namespace TakLib
     {
         public static readonly double MaxValue = double.MaxValue;
         public static readonly double MinValue = double.MinValue;
-        //public int BlackCornerSpacesOwned { get; set; }
-        //public int WhiteCornerSpacesOwned { get; set; }
-        //public int BlackEdgeSpacesOwned { get; set; }
-        //public int WhiteEdgeSpacesOwned { get; set; }
-        //public int CenterTerritoryBlack { get; set; }
-        //public int CenterTerritoryWhite { get; set; }
+
 
         public double whiteAdvantage { get; set; }
         public GameResult gameResult { get; set; }
