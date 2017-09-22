@@ -22,7 +22,7 @@ namespace TakLib
         // Greater negative numbers make the weight irrelevant sooner
         // Greater positive numbers make the weight relevant sooner
         // Around +-0.5 there is an S-curve beginning at turn 10 and ending at turn 26
-        // Values in excess of +-10 will not produce much weight variance over the length of the game
+        // Values in excess of +-5 will not produce much weight variance over the length of the game
         private static double Activation(double turnNumber, double growthRate)
         {
             if (growthRate >= 0 && growthRate <= .1) return 0;
