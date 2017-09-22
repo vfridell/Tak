@@ -95,6 +95,8 @@ namespace TakLibTests
             };
 
             Game game = Game.GetNewGame(gameSetup);
+            Assert.AreEqual(1, game.Turn);
+            Assert.AreEqual(1, game.CurrentBoard.Round);
             game.ApplyMove(NotationParser.Parse("c2"));
             Assert.AreEqual(new Piece(PieceColor.Black, PieceType.Stone), game.CurrentBoard.GetPiece(new Coordinate(1, 2)));
             Assert.AreEqual(1, game.Turn);

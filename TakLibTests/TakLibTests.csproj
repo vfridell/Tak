@@ -52,6 +52,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="MaximumRatioAnalyzerTests.cs" />
     <Compile Include="OptimusDeepTests.cs" />
     <Compile Include="SimpleJackTests.cs" />
     <Compile Include="GameTests.cs" />

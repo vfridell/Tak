@@ -12,21 +12,18 @@ namespace TakLib
     public class MaximumRatioAnalyzer : IBoardAnalyzer
     {
         protected readonly int _boardSize;
-        protected BoardAnalysisWeights _weights;
+        protected AnalysisFactors _factorsTemplate;
 
-        public MaximumRatioAnalyzer(int boardSize, BoardAnalysisWeights weights)
+        public MaximumRatioAnalyzer(int boardSize, AnalysisFactors factorsTemplate)
         {
-            _weights = weights;
+            _factorsTemplate = factorsTemplate;
             _boardSize = boardSize;
         }
 
-        private double Activation(double x) => 1d / (1d + Math.Exp(-x));
 
         public IAnalysisResult Analyze (Board board)
         {
             MaximumRatioAnalysisData d = new MaximumRatioAnalysisData();
-            d.weights = _weights;
-            d.gameResult = board.GameResult;
             d.gameResult = GameResultService.GetGameResult(board);
             if (d.winningResultDiff != 0)
             {
@@ -34,79 +31,73 @@ namespace TakLib
                 return d;
             }
 
-            if (d.weights.capStoneDiffWeight != 0)
+            if(_factorsTemplate["capStoneDiff"].Weight != 0)
             {
-                d.blackCapStonesInHand = board.CapStonesInHand(PieceColor.Black);
-                d.whiteCapStonesInHand = board.CapStonesInHand(PieceColor.White);
+                _factorsTemplate["capStoneDiff"].Value = (board.CapStonesInHand(PieceColor.Black) - board.CapStonesInHand(PieceColor.White));
             }
 
-            if (d.weights.possibleMovesDiffWeight != 0)
+            if(_factorsTemplate["possibleMovesDiff"].Weight != 0)
             {
                 IEnumerable<Move> whiteMoves = MoveGenerator.GetAllMoves(board, PieceColor.White);
                 IEnumerable<Move> blackMoves = MoveGenerator.GetAllMoves(board, PieceColor.Black);
-                d.whitePossibleMovementMoves = whiteMoves.Count(m => m is MoveStack);
-                d.blackPossibleMovementMoves = blackMoves.Count(m => m is MoveStack);
+                _factorsTemplate["possibleMovesDiff"].Value = whiteMoves.Count(m => m is MoveStack) - blackMoves.Count(m => m is MoveStack);
             }
 
+            _factorsTemplate["flatScore"].Value = board.FlatScore;
 
+            if (_factorsTemplate["wallCountDiff"].Weight != 0)
+            {
+                _factorsTemplate["wallCountDiff"].Value = GetWallCountDiff(board);
+            }
 
-            d.blackUnplayedPieces = board.StonesInHand(PieceColor.Black);
-            d.whiteUnplayedPieces = board.StonesInHand(PieceColor.White);
-            d.flatScore = board.FlatScore;
-            d.emptySpaces = board.EmptySpaces;
+            if (_factorsTemplate["stacksAdvantageDiff"].Weight != 0)
+            {
+                _factorsTemplate["stacksAdvantageDiff"].Value = GetStackAdvantageDiff(board);
+            }
 
-            d.whiteToPlay = board.WhiteToPlay;
-            d.turnNumber = board.Turn;
-            if(d.weights.wallCountDiffWeight != 0) CountWalls(board, d);
-            if(d.weights.stacksAdvantageDiffWeight != 0) AnalyzeStacks(board, d);
-
-            if (d.weights.numberOfSubGraphsDiffWeight != 0 || d.weights.averageSubGraphDiffWeight != 0 ||
-                d.weights.longestSubGraphDiffWeight != 0)
+            if (_factorsTemplate["averageSubGraphDiff"].Weight != 0 || _factorsTemplate["longestSubGraphDiff"].Weight != 0 ||
+                _factorsTemplate["numberOfSubGraphsDiff"].Weight != 0)
             {
                 RoadFinder roadFinder = new RoadFinder(_boardSize);
                 roadFinder.Analyze(board, PieceColor.White);
-                d.whiteLongestSubgraph = roadFinder.LongestSubGraphLength;
-                d.whiteAverageSubgraph = roadFinder.AverageSubGraphLength;
-                d.whiteNumberOfSubgraphs = roadFinder.SubGraphCount;
+                double whiteLongestSubgraph = roadFinder.LongestSubGraphLength;
+                double whiteAverageSubgraph = roadFinder.AverageSubGraphLength;
+                double whiteNumberOfSubgraphs = roadFinder.SubGraphCount;
 
                 roadFinder.Analyze(board, PieceColor.Black);
-                d.blackLongestSubgraph = roadFinder.LongestSubGraphLength;
-                d.blackAverageSubgraph = roadFinder.AverageSubGraphLength;
-                d.blackNumberOfSubgraphs = roadFinder.SubGraphCount;
+                double blackLongestSubgraph = roadFinder.LongestSubGraphLength;
+                double blackAverageSubgraph = roadFinder.AverageSubGraphLength;
+                double blackNumberOfSubgraphs = roadFinder.SubGraphCount;
+
+                _factorsTemplate["averageSubGraphDiff"].Value = whiteAverageSubgraph - blackAverageSubgraph;
+                _factorsTemplate["longestSubGraphDiff"].Value = whiteLongestSubgraph - blackLongestSubgraph;
+                _factorsTemplate["numberOfSubGraphsDiff"].Value = whiteNumberOfSubgraphs - blackNumberOfSubgraphs;
             }
 
-            d.whiteAdvantage = (d.capStoneDiff * d.weights.capStoneDiffWeight) +
-                        (d.flatScore * d.weights.flatScoreWeight) +
-                        (d.possibleMovesDiff * d.weights.possibleMovesDiffWeight) +
-                        (d.wallCountDiff * d.weights.wallCountDiffWeight) +
-                        (d.averageSubGraphDiff * d.weights.averageSubGraphDiffWeight) +
-                        (d.longestSubGraphDiff * d.weights.longestSubGraphDiffWeight) +
-                        (d.numberOfSubGraphsDiff * d.weights.numberOfSubGraphsDiffWeight) +
-                        (d.stacksAdvantageDiff * d.weights.stacksAdvantageDiffWeight);
-
+            d.whiteAdvantage = _factorsTemplate.CalculateAdvantage(board.Turn);
             return d;
         }
 
-
-
-        private void CountWalls(Board board, MaximumRatioAnalysisData data)
+        private double GetWallCountDiff(Board board)
         {
+            double result = 0;
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
                 if (space.Piece?.Type == PieceType.Wall)
                 {
                     if (space.Piece?.Color == PieceColor.White)
-                        data.whiteWallCount++;
+                        result += 1;
                     else
-                        data.blackWallCount++;
+                        result -= 1;
                 }
             }
+            return result;
         }
 
-        private void AnalyzeStacks(Board board, MaximumRatioAnalysisData data)
+        private double GetStackAdvantageDiff(Board board)
         {
-
+            double result = 0;
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
@@ -123,10 +114,11 @@ namespace TakLib
                     (stack.OwnerPieceCount * right.Distance);
                 stackAdvantage -= stack.CapturedPieceCount;
                 if (space.ColorEquals(PieceColor.White))
-                    data.whiteStackAdvantage += stackAdvantage;
+                    result += stackAdvantage;
                 else
-                    data.blackStackAdvantage += stackAdvantage;
+                    result -= stackAdvantage;
             }
+            return result;
         }
 
         public SOMWeightsVector GetSomWeightsVector(Board board)

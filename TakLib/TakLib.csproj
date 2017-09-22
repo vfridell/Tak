@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AnalysisFactors.cs" />
     <Compile Include="AI\AnalysisMemory.cs" />
     <Compile Include="AI\BoardStacksAnalysis.cs" />
     <Compile Include="AI\MaximumRatioAnalyzer.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Game\SpaceGraph.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AnalysisFactor.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

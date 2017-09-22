@@ -56,6 +56,7 @@ namespace TakLib
         };
 
 
+
         public override string ToString()
         {
             return string.Format("capStoneDiffWeight: {0} \n", capStoneDiffWeight) +
