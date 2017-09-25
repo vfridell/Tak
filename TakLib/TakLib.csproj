@@ -78,6 +78,7 @@
     <Compile Include="AI\SimpleAnalyzer.cs" />
     <Compile Include="AI\BoardAnalyzer.cs" />
     <Compile Include="Game\Coordinate.cs" />
+    <Compile Include="Game\CoordinateCongruenceEnumerable.cs" />
     <Compile Include="Game\CoordinateEnumerable.cs" />
     <Compile Include="Game\Game.cs" />
     <Compile Include="Game\GameResultService.cs" />

@@ -347,40 +347,49 @@ namespace TakLib
             _turn++;
         }
 
+        public static bool EqualPiecesInPlay(Board board1, Board board2)
+        {
+            if(board1.Size != board2.Size) throw new Exception("Board sizes are not equal");
+            return board1.StonesInHand(PieceColor.White) == board2.StonesInHand(PieceColor.White) &&
+                    board1.StonesInHand(PieceColor.Black) == board2.StonesInHand(PieceColor.Black) &&
+                    board1.CapStonesInHand(PieceColor.Black) == board2.CapStonesInHand(PieceColor.Black) &&
+                    board1.CapStonesInHand(PieceColor.White) == board2.CapStonesInHand(PieceColor.White);
+        }
+
         public static bool IsCongruent(Board board1, Board board2)
         {
             if (!EqualPiecesInPlay(board1, board2)) return false;
 
-            // check reflection congruence
-            for (int i = 1; i <= 6; i++)
-            {
-                bool isCongruent = true;
-                foreach (Cell cell in board1._cellMap.Values)
-                {
-                    if (cell.Piece != board2._cellMap[Neighborhood.MirrorOriginHex(cell.hex, i)].Piece)
-                    {
-                        isCongruent = false;
-                        break;
-                    }
-                }
-                if (isCongruent) return true;
-            }
+            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { {1, true}, {2,true}, {3,true}, {4,true} };
+            CoordinateCongruenceEnumerable congruenceEnumerable = new CoordinateCongruenceEnumerable(board1.Size);
 
-            // check rotational congruence
-            for (int i = 1; i < 6; i++)
+            foreach (CongruencePair pair in congruenceEnumerable)
             {
-                bool isCongruent = true;
-                foreach (Cell cell in board1._cellMap.Values)
+                if (congruenceDict[pair.Group])
                 {
-                    if (cell.Piece != board2._cellMap[Neighborhood.Rotate60DegreesClockwiseHex(cell.hex, i)].Piece)
-                    {
-                        isCongruent = false;
-                        break;
-                    }
+                    congruenceDict[pair.Group] = (board1.GetSpace(pair.C1).IsEmpty && board2.GetSpace(pair.C2).IsEmpty)
+                        || (!(board1.GetSpace(pair.C1).IsEmpty || board2.GetSpace(pair.C2).IsEmpty) && board1.GetPieceStack(pair.C1).Equals(board2.GetPieceStack(pair.C2)));
                 }
-                if (isCongruent) return true;
+                if (congruenceDict.All(kvp => kvp.Value == false)) return false;
             }
-            return false;
+            return congruenceDict.Any(kvp => kvp.Value);
+        }
+
+        public Dictionary<int, bool> GetCongruenceDictionary()
+        {
+            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { { 1, true }, { 2, true }, { 3, true }, { 4, true } };
+            CoordinateCongruenceEnumerable congruenceEnumerable = new CoordinateCongruenceEnumerable(Size);
+
+            foreach (CongruencePair pair in congruenceEnumerable)
+            {
+                if (congruenceDict[pair.Group])
+                {
+                    congruenceDict[pair.Group] = (GetSpace(pair.C1).IsEmpty && GetSpace(pair.C2).IsEmpty)
+                        || (!(GetSpace(pair.C1).IsEmpty || GetSpace(pair.C2).IsEmpty) && GetPieceStack(pair.C1).Equals(GetPieceStack(pair.C2)));
+                }
+                if (congruenceDict.All(kvp => kvp.Value == false)) return congruenceDict;
+            }
+            return congruenceDict;
         }
 
     }
