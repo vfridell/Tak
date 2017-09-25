@@ -51,27 +51,6 @@ namespace TakLib
         }
 
 
-        public static AnalysisFactors GetBestAnalysisFactorsTemplate()
-        {
-            //public int BlackCornerSpacesOwned { get; set; }
-            //public int WhiteCornerSpacesOwned { get; set; }
-            //public int BlackEdgeSpacesOwned { get; set; }
-            //public int WhiteEdgeSpacesOwned { get; set; }
-            //public int CenterTerritoryBlack { get; set; }
-            //public int CenterTerritoryWhite { get; set; }
-            
-            Dictionary<string, Tuple<double, double>> bestWeightsGrowth = new Dictionary<string, Tuple<double, double>>()
-            {
-                {"capStoneDiff", new Tuple<double, double>(1, 1)},
-                {"flatScore", new Tuple<double, double>(86, 1)},
-                {"possibleMovesDiff", new Tuple<double, double>(0, 0)},
-                {"wallCountDiff", new Tuple<double, double>(-5, 1)},
-                {"averageSubGraphDiff", new Tuple<double, double>(15, 1)},
-                {"longestSubGraphDiff", new Tuple<double, double>(15, 1)},
-                {"numberOfSubGraphsDiff", new Tuple<double, double>(1, 1)},
-                {"stacksAdvantageDiff", new Tuple<double, double>(10, 1)},
-            };
-            return new AnalysisFactors(bestWeightsGrowth);
-        }
+
     }
 }

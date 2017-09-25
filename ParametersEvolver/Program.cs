@@ -25,7 +25,8 @@ namespace ParametersEvolver
 
             TrialSet trialSet = new TrialSet();
             trialSet.LoadFiles(5);
-            IBoardAnalyzer analyzer = new BoardStacksAnalyzer(trialSet.BoardSize, BoardAnalysisWeights.bestStackWeights);
+            //IBoardAnalyzer analyzer = new BoardStacksAnalyzer(trialSet.BoardSize, BoardAnalysisWeights.bestStackWeights);
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(trialSet.BoardSize);
             foreach (Trial trial in trialSet.GetTrials())
             {
                 IDictionary<double, HashSet<NegamaxContext>> moveDictionary = MoveSorter.GetSortedAnalysisDictionary(trial.Board, analyzer);

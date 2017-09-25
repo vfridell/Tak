@@ -80,7 +80,7 @@ namespace TakLibTests
             Assert.IsTrue(moves.Any(m => m.ToString() == "1d4<1"));
             Move winningMove = moves.First(m => m.ToString() == "1b4>1");
 
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5, AnalysisFactors.GetBestAnalysisFactorsTemplate());
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board winningBoard = game.CurrentBoard.Clone();
@@ -138,7 +138,7 @@ namespace TakLibTests
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5, AnalysisFactors.GetBestAnalysisFactorsTemplate());
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board blockedBoard = game.CurrentBoard.Clone();
@@ -203,7 +203,7 @@ namespace TakLibTests
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5, AnalysisFactors.GetBestAnalysisFactorsTemplate());
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board winningBoard = game.CurrentBoard.Clone();
@@ -256,7 +256,7 @@ namespace TakLibTests
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5, AnalysisFactors.GetBestAnalysisFactorsTemplate());
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board blockedBoard = game.CurrentBoard.Clone();
@@ -337,7 +337,7 @@ namespace TakLibTests
 
             BoardAnalysisWeights weights = BoardAnalysisWeights.bestWeights;
 
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5, AnalysisFactors.GetBestAnalysisFactorsTemplate());
+            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(5);
             IAnalysisResult data = analyzer.Analyze(game.CurrentBoard);
             Assert.AreEqual(GameResult.Incomplete, data.gameResult);
             Board winningBoard = game.CurrentBoard.Clone();

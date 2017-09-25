@@ -20,6 +20,30 @@ namespace TakLib
             _boardSize = boardSize;
         }
 
+        public MaximumRatioAnalyzer(int boardSize)
+        {
+            _factorsTemplate = GetBestAnalysisFactorsTemplate();
+            _boardSize = boardSize;
+        }
+
+        public static AnalysisFactors GetBestAnalysisFactorsTemplate()
+        {
+            Dictionary<string, Tuple<double, double>> bestWeightsGrowth = new Dictionary<string, Tuple<double, double>>()
+            {
+                {"capStoneDiff", new Tuple<double, double>(1, -.1)},
+                {"flatScore", new Tuple<double, double>(86, -.1)},
+                {"possibleMovesDiff", new Tuple<double, double>(0, 0)},
+                {"wallCountDiff", new Tuple<double, double>(-5, -.1)},
+                {"averageSubGraphDiff", new Tuple<double, double>(15, -.1)},
+                {"longestSubGraphDiff", new Tuple<double, double>(15, -.1)},
+                {"numberOfSubGraphsDiff", new Tuple<double, double>(1, -.1)},
+                {"stacksAdvantageDiff", new Tuple<double, double>(10, -.1)},
+                {"cornerOwnershipDiff", new Tuple<double, double>(1, -.2)},
+                {"sideOwnershipDiff", new Tuple<double, double>(2, -.2)},
+                {"centerOwnershipDiff", new Tuple<double, double>(3, -.2)},
+            };
+            return new AnalysisFactors(bestWeightsGrowth);
+        }
 
         public IAnalysisResult Analyze (Board board)
         {
@@ -55,24 +79,7 @@ namespace TakLib
                 _factorsTemplate["stacksAdvantageDiff"].Value = GetStackAdvantageDiff(board);
             }
 
-            if (_factorsTemplate["averageSubGraphDiff"].Weight != 0 || _factorsTemplate["longestSubGraphDiff"].Weight != 0 ||
-                _factorsTemplate["numberOfSubGraphsDiff"].Weight != 0)
-            {
-                RoadFinder roadFinder = new RoadFinder(_boardSize);
-                roadFinder.Analyze(board, PieceColor.White);
-                double whiteLongestSubgraph = roadFinder.LongestSubGraphLength;
-                double whiteAverageSubgraph = roadFinder.AverageSubGraphLength;
-                double whiteNumberOfSubgraphs = roadFinder.SubGraphCount;
-
-                roadFinder.Analyze(board, PieceColor.Black);
-                double blackLongestSubgraph = roadFinder.LongestSubGraphLength;
-                double blackAverageSubgraph = roadFinder.AverageSubGraphLength;
-                double blackNumberOfSubgraphs = roadFinder.SubGraphCount;
-
-                _factorsTemplate["averageSubGraphDiff"].Value = whiteAverageSubgraph - blackAverageSubgraph;
-                _factorsTemplate["longestSubGraphDiff"].Value = whiteLongestSubgraph - blackLongestSubgraph;
-                _factorsTemplate["numberOfSubGraphsDiff"].Value = whiteNumberOfSubgraphs - blackNumberOfSubgraphs;
-            }
+            GetRoadFinderFactors(board);
 
             d.whiteAdvantage = _factorsTemplate.CalculateAdvantage(board.Turn);
             return d;
@@ -80,19 +87,19 @@ namespace TakLib
 
         private double GetWallCountDiff(Board board)
         {
-            double result = 0;
+            double wallCountDiff = 0;
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
                 if (space.Piece?.Type == PieceType.Wall)
                 {
                     if (space.Piece?.Color == PieceColor.White)
-                        result += 1;
+                        wallCountDiff += 1;
                     else
-                        result -= 1;
+                        wallCountDiff -= 1;
                 }
             }
-            return result;
+            return wallCountDiff;
         }
 
         private double GetStackAdvantageDiff(Board board)
@@ -121,20 +128,54 @@ namespace TakLib
             return result;
         }
 
+        private void GetRoadFinderFactors(Board board)
+        {
+            RoadFinder roadFinder = new RoadFinder(_boardSize);
+            roadFinder.Analyze(board, PieceColor.White);
+            double whiteLongestSubgraph = roadFinder.LongestSubGraphLength;
+            double whiteAverageSubgraph = roadFinder.AverageSubGraphLength;
+            double whiteNumberOfSubgraphs = roadFinder.SubGraphCount;
+
+            roadFinder.Analyze(board, PieceColor.Black);
+            double blackLongestSubgraph = roadFinder.LongestSubGraphLength;
+            double blackAverageSubgraph = roadFinder.AverageSubGraphLength;
+            double blackNumberOfSubgraphs = roadFinder.SubGraphCount;
+
+            _factorsTemplate["averageSubGraphDiff"].Value = whiteAverageSubgraph - blackAverageSubgraph;
+            _factorsTemplate["longestSubGraphDiff"].Value = whiteLongestSubgraph - blackLongestSubgraph;
+            _factorsTemplate["numberOfSubGraphsDiff"].Value = whiteNumberOfSubgraphs - blackNumberOfSubgraphs;
+
+            double edgeDiff = 0;
+            double cornerDiff = 0;
+            double centerDiff = 0;
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                Space space = board.GetSpace(c);
+                if (roadFinder.IsCorner(c))
+                {
+                    if (space.ColorEquals(PieceColor.Black)) cornerDiff--;
+                    if (space.ColorEquals(PieceColor.White)) cornerDiff++;
+                }
+                else if (roadFinder.IsSide(c))
+                {
+                    if (space.ColorEquals(PieceColor.Black)) edgeDiff--;
+                    if (space.ColorEquals(PieceColor.White)) edgeDiff++;
+                }
+                else
+                {
+                    if (space.ColorEquals(PieceColor.Black)) centerDiff--;
+                    if (space.ColorEquals(PieceColor.White)) centerDiff++;
+                }
+            }
+            _factorsTemplate["cornerOwnershipDiff"].Value = cornerDiff;
+            _factorsTemplate["sideOwnershipDiff"].Value = edgeDiff;
+            _factorsTemplate["centerOwnershipDiff"].Value = centerDiff;
+        }
+
         public SOMWeightsVector GetSomWeightsVector(Board board)
         {
-            SOMWeightsVector vector = new SOMWeightsVector();
-            BoardStacksAnalysis analysis = (BoardStacksAnalysis)Analyze(board);
-            vector.Add(analysis.flatScore);
-            vector.Add(analysis.averageSubGraphDiff);
-            vector.Add(analysis.longestSubGraphDiff);
-            vector.Add(analysis.capStoneDiff);
-            vector.Add(analysis.numberOfSubGraphsDiff);
-            vector.Add(analysis.wallCountDiff);
-            //vector.Add(analysis.possibleMovesDiff);
-            vector.Add(analysis.winningResultDiff);
-            vector.Add(analysis.stacksAdvantageDiff);
-            return vector;
+            throw new NotImplementedException();
+
         }
     }
 

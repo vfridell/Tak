@@ -32,5 +32,34 @@ namespace TakLib
         public static Coordinate operator +(Coordinate c1, Coordinate c2) => new Coordinate(c1.Row + c2.Row, c1.Column + c2.Column);
         public static bool operator ==(Coordinate c1, Coordinate c2) => c1.Row == c2.Row && c1.Column == c2.Column;
         public static bool operator !=(Coordinate c1, Coordinate c2) => c1.Row != c2.Row || c1.Column != c2.Column;
+
+
+        public static Coordinate MirrorCenter(Coordinate c, int mirrorLine)
+        {
+            switch (mirrorLine)
+            {
+                case 1:
+                    return new Hex(-hex.x, -hex.z, -hex.y);
+                case 2:
+                    return new Hex(hex.y, hex.x, hex.z);
+                case 3:
+                    return new Hex(-hex.z, -hex.y, -hex.x);
+                case 4:
+                    return new Hex(hex.x, hex.z, hex.y);
+                default:
+                    throw new Exception($"Bad mirror line: {mirrorLine}");
+            }
+        }
+
+        public static Hex Rotate60DegreesClockwiseHex(Hex hex) => new Hex(-hex.z, -hex.x, -hex.y);
+        public static Hex Rotate60DegreesClockwiseHex(Hex hex, int times)
+        {
+            Hex returnHex = hex;
+            for (int i = 0; i < times; i++) returnHex = new Hex(-returnHex.z, -returnHex.x, -returnHex.y);
+            return returnHex;
+        }
+        public static Hex Rotate60DegreesCounterClockwiseHex(Hex hex) => new Hex(-hex.y, -hex.z, -hex.x);
+
     }
+}
 }

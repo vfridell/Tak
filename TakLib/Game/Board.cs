@@ -346,6 +346,43 @@ namespace TakLib
         {
             _turn++;
         }
+
+        public static bool IsCongruent(Board board1, Board board2)
+        {
+            if (!EqualPiecesInPlay(board1, board2)) return false;
+
+            // check reflection congruence
+            for (int i = 1; i <= 6; i++)
+            {
+                bool isCongruent = true;
+                foreach (Cell cell in board1._cellMap.Values)
+                {
+                    if (cell.Piece != board2._cellMap[Neighborhood.MirrorOriginHex(cell.hex, i)].Piece)
+                    {
+                        isCongruent = false;
+                        break;
+                    }
+                }
+                if (isCongruent) return true;
+            }
+
+            // check rotational congruence
+            for (int i = 1; i < 6; i++)
+            {
+                bool isCongruent = true;
+                foreach (Cell cell in board1._cellMap.Values)
+                {
+                    if (cell.Piece != board2._cellMap[Neighborhood.Rotate60DegreesClockwiseHex(cell.hex, i)].Piece)
+                    {
+                        isCongruent = false;
+                        break;
+                    }
+                }
+                if (isCongruent) return true;
+            }
+            return false;
+        }
+
     }
 
     public struct DistanceAvailable
