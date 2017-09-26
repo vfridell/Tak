@@ -470,6 +470,8 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[2]);
             Assert.IsFalse(congruenceDict[3]);
             Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
         }
 
         [TestMethod]
@@ -542,7 +544,296 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[2]);
             Assert.IsFalse(congruenceDict[3]);
             Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
         }
+
+        [TestMethod]
+        public void BoardCongruence2()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("e2"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("a4"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+            game.ApplyMove(NotationParser.Parse("e3"));
+
+            var board1 = game.CurrentBoard.Clone();
+            Move move1 = NotationParser.Parse("d4");
+            move1.Apply(board1);
+
+            var board2 = game.CurrentBoard.Clone();
+            Move move2 = NotationParser.Parse("d2");
+            move2.Apply(board2);
+
+            Assert.IsTrue(Board.IsCongruent(board1, board2));
+        }
+
+        [TestMethod]
+        public void BoardCongruence2_Dict()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("e2"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("a4"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+            game.ApplyMove(NotationParser.Parse("e3"));
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsTrue(congruenceDict[2]);
+            Assert.IsFalse(congruenceDict[3]);
+            Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
+        }
+
+        [TestMethod]
+        public void BoardCongruence3()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("d5"));
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("b1"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+
+            var board1 = game.CurrentBoard.Clone();
+            Move move1 = NotationParser.Parse("c1");
+            move1.Apply(board1);
+
+            var board2 = game.CurrentBoard.Clone();
+            Move move2 = NotationParser.Parse("a3");
+            move2.Apply(board2);
+
+            Assert.IsTrue(Board.IsCongruent(board1, board2));
+        }
+
+        [TestMethod]
+        public void BoardCongruence3_Dict()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("d5"));
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("b1"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsFalse(congruenceDict[2]);
+            Assert.IsTrue(congruenceDict[3]);
+            Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
+        }
+
+        [TestMethod]
+        public void BoardCongruence4()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c2"));
+            game.ApplyMove(NotationParser.Parse("a4"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+
+            var board1 = game.CurrentBoard.Clone();
+            Move move1 = NotationParser.Parse("a1");
+            move1.Apply(board1);
+
+            var board2 = game.CurrentBoard.Clone();
+            Move move2 = NotationParser.Parse("e5");
+            move2.Apply(board2);
+
+            Assert.IsTrue(Board.IsCongruent(board1, board2));
+        }
+
+        [TestMethod]
+        public void BoardCongruence4_Dict()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c2"));
+            game.ApplyMove(NotationParser.Parse("a4"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsFalse(congruenceDict[2]);
+            Assert.IsFalse(congruenceDict[3]);
+            Assert.IsTrue(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
+        }
+
+        [TestMethod]
+        public void BoardCongruence5()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("d1"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+
+            var board1 = game.CurrentBoard.Clone();
+            Move move1 = NotationParser.Parse("c5");
+            move1.Apply(board1);
+
+            var board2 = game.CurrentBoard.Clone();
+            Move move2 = NotationParser.Parse("a3");
+            move2.Apply(board2);
+
+            Assert.IsTrue(Board.IsCongruent(board1, board2));
+        }
+
+        [TestMethod]
+        public void BoardCongruence5_Dict()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d4"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("d1"));
+            game.ApplyMove(NotationParser.Parse("b2"));
+            game.ApplyMove(NotationParser.Parse("a2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("e4"));
+
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsFalse(congruenceDict[2]);
+            Assert.IsFalse(congruenceDict[3]);
+            Assert.IsFalse(congruenceDict[4]);
+            Assert.IsTrue(congruenceDict[5]);
+            Assert.IsTrue(congruenceDict[6]);
+        }
+
+        [TestMethod]
+        public void BoardCongruence6()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d1"));
+
+            var board1 = game.CurrentBoard.Clone();
+            Move move1 = NotationParser.Parse("b2");
+            move1.Apply(board1);
+
+            var board2 = game.CurrentBoard.Clone();
+            Move move2 = NotationParser.Parse("d4");
+            move2.Apply(board2);
+
+            Assert.IsTrue(Board.IsCongruent(board1, board2));
+        }
+
+        [TestMethod]
+        public void BoardCongruence6_Dict()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b5"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("d1"));
+
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsFalse(congruenceDict[2]);
+            Assert.IsFalse(congruenceDict[3]);
+            Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsTrue(congruenceDict[6]);
+        }
+
 
     }
 }
