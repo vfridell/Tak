@@ -49,8 +49,6 @@ namespace TakLib
         {
             return GetEnumerator();
         }
-
-
     }
 
     public struct CongruencePair

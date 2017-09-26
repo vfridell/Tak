@@ -8,17 +8,17 @@ namespace TakLib
 {
     public static class MoveGenerator
     {
-        public static IEnumerable<Move> GetAllMoves(Board board)
+        public static IEnumerable<Move> GetAllMoves(Board board, bool filterCongruentMoves = false)
         {
-            return GetAllMoves(board, board.ColorToPlay);
+            return GetAllMoves(board, board.ColorToPlay, filterCongruentMoves);
         }
 
-        public static IEnumerable<Move> GetAllMovesNonCurrentPlayer(Board board)
+        public static IEnumerable<Move> GetAllMovesNonCurrentPlayer(Board board, bool filterCongruentMoves = false)
         {
-            return GetAllMoves(board, board.ColorToPlay == PieceColor.White ? PieceColor.Black : PieceColor.White);
+            return GetAllMoves(board, board.ColorToPlay == PieceColor.White ? PieceColor.Black : PieceColor.White, filterCongruentMoves);
         }
 
-        public static IEnumerable<Move> GetAllMoves(Board board, PieceColor colorToCheck)
+        public static IEnumerable<Move> GetAllMoves(Board board, PieceColor colorToCheck, bool filterCongruentMoves = false)
         {
             IList<Move> moves = new List<Move>();
             foreach(Coordinate location in new CoordinateEnumerable(board.Size))
@@ -45,8 +45,12 @@ namespace TakLib
                     AddMovementMoves(board, moves, location, Direction.Right);
                 }
             }
-            return moves;
+            if(!filterCongruentMoves) return moves;
 
+                throw new NotImplementedException();
+            foreach (Move move in moves)
+            {
+            }
         }
 
         private static void AddMovementMoves(Board board, IList<Move> moves, Coordinate location, Direction dir)
@@ -64,7 +68,7 @@ namespace TakLib
         }
 
 
-        public static List<List<int>> GetAllDropLists(int maxPicked, DistanceAvailable maxDistance)
+        private static List<List<int>> GetAllDropLists(int maxPicked, DistanceAvailable maxDistance)
         {
             List<List<int>> returnList = new List<List<int>>();
             for (int i = 1; i <= maxPicked; i++)
@@ -73,7 +77,7 @@ namespace TakLib
         }
 
 
-        public static List<List<int>> GetAllDropListsRecursive(int maxPicked, DistanceAvailable maxDistance, List<int> baseList)
+        private static List<List<int>> GetAllDropListsRecursive(int maxPicked, DistanceAvailable maxDistance, List<int> baseList)
         {
 
             List<List<int>> returnList = new List<List<int>>();
