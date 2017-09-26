@@ -360,7 +360,7 @@ namespace TakLib
         {
             if (!EqualPiecesInPlay(board1, board2)) return false;
 
-            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { { 1, true }, { 2, true }, { 3, true }, { 4, true }, {5, true}, {6, true} };
+            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { { 1, true }, { 2, true }, { 3, true }, { 4, true }, {5, true}, {6, true}, {7,true} };
             CoordinateCongruenceEnumerable congruenceEnumerable = new CoordinateCongruenceEnumerable(board1.Size);
 
             foreach (CongruencePair pair in congruenceEnumerable)
@@ -377,7 +377,7 @@ namespace TakLib
 
         public Dictionary<int, bool> GetCongruenceDictionary()
         {
-            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { { 1, true }, { 2, true }, { 3, true }, { 4, true }, {5, true}, {6, true} };
+            Dictionary<int, bool> congruenceDict = new Dictionary<int, bool>() { { 1, true }, { 2, true }, { 3, true }, { 4, true }, {5, true}, {6, true}, {7,true} };
             CoordinateCongruenceEnumerable congruenceEnumerable = new CoordinateCongruenceEnumerable(Size);
 
             foreach (CongruencePair pair in congruenceEnumerable)

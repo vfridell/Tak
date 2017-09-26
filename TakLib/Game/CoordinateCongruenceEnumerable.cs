@@ -34,10 +34,12 @@ namespace TakLib
                     if(c + r + 1 < BoardSize) yield return new CongruencePair(new Coordinate(r,c), new Coordinate((BoardSize - (r + c + 1)) + r, (BoardSize - (r + c + 1)) + c), 4);
                     // (5) rotate 90 degrees
                     // (6) rotate 180 degrees
-                    if (r + c < BoardSize - 1 && c <= r)
+                    // (6) rotate 270 degrees
+                    if (r + c < BoardSize)
                     {
                         yield return new CongruencePair(new Coordinate(r,c), new Coordinate((BoardSize-1)-c, r), 5);
                         yield return new CongruencePair(new Coordinate(r,c), new Coordinate((BoardSize-1)-r, (BoardSize-1)-c), 6);
+                        yield return new CongruencePair(new Coordinate(r,c), new Coordinate(c, (BoardSize-1)-r), 7);
                     }
                 }
             }

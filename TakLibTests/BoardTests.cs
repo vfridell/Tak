@@ -472,6 +472,7 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -546,6 +547,7 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -602,6 +604,7 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -662,6 +665,7 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -718,6 +722,7 @@ namespace TakLibTests
             Assert.IsTrue(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -779,6 +784,7 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsTrue(congruenceDict[5]);
             Assert.IsTrue(congruenceDict[6]);
+            Assert.IsTrue(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -832,8 +838,53 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[4]);
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsTrue(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
+        [TestMethod]
+        public void BoardCongruence6_StackNot()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c3"));
+            game.ApplyMove(NotationParser.Parse("c4"));
+            game.ApplyMove(NotationParser.Parse("1c3<1"));
+            game.ApplyMove(NotationParser.Parse("1c4<1"));
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[6]);
+        }
+
+        [TestMethod]
+        public void BoardCongruence6_StackNot2()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            game.ApplyMove(NotationParser.Parse("b4"));
+            game.ApplyMove(NotationParser.Parse("b3"));
+            game.ApplyMove(NotationParser.Parse("d3"));
+            game.ApplyMove(NotationParser.Parse("c2"));
+            game.ApplyMove(NotationParser.Parse("d2"));
+            game.ApplyMove(NotationParser.Parse("1c2>1"));
+
+            var congruenceDict = game.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[6]);
+        }
 
     }
 }
