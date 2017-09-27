@@ -47,10 +47,31 @@ namespace TakLib
             }
             if(!filterCongruentMoves) return moves;
 
-                throw new NotImplementedException();
+            // TODO is this really true?
+            // if the current board has no symmetry, there can be no congruent boards
+            if (!board.GetCongruenceDictionary().Any(kvp => kvp.Value)) return moves;
+
+            // only return one move for each set of congruent boards
+            List<Board> futureBoards = new List<Board>();
+            List<Move> uniqueMoves = new List<Move>();
             foreach (Move move in moves)
             {
+                Board futureBoard = Board.ComputeFutureBoard(board, move);
+                bool add = true;
+                foreach (Board otherFutureBoard in futureBoards)
+                {
+                    if (Board.IsCongruent(futureBoard, otherFutureBoard))
+                    {
+                        add = false;
+                    } 
+                }
+                if (add)
+                {
+                    futureBoards.Add(futureBoard);
+                    uniqueMoves.Add(move);
+                }
             }
+            return uniqueMoves;
         }
 
         private static void AddMovementMoves(Board board, IList<Move> moves, Coordinate location, Direction dir)

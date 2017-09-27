@@ -284,12 +284,12 @@ namespace TakLib
             return new Space(OnTheBoard(c) ? _grid[c.Row, c.Column] : new PieceStack(), c, OnTheBoard(c));
         }
 
-        public IEnumerable<Move> GetAllMoves()
+        public IEnumerable<Move> GetAllMoves(bool filterCongruentMoves = false)
         {
             if (GameResult != GameResult.Incomplete) throw new Exception("Game is over");
             if (_moves == null || _flatScoreDirty)
             {
-                _moves = MoveGenerator.GetAllMoves(this);
+                _moves = MoveGenerator.GetAllMoves(this, filterCongruentMoves);
             }
             return _moves;
         }

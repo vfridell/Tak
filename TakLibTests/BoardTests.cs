@@ -666,6 +666,19 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[5]);
             Assert.IsFalse(congruenceDict[6]);
             Assert.IsFalse(congruenceDict[7]);
+
+
+            Game game2 = Game.GetNewGame(gameSetup);
+            game2.ApplyMove(NotationParser.Parse("b1"));
+
+            congruenceDict = game2.CurrentBoard.GetCongruenceDictionary();
+            Assert.IsFalse(congruenceDict[1]);
+            Assert.IsFalse(congruenceDict[2]);
+            Assert.IsFalse(congruenceDict[3]);
+            Assert.IsFalse(congruenceDict[4]);
+            Assert.IsFalse(congruenceDict[5]);
+            Assert.IsFalse(congruenceDict[6]);
+            Assert.IsFalse(congruenceDict[7]);
         }
 
         [TestMethod]
@@ -886,5 +899,20 @@ namespace TakLibTests
             Assert.IsFalse(congruenceDict[6]);
         }
 
+        [TestMethod]
+        public void BoardCongruenceMoveFilter()
+        {
+            GameSetup gameSetup = new GameSetup()
+            {
+                WhitePlayer = new Player() { Name = "Player1" },
+                BlackPlayer = new Player() { Name = "Player2" },
+                BoardSize = 5
+            };
+
+            Game game = Game.GetNewGame(gameSetup);
+            IEnumerable<Move> filteredMoves = game.GetAllMoves(true);
+
+            Assert.AreEqual(6, filteredMoves.Count());
+        }
     }
 }

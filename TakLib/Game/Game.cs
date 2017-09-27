@@ -102,10 +102,10 @@ namespace TakLib
             return Board.GetInitialBoard(gameSetup);
         }
 
-        public IEnumerable<Move> GetAllMoves()
+        public IEnumerable<Move> GetAllMoves(bool filterCongruentMoves = false)
         {
             if(GameResult == GameResult.Incomplete)
-                return CurrentBoard.GetAllMoves();
+                return CurrentBoard.GetAllMoves(filterCongruentMoves);
             else
                 return new List<Move>();
         }
