@@ -25,13 +25,13 @@ namespace TakLib
                 for (int c = 0; c < BoardSize; c++)
                 {
                     // (1) mirror 1 horizontal line
-                    if(c < IndexLimit) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(r, BoardSize - (c + 1)), 1);
+                    if(c <= IndexLimit) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(r, BoardSize - (c + 1)), 1);
                     // (2) mirror 2 vertical line
-                    if(r < IndexLimit) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(BoardSize - (r + 1), c), 2); 
+                    if(r <= IndexLimit) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(BoardSize - (r + 1), c), 2); 
                     // (3) mirror 3 line bottom left to upper right
-                    if(r > c) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(c,r), 3);
+                    if(r >= c) yield return new CongruencePair(new Coordinate(r,c), new Coordinate(c,r), 3);
                     // (4) mirror 4 line upper left to bottom right
-                    if(c + r + 1 < BoardSize) yield return new CongruencePair(new Coordinate(r,c), new Coordinate((BoardSize - (r + c + 1)) + r, (BoardSize - (r + c + 1)) + c), 4);
+                    if(c + r < BoardSize) yield return new CongruencePair(new Coordinate(r,c), new Coordinate((BoardSize - (r + c + 1)) + r, (BoardSize - (r + c + 1)) + c), 4);
                     // (5) rotate 90 degrees
                     // (6) rotate 180 degrees
                     // (6) rotate 270 degrees

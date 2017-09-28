@@ -90,7 +90,14 @@ namespace ParametersEvolver
                 NumberOfTrialsRun++;
 
                 Move movePicked = AI.PickBestMove(trial.Board);
-                if (movePicked.ToString() == trial.CorrectMove.ToString()) NumberOfCorrectPicks++;
+                Board futureBoard = Board.ComputeFutureBoard(trial.Board, movePicked);
+                Board correctFutureBoard = Board.ComputeFutureBoard(trial.Board, trial.CorrectMove);
+                if (movePicked.ToString() == trial.CorrectMove.ToString() ||
+                    Board.IsCongruent(futureBoard, correctFutureBoard)
+                )
+                {
+                    NumberOfCorrectPicks++;
+                }
             }
 
             double result = (double) NumberOfCorrectPicks / NumberOfTrialsRun;

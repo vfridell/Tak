@@ -37,6 +37,7 @@ namespace TakLib
         private int _emptySpaces;
         private bool _flatScoreDirty = true;
         private IEnumerable<Move> _moves;
+        private bool? _moveListFiltered = null;
         [NonSerialized]
         private SpaceGraph _whiteSpaceGraph;
         [NonSerialized]
@@ -287,9 +288,10 @@ namespace TakLib
         public IEnumerable<Move> GetAllMoves(bool filterCongruentMoves = false)
         {
             if (GameResult != GameResult.Incomplete) throw new Exception("Game is over");
-            if (_moves == null || _flatScoreDirty)
+            if (_moves == null || _flatScoreDirty || filterCongruentMoves != _moveListFiltered)
             {
                 _moves = MoveGenerator.GetAllMoves(this, filterCongruentMoves);
+                _moveListFiltered = filterCongruentMoves;
             }
             return _moves;
         }

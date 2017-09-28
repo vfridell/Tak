@@ -910,8 +910,10 @@ namespace TakLibTests
             };
 
             Game game = Game.GetNewGame(gameSetup);
+            IEnumerable<Move> moves = game.GetAllMoves();
             IEnumerable<Move> filteredMoves = game.GetAllMoves(true);
 
+            Assert.AreEqual(25, moves.Count());
             Assert.AreEqual(6, filteredMoves.Count());
         }
     }

@@ -13,7 +13,7 @@ namespace TakLib.AI
         public static IDictionary<double, HashSet<NegamaxContext>> GetSortedAnalysisDictionary(Board board, IBoardAnalyzer analyzer)
         {
             var advantageDict = new SortedDictionary<double, HashSet<NegamaxContext>>();
-            var allMoves = board.GetAllMoves();
+            var allMoves = board.GetAllMoves(true);
             foreach (Move move in allMoves)
             {
                 var futureBoard = Board.ComputeFutureBoard(board, move);

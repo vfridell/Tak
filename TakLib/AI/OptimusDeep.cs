@@ -136,7 +136,7 @@ namespace TakLib
             //}
 
             var advantageBag = new ConcurrentBag<NegamaxContext>();
-            var allMoves = board.GetAllMoves();
+            var allMoves = board.GetAllMoves(true);
             Parallel.ForEach(allMoves, (move, parallelLoopState) =>
             {
                 if (parallelLoopState.ShouldExitCurrentIteration) parallelLoopState.Stop();
