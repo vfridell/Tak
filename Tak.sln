@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakSOM", "TakSOM\TakSOM.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParametersEvolver", "ParametersEvolver\ParametersEvolver.csproj", "{783F7031-1DB2-4495-8CF3-1B6A5A2A39A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakWpfCustomControlLib", "TakWpfCustomControlLib\TakWpfCustomControlLib.csproj", "{37D9F522-7BE0-4E8F-91E5-05E1F114B759}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{783F7031-1DB2-4495-8CF3-1B6A5A2A39A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{783F7031-1DB2-4495-8CF3-1B6A5A2A39A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{783F7031-1DB2-4495-8CF3-1B6A5A2A39A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D9F522-7BE0-4E8F-91E5-05E1F114B759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D9F522-7BE0-4E8F-91E5-05E1F114B759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D9F522-7BE0-4E8F-91E5-05E1F114B759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D9F522-7BE0-4E8F-91E5-05E1F114B759}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

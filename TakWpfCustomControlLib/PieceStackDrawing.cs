@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using TakLib;
 
-namespace TakSOM
+namespace TakWpfControls
 {
     public class PieceStackDrawing
     {

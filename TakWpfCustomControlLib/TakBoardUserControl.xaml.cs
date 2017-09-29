@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TakLib;
 
-namespace TakSOM
+namespace TakWpfControls
 {
     /// <summary>
     /// Interaction logic for TakBoardUserControl.xaml

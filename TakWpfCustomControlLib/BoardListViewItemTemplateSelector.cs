@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TakLib;
 
-namespace TakSOM
+namespace TakWpfControls
 {
     public class BoardListViewItemTemplateSelector : DataTemplateSelector
     {

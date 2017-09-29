@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TakSOM"
+        xmlns:takControls="clr-namespace:TakWpfControls"
+        xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
         Title="BoardDisplayTest" Height="375.497" Width="725.073">
     <Window.Background>
@@ -29,11 +31,11 @@
                 <TextBlock Text="{Binding Item1.whiteAdvantage}"/>
             </WrapPanel>
         </DataTemplate>
-        <local:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>
+        <takWpfControls:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>
     </Window.Resources>
     <DockPanel>
         <ListView Name="BoardListView" SelectionMode="Single" ItemTemplateSelector="{StaticResource boardListViewItemTemplateSelector}">
         </ListView>
-        <local:TakBoardUserControl x:Name="BoardUserControl" DockPanel.Dock="Right"/>
+        <takWpfControls:TakBoardUserControl x:Name="BoardUserControl" DockPanel.Dock="Right"/>
     </DockPanel>
 </Window>

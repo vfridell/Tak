@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TakLib;
 
-namespace TakSOM
+namespace TakWpfControls
 {
     public class BoardInfoSidebarDrawing
     {
