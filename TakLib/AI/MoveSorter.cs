@@ -24,5 +24,20 @@ namespace TakLib.AI
             }
             return advantageDict;
         }
+
+        public static IDictionary<double, HashSet<AnalysisFactors>> GetSortedAnalysisFactorsDictionary(Board board, MaximumRatioAnalyzer analyzer)
+        {
+            var advantageDict = new SortedDictionary<double, HashSet<AnalysisFactors>>();
+            var allMoves = board.GetAllMoves(true);
+            foreach (Move move in allMoves)
+            {
+                var futureBoard = Board.ComputeFutureBoard(board, move);
+                double currentAdvantage = analyzer.Analyze(futureBoard).whiteAdvantage;
+                if (!advantageDict.ContainsKey(currentAdvantage))
+                    advantageDict.Add(currentAdvantage, new HashSet<AnalysisFactors>());
+                advantageDict[currentAdvantage].Add(analyzer.GetCurrentAnalysisFactors);
+            }
+            return advantageDict;
+        }
     }
 }

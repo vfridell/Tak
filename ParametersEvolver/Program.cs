@@ -26,14 +26,14 @@ namespace ParametersEvolver
             TrialSet trialSet = new TrialSet();
             trialSet.LoadFiles(5);
             //IBoardAnalyzer analyzer = new BoardStacksAnalyzer(trialSet.BoardSize, BoardAnalysisWeights.bestStackWeights);
-            IBoardAnalyzer analyzer = new MaximumRatioAnalyzer(trialSet.BoardSize);
+            MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(trialSet.BoardSize);
             foreach (Trial trial in trialSet.GetTrials())
             {
                 IDictionary<double, HashSet<NegamaxContext>> moveDictionary = MoveSorter.GetSortedAnalysisDictionary(trial.Board, analyzer);
+                IDictionary<double, HashSet<AnalysisFactors>> analysisDictionary = MoveSorter.GetSortedAnalysisFactorsDictionary(trial.Board, analyzer);
                 int uniqueScores = moveDictionary.Values.Count;
                 int totalMoves = moveDictionary.Keys.Select(d => moveDictionary[d].Count).Sum();
                 Console.WriteLine($"Ratio: {totalMoves}/{uniqueScores} = {((decimal)totalMoves/uniqueScores):N} ({totalMoves} moves grouped into {uniqueScores} analysis scores)");
-
             }
         }
 

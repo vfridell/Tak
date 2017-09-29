@@ -30,17 +30,20 @@ namespace TakLib
         {
             Dictionary<string, Tuple<double, double>> bestWeightsGrowth = new Dictionary<string, Tuple<double, double>>()
             {
+                {"turnNumber", new Tuple<double, double>(0, 0)},
+                {"piecesInHandDiff", new Tuple<double, double>(0, 0)},
                 {"capStoneDiff", new Tuple<double, double>(1, -.1)},
-                {"flatScore", new Tuple<double, double>(86, -.1)},
-                {"possibleMovesDiff", new Tuple<double, double>(0, 0)},
-                {"wallCountDiff", new Tuple<double, double>(-5, -.1)},
-                {"averageSubGraphDiff", new Tuple<double, double>(15, -.1)},
-                {"longestSubGraphDiff", new Tuple<double, double>(15, -.1)},
-                {"numberOfSubGraphsDiff", new Tuple<double, double>(1, -.1)},
+                {"flatScore", new Tuple<double, double>(86, 1.45)},
+                {"possibleMovesDiff", new Tuple<double, double>(0, -.1)},
+                {"wallCountDiff", new Tuple<double, double>(-15, -.1)},
+                {"averageSubGraphDiff", new Tuple<double, double>(15, -.73)},
+                {"longestSubGraphDiff", new Tuple<double, double>(15, -.73)},
+                {"numberOfSubGraphsDiff", new Tuple<double, double>(1, -.73)},
                 {"stacksAdvantageDiff", new Tuple<double, double>(10, -.1)},
-                {"cornerOwnershipDiff", new Tuple<double, double>(1, -.2)},
-                {"sideOwnershipDiff", new Tuple<double, double>(2, -.2)},
-                {"centerOwnershipDiff", new Tuple<double, double>(3, -.2)},
+                {"cornerOwnershipDiff", new Tuple<double, double>(1, -.73)},
+                {"sideOwnershipDiff", new Tuple<double, double>(2, -.73)},
+                {"centerOwnershipDiff", new Tuple<double, double>(3, -.73)},
+                {"averageDistanceFromCenterDiff", new Tuple<double, double>(-3, -.1)},
             };
             return new AnalysisFactors(bestWeightsGrowth);
         }
@@ -49,6 +52,8 @@ namespace TakLib
         {
             MaximumRatioAnalysisData d = new MaximumRatioAnalysisData();
             d.gameResult = GameResultService.GetGameResult(board);
+            _factorsTemplate["turnNumber"].Value = board.Turn;
+            _factorsTemplate["piecesInHandDiff"].Value = board.StonesInHand(PieceColor.Black) - board.StonesInHand(PieceColor.Black);
             if (d.winningResultDiff != 0)
             {
                 d.whiteAdvantage = d.winningResultDiff;
@@ -62,8 +67,8 @@ namespace TakLib
 
             if(_factorsTemplate["possibleMovesDiff"].Weight != 0)
             {
-                IEnumerable<Move> whiteMoves = MoveGenerator.GetAllMoves(board, PieceColor.White);
-                IEnumerable<Move> blackMoves = MoveGenerator.GetAllMoves(board, PieceColor.Black);
+                IEnumerable<Move> whiteMoves = MoveGenerator.GetAllMoves(board, PieceColor.White, true);
+                IEnumerable<Move> blackMoves = MoveGenerator.GetAllMoves(board, PieceColor.Black, true);
                 _factorsTemplate["possibleMovesDiff"].Value = whiteMoves.Count(m => m is MoveStack) - blackMoves.Count(m => m is MoveStack);
             }
 
@@ -81,8 +86,49 @@ namespace TakLib
 
             GetRoadFinderFactors(board);
 
+            if (_factorsTemplate["averageDistanceFromCenterDiff"].Weight != 0)
+            {
+                _factorsTemplate["averageDistanceFromCenterDiff"].Value = GetAverageDistanceFromCenterDiff(board);
+            }
+
             d.whiteAdvantage = _factorsTemplate.CalculateAdvantage(board.Turn);
             return d;
+        }
+
+        public AnalysisFactors GetCurrentAnalysisFactors => _factorsTemplate;
+
+        private double GetAverageDistanceFromCenterDiff(Board board)
+        {
+            double whiteDistanceSum = 0;
+            double whiteTotalPieces = 0;
+            double blackDistanceSum = 0;
+            double blackTotalPieces = 0;
+            Coordinate center = new Coordinate((int) Math.Floor(board.Size / 2d), (int) Math.Floor(board.Size / 2d));
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                Space space = board.GetSpace(c);
+                if (space.Piece?.Color == PieceColor.White)
+                {
+                    whiteTotalPieces += 1;
+                    whiteDistanceSum += Coordinate.Distance(c, center);
+                }
+                else if (space.Piece?.Color == PieceColor.Black)
+                {
+                    blackTotalPieces += 1;
+                    blackDistanceSum += Coordinate.Distance(c, center);
+                }
+            }
+
+            double whiteAverageDist;
+            double blackAverageDist;
+
+            if (whiteTotalPieces == 0) whiteAverageDist = board.Size;
+            else whiteAverageDist = whiteDistanceSum / whiteTotalPieces;
+
+            if (blackTotalPieces == 0) blackAverageDist = board.Size;
+            else blackAverageDist = blackDistanceSum / blackTotalPieces;
+
+            return whiteAverageDist - blackAverageDist;
         }
 
         private double GetWallCountDiff(Board board)
@@ -175,9 +221,7 @@ namespace TakLib
         public SOMWeightsVector GetSomWeightsVector(Board board)
         {
             throw new NotImplementedException();
-
         }
     }
-
     
 }
