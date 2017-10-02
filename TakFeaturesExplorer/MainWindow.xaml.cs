@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using TakLib;
 using TakLib.AI.Helpers;
 
@@ -26,8 +25,6 @@ namespace TakFeaturesExplorer
     /// </summary>
     public partial class MainWindow : Window
     {
-        CommonOpenFileDialog _openFolderDialog;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -43,15 +40,36 @@ namespace TakFeaturesExplorer
             var openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog(this).Value)
             {
-                string fileText = File.ReadAllText(openFileDialog.FileName);
+                BoardListView.ItemsSource = null;
+                Game game = Game.CreateGameFromTranscript(openFileDialog.FileName);
+                if (game == null)
+                {
+                    MessageBox.Show($"Error creating game from file {openFileDialog.FileName}");
+                    return;
+                }
+                BoardAnalyzer analyzer = new BoardAnalyzer(game.Boards[0].Size, BoardAnalysisWeights.bestWeights);
+                BoardListView.ItemsSource = game.Boards.Select(b => new Tuple<IAnalysisResult, Board>(analyzer.Analyze(b), b));
+                BoardListView.SelectionChanged += BoardAnalysisListViewOnSelectionChanged;
+                if (game.Boards != null && game.Boards.Count > 0)
+                {
+                    BoardUserControl.Board = game.Boards[0];
+                }
 
- 
             }
         }
 
         private void OpenGameFileCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            e.CanExecute = true;
+        }
+
+        private void BoardAnalysisListViewOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            if (selectionChangedEventArgs.AddedItems.Count > 0)
+            {
+                BoardUserControl.Board = ((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item2;
+                BoardUserControl.DrawBoard((BoardAnalysisData)((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item1);
+            }
         }
     }
 }

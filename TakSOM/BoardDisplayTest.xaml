@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TakSOM"
-        xmlns:takControls="clr-namespace:TakWpfControls"
         xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
         Title="BoardDisplayTest" Height="375.497" Width="725.073">
