@@ -8,9 +8,10 @@ namespace TakLib
 {
     public class AnalysisFactor
     {
-        public string Name;
-        public double Value;
-        public double Weight;
-        public double GrowthRate;
+        public string Name { get; set; }
+        public double Value { get; set;}
+        public double Weight { get; set; }
+        public double GrowthRate { get; set; }
+        public double CalculatedResult { get; set; }
     }
 }

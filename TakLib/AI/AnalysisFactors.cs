@@ -31,13 +31,26 @@ namespace TakLib
             return 1d / (1d + Math.Exp(-growthRate * turnNumber) * Q);
         }
 
+        public double CalculateNamedFactor(string name, int turnNumber)
+        {
+            AnalysisFactor factor;
+            if(!TryGetValue(name, out factor)) throw new Exception($"Invalid factor {name}");
+            return CalculateNamedFactor(factor, turnNumber);
+        }
+
+        public double CalculateNamedFactor(AnalysisFactor factor, int turnNumber)
+        {
+            factor.CalculatedResult = factor.Value * factor.Weight * Activation(turnNumber, factor.GrowthRate);
+            return factor.CalculatedResult;
+        }
+
         public double CalculateAdvantage(int turnNumber)
         {
             double result = 0;
             foreach (var kvp in this)
             {
                 if (kvp.Key != kvp.Value.Name) throw new Exception($"Invalid factor: Name = {kvp.Key}, FactorName = {kvp.Value.Name}");
-                result += kvp.Value.Value * kvp.Value.Weight * Activation(turnNumber, kvp.Value.GrowthRate);
+                result += CalculateNamedFactor(kvp.Value, turnNumber);
             }
             return result;
         }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TakFeaturesExplorer"
         xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="MainWindow" Height="418.162" Width="672.812" Loaded="Window_Loaded">
     <Window.Resources>
         <DataTemplate x:Key="BoardItemTemplate">
             <WrapPanel>
@@ -20,8 +20,7 @@
         </DataTemplate>
         <DataTemplate x:Key="BoardAnalysisTemplate">
             <WrapPanel>
-                <TextBlock Text="WhiteAdvantage: "/>
-                <TextBlock Text="{Binding Item1.whiteAdvantage}"/>
+                <TextBlock Text="{Binding Item1.whiteAdvantage, StringFormat=WhiteAdvantage: {0:G5}}"/>
             </WrapPanel>
         </DataTemplate>
         <takWpfControls:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>

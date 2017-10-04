@@ -39,6 +39,7 @@ namespace TakWpfControls
 
         public Board Board { get; set; }
         public BoardAnalysisData Data { get; set; }
+        public MaximumRatioAnalysisData AltData { get; set; }
 
         public void DrawBoard()
         {
@@ -80,8 +81,27 @@ namespace TakWpfControls
             generalSB.AppendLine($"possibleMovesDiff: {data.possibleMovesDiff}");
             generalSB.AppendLine($"wallCountDiff: {data.wallCountDiff}");
             generalSB.AppendLine($"winningResultDiff: {data.winningResultDiff}");
-            GeneralInfo.Text += generalSB.ToString();
-            GeneralInfo.FontSize = GetFontSize();
+            //GeneralInfo.Text += generalSB.ToString();
+            //GeneralInfo.FontSize = GetFontSize();
+        }
+
+        public void DrawBoard(MaximumRatioAnalysisData data)
+        {
+            DrawBoard();
+            MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(Board.Size);
+            var result = analyzer.Analyze(Board);
+
+            FactorsDG.DataContext = analyzer.GetCurrentAnalysisFactors.Values;
+
+            StringBuilder generalSB = new StringBuilder();
+            foreach (AnalysisFactor factor in analyzer.GetCurrentAnalysisFactors.Values)
+            {
+                double calc = analyzer.GetCurrentAnalysisFactors.CalculateNamedFactor(factor.Name, Board.Turn);
+                generalSB.AppendLine($"{factor.Name}: Base {factor.Value:g2}  Calc {calc:g2}");
+            }
+            generalSB.AppendLine($"Advantage: {result.whiteAdvantage:G}");
+            //GeneralInfo.Text += generalSB.ToString();
+            //GeneralInfo.FontSize = GetFontSize();
         }
 
         private void WriteInfo()
@@ -99,8 +119,8 @@ namespace TakWpfControls
             blackSB.AppendLine($"Stones Held: {Board.StonesInHand(PieceColor.Black)}");
             blackSB.AppendLine($"CapStones Held: {Board.CapStonesInHand(PieceColor.Black)}");
 
-            GeneralInfo.Text = generalSB.ToString();
-            GeneralInfo.FontSize = GetFontSize();
+            //GeneralInfo.Text = generalSB.ToString();
+            //GeneralInfo.FontSize = GetFontSize();
             WhiteInfo.Text = whiteSB.ToString();
             WhiteInfo.FontSize = GetFontSize();
             BlackInfo.Text = blackSB.ToString();
@@ -119,6 +139,12 @@ namespace TakWpfControls
                 return 10.0;
             else
                 return 8.0;
+        }
+
+        private void FactorsDG_OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(System.Double))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "0000.00";
         }
     }
 }

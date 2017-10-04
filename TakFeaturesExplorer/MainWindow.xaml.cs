@@ -47,7 +47,7 @@ namespace TakFeaturesExplorer
                     MessageBox.Show($"Error creating game from file {openFileDialog.FileName}");
                     return;
                 }
-                BoardAnalyzer analyzer = new BoardAnalyzer(game.Boards[0].Size, BoardAnalysisWeights.bestWeights);
+                MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(game.Boards[0].Size);
                 BoardListView.ItemsSource = game.Boards.Select(b => new Tuple<IAnalysisResult, Board>(analyzer.Analyze(b), b));
                 BoardListView.SelectionChanged += BoardAnalysisListViewOnSelectionChanged;
                 if (game.Boards != null && game.Boards.Count > 0)
@@ -68,7 +68,7 @@ namespace TakFeaturesExplorer
             if (selectionChangedEventArgs.AddedItems.Count > 0)
             {
                 BoardUserControl.Board = ((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item2;
-                BoardUserControl.DrawBoard((BoardAnalysisData)((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item1);
+                BoardUserControl.DrawBoard((MaximumRatioAnalysisData)((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item1);
             }
         }
     }

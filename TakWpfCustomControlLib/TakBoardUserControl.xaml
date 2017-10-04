@@ -5,17 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TakWpfControls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="500" d:DesignWidth="700">
         <DockPanel Name="MainDock" >
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Padding="5" Margin="1" DockPanel.Dock="Right">
             <ScrollViewer>
-            <Grid Width="Auto">
+            <Grid Width="400">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Name="GeneralInfo" Background="White" Padding="5" Text="General Text" Grid.Row="0" />
+                    <DataGrid Name="FactorsDG" AutoGeneratingColumn="FactorsDG_OnAutoGeneratingColumn" AutoGenerateColumns="True" ItemsSource="{Binding}" Background="White" Foreground="Black" Padding="5" Grid.Row="0"></DataGrid>
                 <TextBlock Name="WhiteInfo" Background="Orange" Padding="5" Grid.Row="1"/>
                 <TextBlock Name="BlackInfo" Background="Navy" Foreground="White" Padding="5" Grid.Row="3" />
             </Grid>
