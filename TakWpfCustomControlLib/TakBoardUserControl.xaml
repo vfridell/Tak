@@ -5,24 +5,24 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TakWpfControls"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="700">
+             d:DesignHeight="368.709" d:DesignWidth="700">
         <DockPanel Name="MainDock" >
-            <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Padding="5" Margin="1" DockPanel.Dock="Right">
+            <Border BorderBrush="Black" BorderThickness="1" Padding="5" Margin="1" DockPanel.Dock="Right">
             <ScrollViewer>
-            <Grid Width="400">
+            <Grid Width="Auto">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                    <DataGrid Name="FactorsDG" AutoGeneratingColumn="FactorsDG_OnAutoGeneratingColumn" AutoGenerateColumns="True" ItemsSource="{Binding}" Background="White" Foreground="Black" Padding="5" Grid.Row="0"></DataGrid>
+                <DataGrid Name="FactorsDG" AutoGeneratingColumn="FactorsDG_OnAutoGeneratingColumn" AutoGenerateColumns="True" ItemsSource="{Binding}" Background="White" Foreground="Black" Padding="5" Grid.Row="0"></DataGrid>
                 <TextBlock Name="WhiteInfo" Background="Orange" Padding="5" Grid.Row="1"/>
-                <TextBlock Name="BlackInfo" Background="Navy" Foreground="White" Padding="5" Grid.Row="3" />
+                <TextBlock Name="BlackInfo" Background="Navy" Foreground="White" Padding="5" Grid.Row="2" />
             </Grid>
             </ScrollViewer>
-        </Border>
+            </Border>
 
-        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="0" Padding="5" Margin="5,5,5,0" Background="White">
+            <Border BorderBrush="Black" BorderThickness="1" Padding="5" Margin="5,5,5,0" Background="White">
                 <DockPanel Name="CanvasDockPanel">
                     <Canvas Name="MainCanvas" Background="LightBlue" MinWidth="150" MinHeight="150"/>
                 </DockPanel>

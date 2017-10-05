@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TakFeaturesExplorer"
         xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="418.162" Width="672.812" Loaded="Window_Loaded">
+        Title="MainWindow" Height="418.162" Width="900.39" Loaded="Window_Loaded">
     <Window.Resources>
         <DataTemplate x:Key="BoardItemTemplate">
             <WrapPanel>
@@ -28,7 +28,8 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="Load Game" Command="ApplicationCommands.Open" />
+                <Button Content="Load _game" Command="ApplicationCommands.Open" />
+                <Button Content="Show _game Chart" Command="ApplicationCommands.Properties" Margin="15,0,0,0" />
             </ToolBar>
         </ToolBarTray>
         <ScrollViewer>

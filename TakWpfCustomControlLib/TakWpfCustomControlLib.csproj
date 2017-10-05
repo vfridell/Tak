@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicDataDisplay, Version=0.3.0.1, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplay.0.3.0.1\lib\net45\DynamicDataDisplay.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -51,10 +55,17 @@
     <Compile Include="BoardGridDrawing.cs" />
     <Compile Include="BoardInfoSidebarDrawing.cs" />
     <Compile Include="BoardListViewItemTemplateSelector.cs" />
+    <Compile Include="GameFactorsGraph.xaml.cs">
+      <DependentUpon>GameFactorsGraph.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PieceStackDrawing.cs" />
     <Compile Include="TakBoardUserControl.xaml.cs">
       <DependentUpon>TakBoardUserControl.xaml</DependentUpon>
     </Compile>
+    <Page Include="GameFactorsGraph.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TakBoardUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,6 +89,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

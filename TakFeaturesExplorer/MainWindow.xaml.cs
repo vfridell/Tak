@@ -25,6 +25,8 @@ namespace TakFeaturesExplorer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Game _game;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +35,18 @@ namespace TakFeaturesExplorer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenGameFileExecute, OpenGameFileCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Properties, ShowChartExecute, ShowChartCanExecute));
+        }
+
+        private void ShowChartExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            GameChartWindow chartWindow = new GameChartWindow(_game);
+            chartWindow.Show();
+        }
+
+        private void ShowChartCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _game != null;
         }
 
         private void OpenGameFileExecute(object sender, ExecutedRoutedEventArgs e)
@@ -41,18 +55,18 @@ namespace TakFeaturesExplorer
             if (openFileDialog.ShowDialog(this).Value)
             {
                 BoardListView.ItemsSource = null;
-                Game game = Game.CreateGameFromTranscript(openFileDialog.FileName);
-                if (game == null)
+                _game = Game.CreateGameFromTranscript(openFileDialog.FileName);
+                if (_game == null)
                 {
                     MessageBox.Show($"Error creating game from file {openFileDialog.FileName}");
                     return;
                 }
-                MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(game.Boards[0].Size);
-                BoardListView.ItemsSource = game.Boards.Select(b => new Tuple<IAnalysisResult, Board>(analyzer.Analyze(b), b));
+                MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(_game.Boards[0].Size);
+                BoardListView.ItemsSource = _game.Boards.Select(b => new Tuple<IAnalysisResult, Board>(analyzer.Analyze(b), b));
                 BoardListView.SelectionChanged += BoardAnalysisListViewOnSelectionChanged;
-                if (game.Boards != null && game.Boards.Count > 0)
+                if (_game.Boards != null && _game.Boards.Count > 0)
                 {
-                    BoardUserControl.Board = game.Boards[0];
+                    BoardUserControl.Board = _game.Boards[0];
                 }
 
             }
@@ -71,5 +85,6 @@ namespace TakFeaturesExplorer
                 BoardUserControl.DrawBoard((MaximumRatioAnalysisData)((Tuple<IAnalysisResult, Board>)selectionChangedEventArgs.AddedItems[0]).Item1);
             }
         }
+
     }
 }

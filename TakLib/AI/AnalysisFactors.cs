@@ -16,6 +16,7 @@ namespace TakLib
                 GetOrAdd(kvp.Key, new AnalysisFactor() {Name = kvp.Key, Weight = kvp.Value.Item1, GrowthRate = kvp.Value.Item2});
             }
         }
+        private AnalysisFactors() { }
 
         // If growthRate is negative, the weight applies in full on turn 1 and becomes less important toward the last turn
         // If positive, the weight applies hardly at all in the beginning and fully at endgame
@@ -63,6 +64,22 @@ namespace TakLib
             }
         }
 
+        public AnalysisFactors Clone()
+        {
+            AnalysisFactors clone = new AnalysisFactors();
+            foreach (var kvp in this)
+            {
+                clone.GetOrAdd(kvp.Key, new AnalysisFactor()
+                {
+                    Name = kvp.Key,
+                    Value = kvp.Value.Value,
+                    Weight = kvp.Value.Weight,
+                    GrowthRate = kvp.Value.GrowthRate,
+                    CalculatedResult = kvp.Value.CalculatedResult,
+                });
+            }
+            return clone;
+        }
 
 
     }

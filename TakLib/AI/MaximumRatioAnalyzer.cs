@@ -31,6 +31,7 @@ namespace TakLib
             Dictionary<string, Tuple<double, double>> bestWeightsGrowth = new Dictionary<string, Tuple<double, double>>()
             {
                 {"turnNumber", new Tuple<double, double>(0, 0)},
+                {"roundNumber", new Tuple<double, double>(0, 0)},
                 {"piecesInHandDiff", new Tuple<double, double>(0, 0)},
                 {"capStoneDiff", new Tuple<double, double>(1, -.1)},
                 {"flatScore", new Tuple<double, double>(86, 1.45)},
@@ -53,6 +54,7 @@ namespace TakLib
             MaximumRatioAnalysisData d = new MaximumRatioAnalysisData();
             d.gameResult = GameResultService.GetGameResult(board);
             _factorsTemplate["turnNumber"].Value = board.Turn;
+            _factorsTemplate["roundNumber"].Value = board.Round;
             _factorsTemplate["piecesInHandDiff"].Value = board.StonesInHand(PieceColor.Black) - board.StonesInHand(PieceColor.Black);
             if (d.winningResultDiff != 0)
             {
