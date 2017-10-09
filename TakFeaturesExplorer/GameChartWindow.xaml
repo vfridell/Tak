@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:TakFeaturesExplorer"
         xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
-        Title="GameChartWindow" Height="300" Width="300">
+        Title="GameChartWindow" Height="600" Width="1200">
     <Grid>
-        <takWpfControls:GameFactorsGraph Name="FactorsGraph"/>
+        <takWpfControls:GameFactorsGraph Name="FactorsGraph" />
     </Grid>
 </Window>

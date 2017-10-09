@@ -8,10 +8,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <d3:ChartPlotter Name="Chart">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="160"/>
+        </Grid.ColumnDefinitions>
+            
+        <d3:ChartPlotter Grid.Column="0" Name="Chart">
             <d3:Header TextBlock.FontSize="20" Content="Factor Values by Round"/>
             <d3:VerticalAxisTitle Content="Value" />
             <d3:HorizontalAxisTitle Content="Round"/>
         </d3:ChartPlotter>
+        <StackPanel Name="RadioStackPanel" Grid.Column="1" Background="AliceBlue"/>
     </Grid>
 </UserControl>
