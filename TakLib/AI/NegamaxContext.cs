@@ -1,6 +1,6 @@
 ﻿namespace TakLib
 {
-    public struct NegamaxContext
+    public class NegamaxContext
     {
         public NegamaxContext(Move move, Board board, double score, bool calculated)
         {
@@ -10,9 +10,9 @@
             ScoreCalculated = calculated;
         }
 
-        public Move Move;
-        public Board Board;
-        public double Score;
-        public bool ScoreCalculated;
+        public Move Move { get; set; }
+        public Board Board { get; set; }
+        public double Score { get; set; }
+        public bool ScoreCalculated { get; set; }
     }
 }

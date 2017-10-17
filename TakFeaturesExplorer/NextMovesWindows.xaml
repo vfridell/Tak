@@ -1,0 +1,29 @@
+﻿<Window x:Class="TakFeaturesExplorer.NextMovesWindows"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TakFeaturesExplorer"
+        xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="NextMovesWindows" Height="418.162" Width="900.39" Loaded="Window_Loaded">
+    <Window.Resources>
+        <DataTemplate x:Key="NegamaxContentTemplate">
+            <WrapPanel>
+                <TextBlock Text="{Binding Move, diag:PresentationTraceSources.TraceLevel=High}"/>
+                <TextBlock Text="  "/>
+                <TextBlock Text="{Binding Board.Round}"/>
+                <TextBlock Text="  "/>
+                <TextBlock Text="{Binding Score, StringFormat=WA: {0:G5}}"/>
+            </WrapPanel>
+        </DataTemplate>
+        <takWpfControls:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>
+    </Window.Resources>
+    <DockPanel>
+        <ScrollViewer>
+            <ListView Name="BoardListView" SelectionMode="Single" ItemTemplateSelector="{StaticResource boardListViewItemTemplateSelector}"/>
+        </ScrollViewer>
+        <takWpfControls:TakBoardUserControl x:Name="BoardUserControl" DockPanel.Dock="Right"/>
+    </DockPanel>
+</Window>

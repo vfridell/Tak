@@ -19,6 +19,10 @@ namespace TakWpfControls
             {
                 return elemnt.FindResource("BoardItemTemplate") as DataTemplate;
             }
+            else if(item is NegamaxContext)
+            {
+                return elemnt.FindResource("NegamaxContentTemplate") as DataTemplate;
+            }
             else
             {
                 return elemnt.FindResource("BoardAnalysisTemplate") as DataTemplate;

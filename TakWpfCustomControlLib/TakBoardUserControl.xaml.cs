@@ -88,6 +88,11 @@ namespace TakWpfControls
         public void DrawBoard(MaximumRatioAnalysisData data)
         {
             DrawBoard();
+            UpdateAnalysisDataGrid();
+        }
+
+        private void UpdateAnalysisDataGrid()
+        {
             MaximumRatioAnalyzer analyzer = new MaximumRatioAnalyzer(Board.Size);
             var result = analyzer.Analyze(Board);
 
@@ -100,8 +105,6 @@ namespace TakWpfControls
                 generalSB.AppendLine($"{factor.Name}: Base {factor.Value:g2}  Calc {calc:g2}");
             }
             generalSB.AppendLine($"Advantage: {result.whiteAdvantage:G}");
-            //GeneralInfo.Text += generalSB.ToString();
-            //GeneralInfo.FontSize = GetFontSize();
         }
 
         private void WriteInfo()

@@ -18,9 +18,20 @@
                 <TextBlock Text="{Binding ColorToPlay}"/>
             </WrapPanel>
         </DataTemplate>
+        <DataTemplate x:Key="NegamaxContentTemplate">
+            <WrapPanel>
+                <TextBlock Text="{Binding Move}"/>
+                <TextBlock Text="  "/>
+                <TextBlock Text="{Binding Board.Round}"/>
+                <TextBlock Text="  "/>
+                <TextBlock Text="{Binding Item1.Score, StringFormat=WA: {0:G5}}"/>
+            </WrapPanel>
+        </DataTemplate>
         <DataTemplate x:Key="BoardAnalysisTemplate">
             <WrapPanel>
-                <TextBlock Text="{Binding Item1.whiteAdvantage, StringFormat=WhiteAdvantage: {0:G5}}"/>
+                <TextBlock Text="{Binding Item2.Round, StringFormat=R: {0:G}}"/>
+                <TextBlock Text="  "/>
+                <TextBlock Text="{Binding Item1.whiteAdvantage, StringFormat=WA: {0:G5}}"/>
             </WrapPanel>
         </DataTemplate>
         <takWpfControls:BoardListViewItemTemplateSelector x:Key="boardListViewItemTemplateSelector"/>
@@ -28,8 +39,9 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="Load _game" Command="ApplicationCommands.Open" />
-                <Button Content="Show _game Chart" Command="ApplicationCommands.Properties" Margin="15,0,0,0" />
+                <Button Content="Load Game" Command="ApplicationCommands.Open" />
+                <Button Content="Show Game Chart" Command="ApplicationCommands.Properties" Margin="15,0,0,0" />
+                <Button Content="Next Moves" Command="ApplicationCommands.Find" Margin="15,0,0,0" />
             </ToolBar>
         </ToolBarTray>
         <ScrollViewer>
