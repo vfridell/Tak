@@ -49,6 +49,7 @@ namespace TakWpfControls
             i = 0;
             foreach (string featureIndex in _factors[0].Keys)
             {
+                if (_factors[0][featureIndex].Weight == 0) continue;
                 // Create data sources:
                 AddFeatureGraph(featureIndex, GetColor());
                 CheckBox newCheckBox = new CheckBox() { IsChecked = true, Content = FeatureIndexToName(featureIndex), Name = featureIndex};
