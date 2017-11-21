@@ -45,6 +45,7 @@ namespace TakLib
                 {"sideOwnershipDiff", new Tuple<double, double>(2, -.73)},
                 {"centerOwnershipDiff", new Tuple<double, double>(3, -.73)},
                 {"averageDistanceFromCenterDiff", new Tuple<double, double>(-3, -.1)},
+                {"threatsDiff", new Tuple<double, double>(1, -.1)},
             };
             return new AnalysisFactors(bestWeightsGrowth);
         }
@@ -91,6 +92,11 @@ namespace TakLib
             if (_factorsTemplate["averageDistanceFromCenterDiff"].Weight != 0)
             {
                 _factorsTemplate["averageDistanceFromCenterDiff"].Value = GetAverageDistanceFromCenterDiff(board);
+            }
+
+            if (_factorsTemplate["threatsDiff"].Weight != 0)
+            {
+                _factorsTemplate["threatsDiff"].Value = GetThreatsDiff(board);
             }
 
             d.whiteAdvantage = _factorsTemplate.CalculateAdvantage(board.Turn);
@@ -174,6 +180,46 @@ namespace TakLib
                     result -= stackAdvantage;
             }
             return result;
+        }
+
+        private double GetThreatsDiff(Board board)
+        {
+            double result = 0;
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                Space space = board.GetSpace(c);
+                if (space.IsEmpty) continue;
+
+                Space upNeighbor = board.GetSpace(c.GetNeighbor(Direction.Up));
+                Space downNeighbor = board.GetSpace(c.GetNeighbor(Direction.Down));
+                Space leftNeighbor = board.GetSpace(c.GetNeighbor(Direction.Left));
+                Space rightNeighbor = board.GetSpace(c.GetNeighbor(Direction.Right));
+
+                if (space.Piece?.Color == PieceColor.Black)
+                {
+                    result += IsThreat(space, upNeighbor) ? -1 : 0;
+                    result += IsThreat(space, downNeighbor) ? -1 : 0;
+                    result += IsThreat(space, leftNeighbor) ? -1 : 0;
+                    result += IsThreat(space, rightNeighbor) ? -1 : 0;
+                }
+                else if (space.Piece?.Color == PieceColor.White)
+                {
+                    result += IsThreat(space, upNeighbor) ? 1 : 0;
+                    result += IsThreat(space, downNeighbor) ? 1 : 0;
+                    result += IsThreat(space, leftNeighbor) ? 1 : 0;
+                    result += IsThreat(space, rightNeighbor) ? 1 : 0;
+                }
+            }
+            return result;
+        }
+
+        private bool IsThreat(Space from, Space to)
+        {
+            if (from.IsEmpty || to.IsEmpty) return false;
+            if (from.Piece?.Color == to.Piece?.Color) return false;
+            if (from.Piece?.Type == PieceType.CapStone && to.Piece?.Type == PieceType.Wall) return true;
+            if (to.Piece?.Type == PieceType.Wall || to.Piece?.Type == PieceType.CapStone) return false;
+            return true;
         }
 
         private void GetRoadFinderFactors(Board board)
