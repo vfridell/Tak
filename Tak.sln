@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakLib", "TakLib\TakLib.csproj", "{80AE1152-FD43-4750-812D-31671F42F9D3}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakWpfCustomControlLib", "TakWpfCustomControlLib\TakWpfCustomControlLib.csproj", "{37D9F522-7BE0-4E8F-91E5-05E1F114B759}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakFeaturesExplorer", "TakFeaturesExplorer\TakFeaturesExplorer.csproj", "{BF9FAC24-226C-456C-A259-012B5D8A6D26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakFeatureDataExtract", "TakFeatureDataExtract\TakFeatureDataExtract.csproj", "{C01BC8A4-2E87-4044-8F4C-BAD263424674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,8 +53,15 @@ Global
 		{BF9FAC24-226C-456C-A259-012B5D8A6D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF9FAC24-226C-456C-A259-012B5D8A6D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF9FAC24-226C-456C-A259-012B5D8A6D26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C01BC8A4-2E87-4044-8F4C-BAD263424674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01BC8A4-2E87-4044-8F4C-BAD263424674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01BC8A4-2E87-4044-8F4C-BAD263424674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01BC8A4-2E87-4044-8F4C-BAD263424674}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE91E277-E971-49BA-97D5-F3715C2BD1DA}
 	EndGlobalSection
 EndGlobal

@@ -67,6 +67,8 @@ namespace TakWpfControls
                 i++;
             }
 
+            Chart.Legend.LegendLeft = 5;
+
             // Force evertyhing plotted to be visible
             Chart.FitToView();
         }
