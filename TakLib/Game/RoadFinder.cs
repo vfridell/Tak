@@ -14,7 +14,7 @@ namespace TakLib
         public IDictionary<int, IEnumerable<Space>> Roads = new Dictionary<int, IEnumerable<Space>>();
         public PieceColor ColorAnalyzed { get; protected set; }
         public int SubGraphCount { get; protected set; }
-        public int AverageSubGraphLength { get; protected set; }
+        public double AverageSubGraphLength { get; protected set; }
         public int LongestSubGraphLength { get; protected set; }
 
         public RoadFinder(int boardSize)
@@ -32,10 +32,10 @@ namespace TakLib
             // get stats on all subgraphs
             SubGraphCount = connectedComponents.ComponentCount;
             if (connectedComponents.ComponentCount == 0) return;
-            AverageSubGraphLength = (int)Math.Ceiling(connectedComponents.Components
+            AverageSubGraphLength = connectedComponents.Components
                 .GroupBy(kvp => kvp.Value)
                 .Select(g => g.Count())
-                .Average());
+                .Average();
             LongestSubGraphLength = connectedComponents.Components
                 .GroupBy(kvp => kvp.Value)
                 .Select(g => g.Count())

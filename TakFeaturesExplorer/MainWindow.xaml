@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TakFeaturesExplorer"
         xmlns:takWpfControls="clr-namespace:TakWpfControls;assembly=TakWpfCustomControlLib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="418.162" Width="900.39" Loaded="Window_Loaded">
+        Title="MainWindow" Height="550" Width="1150" Loaded="Window_Loaded">
     <Window.Resources>
         <DataTemplate x:Key="BoardItemTemplate">
             <WrapPanel>

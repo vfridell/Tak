@@ -50,12 +50,12 @@ namespace TakLib
             RoadFinder roadFinder = new RoadFinder(_boardSize);
             roadFinder.Analyze(board, PieceColor.White);
             d.whiteLongestSubgraph = roadFinder.LongestSubGraphLength;
-            d.whiteAverageSubgraph = roadFinder.AverageSubGraphLength;
+            d.whiteAverageSubgraph = (int)Math.Ceiling(roadFinder.AverageSubGraphLength);
             d.whiteNumberOfSubgraphs = roadFinder.SubGraphCount;
 
             roadFinder.Analyze(board, PieceColor.Black);
             d.blackLongestSubgraph = roadFinder.LongestSubGraphLength;
-            d.blackAverageSubgraph = roadFinder.AverageSubGraphLength;
+            d.blackAverageSubgraph = (int)Math.Ceiling(roadFinder.AverageSubGraphLength);
             d.blackNumberOfSubgraphs = roadFinder.SubGraphCount;
 
             d.whiteAdvantage = (d.capStoneDiff * d.weights.capStoneDiffWeight) +
