@@ -46,6 +46,7 @@ namespace TakLib
                 {"centerOwnershipDiff", new Tuple<double, double>(3, -.73)},
                 {"averageDistanceFromCenterDiff", new Tuple<double, double>(-3, -.1)},
                 {"threatsDiff", new Tuple<double, double>(1, -.1)},
+                {"influenceDiff", new Tuple<double, double>(1, -.1)},
             };
             return new AnalysisFactors(bestWeightsGrowth);
         }
@@ -99,9 +100,16 @@ namespace TakLib
                 _factorsTemplate["threatsDiff"].Value = GetThreatsDiff(board);
             }
 
+            if (_factorsTemplate["influenceDiff"].Weight != 0)
+            {
+                _factorsTemplate["influenceDiff"].Value = GetInfluenceDiff(board);
+            }
+
             d.whiteAdvantage = _factorsTemplate.CalculateAdvantage(board.Turn);
             return d;
         }
+
+
 
         public AnalysisFactors GetCurrentAnalysisFactors => _factorsTemplate;
 
@@ -208,6 +216,37 @@ namespace TakLib
                     result += IsThreat(space, downNeighbor) ? 1 : 0;
                     result += IsThreat(space, leftNeighbor) ? 1 : 0;
                     result += IsThreat(space, rightNeighbor) ? 1 : 0;
+                }
+            }
+            return result;
+        }
+
+        private double GetInfluenceDiff(Board board)
+        {
+            double result = 0;
+            foreach (Coordinate c in new CoordinateEnumerable(board.Size))
+            {
+                Space space = board.GetSpace(c);
+                if (space.IsEmpty) continue;
+
+                Space upNeighbor = board.GetSpace(c.GetNeighbor(Direction.Up));
+                Space downNeighbor = board.GetSpace(c.GetNeighbor(Direction.Down));
+                Space leftNeighbor = board.GetSpace(c.GetNeighbor(Direction.Left));
+                Space rightNeighbor = board.GetSpace(c.GetNeighbor(Direction.Right));
+
+                if (space.Piece?.Color == PieceColor.Black)
+                {
+                    result += upNeighbor.OnTheBoard && upNeighbor.IsEmpty ? -1 : 0;
+                    result += downNeighbor.OnTheBoard && downNeighbor.IsEmpty  ? -1 : 0;
+                    result += leftNeighbor.OnTheBoard && leftNeighbor.IsEmpty  ? -1 : 0;
+                    result += rightNeighbor.OnTheBoard && rightNeighbor.IsEmpty  ? -1 : 0;
+                }
+                else if (space.Piece?.Color == PieceColor.White)
+                {
+                    result += upNeighbor.OnTheBoard && upNeighbor.IsEmpty  ? 1 : 0;
+                    result += downNeighbor.OnTheBoard && downNeighbor.IsEmpty  ? 1 : 0;
+                    result += leftNeighbor.OnTheBoard && leftNeighbor.IsEmpty  ? 1 : 0;
+                    result += rightNeighbor.OnTheBoard && rightNeighbor.IsEmpty  ? 1 : 0;
                 }
             }
             return result;
