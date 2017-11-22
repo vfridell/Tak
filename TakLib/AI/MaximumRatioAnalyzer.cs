@@ -223,33 +223,27 @@ namespace TakLib
 
         private double GetInfluenceDiff(Board board)
         {
-            double result = 0;
+            if (board.Round <= 2) return 0.0;
+            Dictionary<Coordinate, int> influenceArray = new Dictionary<Coordinate, int>();
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
-                if (space.IsEmpty) continue;
+                if (!space.IsEmpty) continue;
 
-                Space upNeighbor = board.GetSpace(c.GetNeighbor(Direction.Up));
-                Space downNeighbor = board.GetSpace(c.GetNeighbor(Direction.Down));
-                Space leftNeighbor = board.GetSpace(c.GetNeighbor(Direction.Left));
-                Space rightNeighbor = board.GetSpace(c.GetNeighbor(Direction.Right));
+                int nearestBlackPiece = 99;
+                int nearestWhitePiece = 99;
+                foreach(Coordinate c2 in new CoordinateEnumerable(board.Size))
+                {
+                    if (c == c2) continue;
+                    Space otherSpace = board.GetSpace(c2);
+                    if (otherSpace.IsEmpty) continue;
+                    if (otherSpace.Piece?.Color == PieceColor.Black) nearestBlackPiece = Math.Min(nearestBlackPiece, Coordinate.Distance(c, c2));
+                    if (otherSpace.Piece?.Color == PieceColor.White) nearestWhitePiece = Math.Min(nearestWhitePiece, Coordinate.Distance(c, c2));
+                }
 
-                if (space.Piece?.Color == PieceColor.Black)
-                {
-                    result += upNeighbor.OnTheBoard && upNeighbor.IsEmpty ? -1 : 0;
-                    result += downNeighbor.OnTheBoard && downNeighbor.IsEmpty  ? -1 : 0;
-                    result += leftNeighbor.OnTheBoard && leftNeighbor.IsEmpty  ? -1 : 0;
-                    result += rightNeighbor.OnTheBoard && rightNeighbor.IsEmpty  ? -1 : 0;
-                }
-                else if (space.Piece?.Color == PieceColor.White)
-                {
-                    result += upNeighbor.OnTheBoard && upNeighbor.IsEmpty  ? 1 : 0;
-                    result += downNeighbor.OnTheBoard && downNeighbor.IsEmpty  ? 1 : 0;
-                    result += leftNeighbor.OnTheBoard && leftNeighbor.IsEmpty  ? 1 : 0;
-                    result += rightNeighbor.OnTheBoard && rightNeighbor.IsEmpty  ? 1 : 0;
-                }
+                influenceArray.Add(c, nearestBlackPiece - nearestWhitePiece);
             }
-            return result;
+            return influenceArray.Values.Average();
         }
 
         private bool IsThreat(Space from, Space to)
