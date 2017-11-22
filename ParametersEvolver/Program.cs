@@ -33,7 +33,11 @@ namespace ParametersEvolver
                 IDictionary<double, HashSet<AnalysisFactors>> analysisDictionary = MoveSorter.GetSortedAnalysisFactorsDictionary(trial.Board, analyzer);
                 int uniqueScores = moveDictionary.Values.Count;
                 int totalMoves = moveDictionary.Keys.Select(d => moveDictionary[d].Count).Sum();
-                Console.WriteLine($"Ratio: {totalMoves}/{uniqueScores} = {((decimal)totalMoves/uniqueScores):N} ({totalMoves} moves grouped into {uniqueScores} analysis scores)");
+                double ratio = (double)totalMoves / uniqueScores;
+                if(ratio > 1)
+                {
+                    Console.WriteLine($"Ratio: {totalMoves}/{uniqueScores} = {ratio:N} ({totalMoves} moves grouped into {uniqueScores} analysis scores)");
+                }
             }
         }
 
