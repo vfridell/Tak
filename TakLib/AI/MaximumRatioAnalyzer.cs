@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TakLib.AI.Helpers;
+using TakLib.Helpers;
 
 namespace TakLib
 {
@@ -192,7 +193,9 @@ namespace TakLib
 
         private double GetThreatsDiff(Board board)
         {
-            double result = 0;
+            Dictionary<Coordinate, int> BlackThreats = new Dictionary<Coordinate, int>();
+            Dictionary<Coordinate, int> WhiteThreats = new Dictionary<Coordinate, int>();
+
             foreach (Coordinate c in new CoordinateEnumerable(board.Size))
             {
                 Space space = board.GetSpace(c);
@@ -205,21 +208,29 @@ namespace TakLib
 
                 if (space.Piece?.Color == PieceColor.Black)
                 {
-                    result += IsThreat(space, upNeighbor) ? -1 : 0;
-                    result += IsThreat(space, downNeighbor) ? -1 : 0;
-                    result += IsThreat(space, leftNeighbor) ? -1 : 0;
-                    result += IsThreat(space, rightNeighbor) ? -1 : 0;
+                    if(IsThreat(space, upNeighbor)) BlackThreats.CreateOrAddOne(upNeighbor.Coordinate);
+                    if(IsThreat(space, downNeighbor)) BlackThreats.CreateOrAddOne(downNeighbor.Coordinate);
+                    if(IsThreat(space, leftNeighbor)) BlackThreats.CreateOrAddOne(leftNeighbor.Coordinate);
+                    if(IsThreat(space, rightNeighbor)) BlackThreats.CreateOrAddOne(rightNeighbor.Coordinate);
                 }
                 else if (space.Piece?.Color == PieceColor.White)
                 {
-                    result += IsThreat(space, upNeighbor) ? 1 : 0;
-                    result += IsThreat(space, downNeighbor) ? 1 : 0;
-                    result += IsThreat(space, leftNeighbor) ? 1 : 0;
-                    result += IsThreat(space, rightNeighbor) ? 1 : 0;
+                    if(IsThreat(space, upNeighbor)) WhiteThreats.CreateOrAddOne(upNeighbor.Coordinate);
+                    if(IsThreat(space, downNeighbor)) WhiteThreats.CreateOrAddOne(downNeighbor.Coordinate);
+                    if(IsThreat(space, leftNeighbor)) WhiteThreats.CreateOrAddOne(leftNeighbor.Coordinate);
+                    if(IsThreat(space, rightNeighbor)) WhiteThreats.CreateOrAddOne(rightNeighbor.Coordinate);
                 }
             }
+            double result = WhiteThreats.Values.Sum() - BlackThreats.Values.Sum();
+            if (board.WhiteToPlay)
+                result += WhiteThreats.Count();
+            else
+                result -= BlackThreats.Count();
+
             return result;
         }
+
+
 
         private double GetInfluenceDiff(Board board)
         {

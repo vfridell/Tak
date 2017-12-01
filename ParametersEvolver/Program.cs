@@ -36,7 +36,7 @@ namespace ParametersEvolver
                 double ratio = (double)totalMoves / uniqueScores;
                 if(ratio > 1)
                 {
-                    Console.WriteLine($"Ratio: {totalMoves}/{uniqueScores} = {ratio:N} ({totalMoves} moves grouped into {uniqueScores} analysis scores)");
+                    Console.WriteLine($"{trial.GameName}: Ratio: {totalMoves}/{uniqueScores} = {ratio:N} ({totalMoves} moves grouped into {uniqueScores} analysis scores)");
                 }
             }
         }

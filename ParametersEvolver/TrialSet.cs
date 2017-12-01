@@ -10,7 +10,7 @@ namespace ParametersEvolver
 {
     public class TrialSet
     {
-        public List<Game> Games { get; set; }
+        public Dictionary<string, Game> Games { get; set; }
         public int NumberOfTrialsRun { get; protected set; }
         public int NumberOfCorrectPicks { get; protected set; }
         public int BoardSize { get; protected set; }
@@ -22,7 +22,7 @@ namespace ParametersEvolver
 
             IEnumerable<string> files = Directory.EnumerateFiles(directory, "*.txt", SearchOption.TopDirectoryOnly);
 
-            Games = new List<Game>();
+            Games = new Dictionary<string, Game>();
             int i = 0;
             foreach (string file in files)
             {
@@ -32,7 +32,7 @@ namespace ParametersEvolver
                     Console.WriteLine($"Loaded file {file}");
                     if (game.Boards[0].Size == BoardSize)
                     {
-                        Games.Add(game);
+                        Games.Add(file, game);
                         i++;
                     }
                     else
@@ -53,8 +53,9 @@ namespace ParametersEvolver
         {
             if(null == Games || !Games.Any()) throw new Exception("No games!");
 
-            foreach (Game game in Games)
+            foreach (var kvp in Games)
             {
+                Game game = kvp.Value;
                 if(!game.WinnerColor.HasValue) continue;
                 bool WhiteTrial = game.WinnerColor.Value == PieceColor.White;
                 for(int i=0; i<game.Boards.Count - 1; i++)
@@ -62,18 +63,18 @@ namespace ParametersEvolver
                     if (i == 0)
                     {
                         if(WhiteTrial)
-                            yield return new Trial(game.GetInitialBoard(), null, game.movesMade[0]);
+                            yield return new Trial(kvp.Key, game.GetInitialBoard(), null, game.movesMade[0]);
                     }
                     else if (i == 1)
                     {
                         if(!WhiteTrial)
-                            yield return new Trial(game.Boards[0], game.movesMade[0], game.movesMade[1]);
+                            yield return new Trial(kvp.Key, game.Boards[0], game.movesMade[0], game.movesMade[1]);
                     }
                     else
                     {
                         if (game.Boards[i-1].WhiteToPlay == WhiteTrial)
                         {
-                            yield return new Trial(game.Boards[i-1], game.movesMade[i-1], game.movesMade[i]);
+                            yield return new Trial(kvp.Key, game.Boards[i-1], game.movesMade[i-1], game.movesMade[i]);
                         }
                     }
                 }
